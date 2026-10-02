@@ -116,3 +116,8 @@ Book Tower skyter en tilfeldig animert A, B eller C per skudd. Blackboard Tower 
 Assistant koster120KP og lager2 assistenter. Hver assistent stopper én elev i3sekunder og gir5Knowledge per sekund (15totalt). De returnerer til rally etterpå med0,8sekunders cooldown. Alle studentvarianter holdes like lenge. Andre tårn kan fortsatt undervise den holdte eleven.
 
 Velg posten for å vise rekkevidde260 og arbeidsområde110 rundt rally. Klikk på eller innen28piksler fra veien inne i rekkevidden for å flytte rally. Dette avbryter eksisterende undervisning og samler begge assistenter ved nye, separate hjemmeplasser. SELL frigjør elevene og gir60KP tilbake.
+## Miljøanimasjoner – v0.007
+
+Fem små, transparente fire-frame-loops er laget i Aseprite: vannkrusninger, fossefall, busker, bladverk og planter. Map 1 bruker 11 små animasjonspatcher; Map 2 bruker 15, inkludert to fossefall. De ligger bak studenter/tårn og har ingen kollisjon eller input. Fast posisjon og nearest-filter gir skarpe piksler. Miljøet følger pause.
+
+Redigerbare filer ligger i assets/environment/source/*.aseprite. PNG-frames ligger i assets/environment/. Aseprite-skriptet kan kjøres med --batch --script-param out=EXPORT_DIRECTORY/ --script create_loops.lua. Kildene eksporteres ikke til Web.

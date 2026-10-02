@@ -46,7 +46,7 @@ func _ready() -> void:
 	root.add_child(header)
 	Artwork.panel(header, Vector2.ZERO, header.size)
 	Artwork.label(header,"ACADEMIC DEFENCE",Vector2(46,54),Vector2(365,42),28)
-	level_label = Artwork.label(header,"Skogsstien · v0.006",Vector2(47,96),Vector2(350,28),18,Color("bfd6b9"))
+	level_label = Artwork.label(header,"Skogsstien · v0.007",Vector2(47,96),Vector2(350,28),18,Color("bfd6b9"))
 	Artwork.image(header,"icon_resources",Vector2(433,62),Vector2(65,65))
 	gold_label = Artwork.label(header,"",Vector2(505,78),Vector2(155,35),26)
 	Artwork.image(header,"icon_reputation",Vector2(670,56),Vector2(76,76))
@@ -75,7 +75,7 @@ func _ready() -> void:
 	create_result(root)
 
 func set_level_title(title: String) -> void:
-	level_label.text = title + " · v0.006"
+	level_label.text = title + " · v0.007"
 
 func create_tower_panel(root: Control) -> void:
 	tower_panel = Control.new()
@@ -253,4 +253,5 @@ func show_result(won: bool, game, wave: int, total: int = 7) -> void:
 	result_overlay.visible = true
 	result_title.text = "Akademisk seier!" if won else "Prøv et nytt opplegg"
 	result_body.text = "Bølge %d av %d · Omdømme %d\n%d studenter lært opp\n%d studenter nådde broen" % [wave,total,game.lives,game.graduated,game.escaped]
+
 

@@ -39,7 +39,7 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.006 — playable prototype.** Two playable maps (7 and 12 waves), normal and PE students, Book, Blackboard and Teaching Assistant towers, tower selling, pause, restart, radial building menu and shared graduation animation. Book Tower fires randomly selected animated A/B/C projectiles. Blackboard Tower uses a sponge swipe with splash and droplets while its 30% slow is active for 2 seconds; new hits refresh the duration without stacking. Three further world-map nodes remain locked.
+**v0.007 — playable prototype.** Two playable maps (7 and 12 waves), normal and PE students, Book, Blackboard and Teaching Assistant towers, tower selling, pause, restart, radial building menu and shared graduation animation. Book Tower fires randomly selected animated A/B/C projectiles. Blackboard Tower uses a sponge swipe with splash and droplets while its 30% slow is active for 2 seconds; new hits refresh the duration without stacking. Three further world-map nodes remain locked.
 
 The earlier v0.005 verification recorded 1,117 successful checks, including full rounds on both maps and graphical tests. See `VERIFISERING.md` for details.
 
@@ -53,4 +53,11 @@ Workflow: `.github/workflows/pages.yml`. Deployment follows [GitHub's Pages work
 
 Assistant costs120KP and spawns2 assistants. Each holds one student for3seconds and teaches5Knowledge/second (15total), then returns to its rally and cools down for0.8seconds. Select the post and click near the road within its260radius to move rally. Selling refunds60KP and releases held students.
 
-Current version: **v0.006**, including Teaching Assistant Post. Latest local verification: **1,244 checks, 0 failures**.
+Current version: **v0.007**, including Teaching Assistant Post and subtle ambient animations. Latest local verification: **1,264 checks, 0 failures**.
+
+## v0.007 — ambient animation
+
+The current source and Web export include five subtle four-frame loops authored in Aseprite: water, waterfall, bush, crown leaves and plant. Both maps use a reusable AnimatedSprite2D background layer with nearest filtering, fixed origins and inherited pause behavior. Editable sources are in `assets/environment/source/`.
+
+Play v0.007 using the GitHub Pages link above. Local test link: http://127.0.0.1:8765/ .
+
