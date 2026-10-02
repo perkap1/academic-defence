@@ -53,4 +53,4 @@ Workflow: `.github/workflows/pages.yml`. Deployment follows [GitHub's Pages work
 
 Assistant costs120KP and spawns2 assistants. Each holds one student for3seconds and teaches5Knowledge/second (15total), then returns to its rally and cools down for0.8seconds. Select the post and click near the road within its260radius to move rally. Selling refunds60KP and releases held students.
 
-The local source is nowv0.006. The public Pages version remainsv0.005 until this version is pushed. Latest local verification:1244checks,0failures.
+Current version: **v0.006**, including Teaching Assistant Post. Latest local verification: **1,244 checks, 0 failures**.
