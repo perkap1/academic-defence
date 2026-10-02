@@ -16,7 +16,7 @@ func _ready() -> void:
 	Artwork.label(header,"ACADEMIC DEFENCE",Vector2(47,54),Vector2(760,49),34)
 	Artwork.label(header,"Verdenskart · velg en bane",Vector2(49,101),Vector2(900,32),23,Color("c4debf"))
 	Artwork.image(header,"icon_reputation",Vector2(1420,54),Vector2(87,87))
-	Artwork.label(header,"v0.005",Vector2(1520,78),Vector2(108,30),22)
+	Artwork.label(header,"v0.006",Vector2(1520,78),Vector2(108,30),22)
 	var note := Artwork.panel(root,Vector2(24,202),Vector2(778,116),true)
 	Artwork.label(note,"Velg bane 1 eller 2 · klikk på en grønn spilleknapp",Vector2(46,34),Vector2(690,28),20)
 	Artwork.label(note,"Skogsstien: 7 bølger · Elvesvingene: 12 bølger",Vector2(46,62),Vector2(690,23),17,Color("bbd8bf"))

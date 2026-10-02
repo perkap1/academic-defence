@@ -1,6 +1,7 @@
 extends Node2D
 
 const TowerScene = preload("res://scenes/book_tower.tscn")
+const AssistantScene = preload("res://scenes/assistant_post.tscn")
 const BlackboardScene = preload("res://scenes/blackboard_tower.tscn")
 @onready var map = $Map1
 @onready var game = $GameManager
@@ -46,6 +47,14 @@ func clear_selection() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if not ui.tower_panel.visible or not ui.tower_panel.get_global_rect().has_point(event.position):
+			if is_instance_valid(selected_tower_slot) and selected_tower_slot.tower.tower_type=="assistant" and not game.finished and not get_tree().paused:
+				var clicked_slot := false
+				for slot in map.slots.get_children():
+					if slot.global_position.distance_to(event.position)<70: clicked_slot=true
+				if not clicked_slot and selected_tower_slot.tower.try_move_rally(event.position):
+					ui.show_message("Rally point flyttet · assistentene samles her.",false)
+					get_viewport().set_input_as_handled()
+					return
 			clear_selection()
 
 func sell(slot) -> bool:
@@ -64,7 +73,8 @@ func build(slot, tower_type: String = "book") -> void:
 		if not game.finished:
 			ui.show_message("Du har ikke nok kunnskapspoeng til dette tårnet.", true)
 		return
-	var tower = BlackboardScene.instantiate() if tower_type == "blackboard" else TowerScene.instantiate()
+	var scene = AssistantScene if tower_type=="assistant" else (BlackboardScene if tower_type=="blackboard" else TowerScene)
+	var tower = scene.instantiate()
 	map.towers.add_child(tower)
 	tower.position = slot.position
 	tower.configure(map, game)
@@ -72,7 +82,7 @@ func build(slot, tower_type: String = "book") -> void:
 	slot.refresh_visuals()
 	tower.set_range_visible(false)
 	ui.close_build_menu()
-	ui.show_message("%s bygget. Klar for undervisning!" % ("Blackboard Tower" if tower_type == "blackboard" else "Book Tower"), false)
+	ui.show_message("%s bygget. Klar for undervisning!" % ("Teaching Assistant Post" if tower_type=="assistant" else ("Blackboard Tower" if tower_type == "blackboard" else "Book Tower")), false)
 
 func student_resolved(student, graduated: bool) -> void:
 	map.show_completion(student, graduated)

@@ -1,6 +1,6 @@
-# Academic Defence v0.005
+# Academic Defence v0.006
 
-Et Godot-spill der tårn lærer opp studenter før de når broen. v0.005 bygger videre på v0.003 med en radial byggemeny og en felles graduation-effekt.
+Et Godot-spill der tårn lærer opp studenter før de når broen. v0.006 bygger videre på v0.003 med en radial byggemeny og en felles graduation-effekt.
 
 ## Spill i nettleseren
 
@@ -82,7 +82,7 @@ Spawnintervallet faller gradvis fra 1,8 til 0,75 sekunder.
 - `assets/source/`: de fem nye originalbildene, bevart uendret.
 - `assets/`: spillets beskårne bilder med faste ankere og pikselgjengivelse.
 - `export_templates/`: offisielle Godot 4.4.1-webmaler og lisens.
-- `tests/`: regeltester, v0.005-tester, full spillrunde og faktisk grafisk input.
+- `tests/`: regeltester, v0.006-tester, full spillrunde og faktisk grafisk input.
 
 Bane 2 har egen scene main_map2.tscn / map2.tscn og åtte større, faste byggeplasser. Bane 1 beholder de ni eksisterende plassene.
 
@@ -107,6 +107,12 @@ Testresultater og nettleserkontroll er beskrevet i **VERIFISERING.md**. Arkivet 
 
 
 
-## Nye angrep i v0.005
+## Nye angrep i v0.006
 
 Book Tower skyter en tilfeldig animert A, B eller C per skudd. Blackboard Tower sveiper med tavlesvampen rundt valgt mål og viser våte treff. Dråper vises mens 30 % slow er aktiv i to sekunder; nye treff fornyer varigheten uten å stable slow.
+
+## Teaching Assistant Post – v0.006
+
+Assistant koster120KP og lager2 assistenter. Hver assistent stopper én elev i3sekunder og gir5Knowledge per sekund (15totalt). De returnerer til rally etterpå med0,8sekunders cooldown. Alle studentvarianter holdes like lenge. Andre tårn kan fortsatt undervise den holdte eleven.
+
+Velg posten for å vise rekkevidde260 og arbeidsområde110 rundt rally. Klikk på eller innen28piksler fra veien inne i rekkevidden for å flytte rally. Dette avbryter eksisterende undervisning og samler begge assistenter ved nye, separate hjemmeplasser. SELL frigjør elevene og gir60KP tilbake.

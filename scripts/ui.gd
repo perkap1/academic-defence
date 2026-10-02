@@ -22,6 +22,7 @@ var result_title: Label
 var result_body: Label
 var build_menu: Control
 var book_button: TextureButton
+var assistant_button: TextureButton
 var blackboard_button: TextureButton
 var pause_overlay: Control
 var tower_panel: Control
@@ -45,7 +46,7 @@ func _ready() -> void:
 	root.add_child(header)
 	Artwork.panel(header, Vector2.ZERO, header.size)
 	Artwork.label(header,"ACADEMIC DEFENCE",Vector2(46,54),Vector2(365,42),28)
-	level_label = Artwork.label(header,"Skogsstien · v0.005",Vector2(47,96),Vector2(350,28),18,Color("bfd6b9"))
+	level_label = Artwork.label(header,"Skogsstien · v0.006",Vector2(47,96),Vector2(350,28),18,Color("bfd6b9"))
 	Artwork.image(header,"icon_resources",Vector2(433,62),Vector2(65,65))
 	gold_label = Artwork.label(header,"",Vector2(505,78),Vector2(155,35),26)
 	Artwork.image(header,"icon_reputation",Vector2(670,56),Vector2(76,76))
@@ -66,7 +67,7 @@ func _ready() -> void:
 	reset_button.tooltip_text = "Start banen på nytt"
 	reset_button.pressed.connect(func(): restart_requested.emit())
 	var instruction := Artwork.panel(root,Vector2(24,202),Vector2(790,116),true)
-	message_label = Artwork.label(instruction,"Klikk på + for å velge tårn · Book 70 KP · Blackboard 100 KP",Vector2(45,34),Vector2(708,27),19)
+	message_label = Artwork.label(instruction,"Velg tårn · Book 70 · Blackboard 100 · Assistant 120 KP",Vector2(45,34),Vector2(708,27),19)
 	activity_label = Artwork.label(instruction,"Bygg først, og start bølgen når du er klar.",Vector2(45,61),Vector2(708,23),16,Color("b7d5c2"))
 	create_build_menu(root)
 	create_tower_panel(root)
@@ -74,7 +75,7 @@ func _ready() -> void:
 	create_result(root)
 
 func set_level_title(title: String) -> void:
-	level_label.text = title + " · v0.005"
+	level_label.text = title + " · v0.006"
 
 func create_tower_panel(root: Control) -> void:
 	tower_panel = Control.new()
@@ -97,6 +98,10 @@ func open_tower_panel(slot) -> void:
 	tower_title.text = "Blackboard Tower" if board else "Book Tower"
 	tower_description.text = "Gruppeundervisning · +15 kunnskap\n30 % slow i 2 sek. · rekkevidde 225" if board else "Ett mål · +20 kunnskap per treff\nEtt skudd per sekund · rekkevidde 260"
 	sell_button.text = "SELL · +%d KP" % (50 if board else 35)
+	if slot.tower.tower_type=="assistant":
+		tower_title.text="Teaching Assistant Post"
+		tower_description.text="2 assistenter · stopp 3 sek. · +5 kunnskap/sek\nKlikk nær veien innenfor radius for å flytte rally."
+		sell_button.text="SELL · +60 KP"
 	tower_panel.visible = true
 
 func close_tower_panel() -> void:
@@ -108,6 +113,11 @@ func create_build_menu(root: Control) -> void:
 	build_menu.name = "RadialBuildMenu"
 	build_menu.visible = false
 	root.add_child(build_menu)
+	assistant_button = radial_button("assistant",Vector2(145,-55),Vector2(150,156))
+	var assistant_cost := Artwork.label(build_menu,"120 KP",Vector2(145,104),Vector2(150,27),20)
+	assistant_cost.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	assistant_button.tooltip_text="Teaching Assistant Post · 120 KP · 2 assistenter, hold 3 sek., +5 kunnskap/sek"
+	assistant_button.pressed.connect(func(): choose_tower("assistant"))
 	book_button = radial_button("book",Vector2(25,89),Vector2(160,172))
 	blackboard_button = radial_button("blackboard",Vector2(255,89),Vector2(160,172))
 	var book_cost := Artwork.label(build_menu,"70 KP",Vector2(30,264),Vector2(150,27),20)
@@ -189,7 +199,7 @@ func _process(delta: float) -> void:
 	if message_time > 0:
 		message_time -= delta
 		if message_time <= 0:
-			message_label.text = "Klikk på + for å velge tårn · Book 70 KP · Blackboard 100 KP"
+			message_label.text = "Velg tårn · Book 70 · Blackboard 100 · Assistant 120 KP"
 			message_label.add_theme_color_override("font_color",Color("fff0c7"))
 
 func open_build_menu(slot, game) -> void:
@@ -208,6 +218,7 @@ func choose_tower(kind: String) -> void:
 		build_requested.emit(selected_slot,kind)
 
 func update_build_buttons(game) -> void:
+	assistant_button.disabled = game.finished or game.gold < 120
 	book_button.disabled = game.finished or game.gold < 70
 	blackboard_button.disabled = game.finished or game.gold < 100
 

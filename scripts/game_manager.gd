@@ -4,7 +4,7 @@ signal changed
 signal ended(won: bool)
 
 const TOWER_COST := 70
-const TOWER_COSTS := {"book": 70, "blackboard": 100}
+const TOWER_COSTS := {"book": 70, "blackboard": 100, "assistant": 120}
 var gold := 200
 var lives := 10
 var graduated := 0

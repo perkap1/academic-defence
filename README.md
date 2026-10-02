@@ -4,7 +4,7 @@
 
 # Academic Defence
 
-A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: students graduate at 100 Knowledge. This repository contains the existing v0.005 project developed in this chat.
+A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: students graduate at 100 Knowledge. This repository contains the existing v0.006 project developed in this chat.
 
 ## Controls
 
@@ -39,12 +39,18 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.005 — playable prototype.** Two playable maps (7 and 12 waves), normal and PE students, Book and Blackboard towers, tower selling, pause, restart, radial building menu and shared graduation animation. Book Tower fires randomly selected animated A/B/C projectiles. Blackboard Tower uses a sponge swipe with splash and droplets while its 30% slow is active for 2 seconds; new hits refresh the duration without stacking. Three further world-map nodes remain locked.
+**v0.006 — playable prototype.** Two playable maps (7 and 12 waves), normal and PE students, Book, Blackboard and Teaching Assistant towers, tower selling, pause, restart, radial building menu and shared graduation animation. Book Tower fires randomly selected animated A/B/C projectiles. Blackboard Tower uses a sponge swipe with splash and droplets while its 30% slow is active for 2 seconds; new hits refresh the duration without stacking. Three further world-map nodes remain locked.
 
-The existing v0.005 verification recorded 1,117 successful checks, including full rounds on both maps and graphical tests. See `VERIFISERING.md` for details.
+The earlier v0.005 verification recorded 1,117 successful checks, including full rounds on both maps and graphical tests. See `VERIFISERING.md` for details.
 
 ## Automatic publishing
 
 Push to **main** to run headless gameplay regression tests, export this same Godot project and deploy it to GitHub Pages. Failed tests or exports stop deployment. The workflow can also be started manually from Actions. No separate game source copy is used.
 
 Workflow: `.github/workflows/pages.yml`. Deployment follows [GitHub's Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+
+## Teaching Assistant Post
+
+Assistant costs120KP and spawns2 assistants. Each holds one student for3seconds and teaches5Knowledge/second (15total), then returns to its rally and cools down for0.8seconds. Select the post and click near the road within its260radius to move rally. Selling refunds60KP and releases held students.
+
+The local source is nowv0.006. The public Pages version remainsv0.005 until this version is pushed. Latest local verification:1244checks,0failures.

@@ -10,6 +10,8 @@ var slow_remaining := 0.0
 var slow_indicator := Sprite2D.new()
 var drop_frames := []
 var drop_time := 0.0
+var teacher
+var assistant_hold := false
 var knowledge := 0
 var done := false
 var animation_time := 0.0
@@ -42,6 +44,22 @@ func show_wet_hit() -> void:
 	splash.configure("wet_splash",5,0.30)
 	splash.position = Vector2(0,-17)
 	add_child(splash)
+
+func reserve_teacher(candidate) -> bool:
+	if done or is_instance_valid(teacher): return false
+	teacher=candidate
+	return true
+
+func release_teacher(candidate) -> void:
+	if teacher==candidate:
+		teacher=null
+		assistant_hold=false
+
+func face_teacher(point:Vector2) -> void:
+	var vector:Vector2=point-global_position
+	direction="side" if absf(vector.x)>absf(vector.y)*0.8 else ("front" if vector.y>0 else "back")
+	sprite.flip_h=direction=="side" and vector.x>0
+	sprite.texture=frames[direction][0]
 
 func _ready() -> void:
 	rotates = false
@@ -87,7 +105,8 @@ func _process(delta: float) -> void:
 	var old_progress := progress
 	# Split a long frame at expiry so the un-slowed part travels at base speed.
 	var slowed_time := minf(delta, slow_remaining)
-	progress = minf(progress + base_speed * (delta - slowed_time * 0.30), length)
+	if not assistant_hold:
+		progress = minf(progress + base_speed * (delta - slowed_time * 0.30), length)
 	slow_remaining = maxf(0.0, slow_remaining - delta)
 	speed = base_speed * 0.70 if slow_remaining > 0 else base_speed
 	slow_indicator.visible = slow_remaining > 0
@@ -96,6 +115,10 @@ func _process(delta: float) -> void:
 		slow_indicator.texture = drop_frames[int(drop_time*8) % 3]
 	if slowed_time > 0:
 		queue_redraw()
+	if assistant_hold:
+		if is_instance_valid(teacher): face_teacher(teacher.global_position)
+		else: assistant_hold=false
+		return
 	var tangent := path.curve.sample_baked(minf(progress + 4, length)) - path.curve.sample_baked(maxf(old_progress - 4, 0))
 	if absf(tangent.y) > absf(tangent.x) * 0.8:
 		direction = "front" if tangent.y > 0 else "back"
@@ -122,6 +145,9 @@ func complete(graduated: bool) -> void:
 	if done:
 		return
 	done = true
+	if is_instance_valid(teacher): teacher.student_completed(self)
+	teacher=null
+	assistant_hold=false
 	slow_indicator.visible = false
 	remove_from_group("students")
 	hide()
