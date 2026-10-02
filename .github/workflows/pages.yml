@@ -1,0 +1,55 @@
+name: Test, export and publish game
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Godot 4.4.1
+        run: |
+          curl -fL --retry 3 https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip -o /tmp/godot.zip
+          unzip /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.4.1-stable_linux.x86_64
+          echo /tmp/godot >> "$GITHUB_PATH"
+      - name: Import project
+        run: Godot_v4.4.1-stable_linux.x86_64 --headless --path . --editor --import
+      - name: Gameplay regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in test_rules test_v002 test_integration test_v003 test_map2_integration test_v004 test_v005; do
+            Godot_v4.4.1-stable_linux.x86_64 --headless --audio-driver Dummy --path . --script "res://tests/$test.gd"
+          done
+      - name: Export same game for Web
+        run: |
+          mkdir -p build/web
+          Godot_v4.4.1-stable_linux.x86_64 --headless --path . --export-release Web build/web/index.html
+          test -s build/web/index.html
+          test -s build/web/index.js
+          test -s build/web/index.wasm
+          test -s build/web/index.pck
+          touch build/web/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: build/web
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,26 @@
+; Academic Defence — Godot 4.4+
+config_version=5
+
+[application]
+config/name="Academic Defence"
+config/version="0.005"
+config/icon="res://assets/ui/icon_reputation.png"
+boot_splash/image="res://assets/ui/icon_reputation.png"
+boot_splash/bg_color=Color(0.035, 0.07, 0.08, 1)
+run/main_scene="res://scenes/world_map.tscn"
+
+[display]
+window/size/viewport_width=1672
+window/size/viewport_height=1131
+window/size/window_width_override=1280
+window/size/window_height_override=866
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+textures/canvas_textures/default_texture_filter=0
+environment/defaults/default_clear_color=Color(0.035, 0.07, 0.08, 1)
+

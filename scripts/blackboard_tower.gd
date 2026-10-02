@@ -1,0 +1,46 @@
+extends "res://scripts/book_tower.gd"
+const AttackEffect = preload("res://scripts/attack_effect.gd")
+
+var area_radius := 105.0
+
+func _ready() -> void:
+	tower_type = "blackboard"
+	teaching_range = 225.0
+	fire_interval = 1.3
+	knowledge_per_hit = 15
+	for i in range(4):
+		frames.append(load("res://assets/blackboard_%d.png" % i))
+	sprite.texture = frames[0]
+
+func _process(delta: float) -> void:
+	if game == null or game.finished:
+		return
+	cooldown = maxf(0, cooldown - delta)
+	animation_time = maxf(0, animation_time - delta)
+	sprite.texture = frames[1] if animation_time > 0 else frames[0]
+	queue_redraw()
+	if cooldown > 0:
+		return
+	var nearest = null
+	var closest := teaching_range
+	for student in map.route.get_children():
+		if not student.done:
+			var distance := global_position.distance_to(student.global_position)
+			if distance <= closest:
+				nearest = student
+				closest = distance
+	if nearest == null:
+		return
+	var center: Vector2 = nearest.global_position
+	var swipe = AttackEffect.new()
+	swipe.configure("sponge_swipe",5,0.45)
+	map.effects.add_child(swipe)
+	swipe.global_position = center
+	# Snapshot the group: a teaching hit may graduate and remove a student.
+	for student in map.route.get_children():
+		if is_instance_valid(student) and not student.done and student.global_position.distance_to(center) <= area_radius:
+			student.apply_slow(2.0)
+			student.show_wet_hit()
+			student.teach(knowledge_per_hit)
+	animation_time = 0.3
+	cooldown = fire_interval

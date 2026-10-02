@@ -1,0 +1,14 @@
+# Godot caches and generated imports
+.godot/
+.import/
+*.translation
+# Local export credentials
+export_credentials.cfg
+# Build outputs
+build/
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
