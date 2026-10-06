@@ -57,7 +57,7 @@ func run() -> void:
 			for texture in frames:
 				check(texture.get_size() == Vector2(80,90), "PE frame size stable")
 	for texture in board.frames:
-		check(texture.get_size() == Vector2(140,188), "Blackboard frame size stable")
+		check(texture.get_size() == Vector2(400,400), "Blackboard atlas canvas stable")
 	main.free()
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)

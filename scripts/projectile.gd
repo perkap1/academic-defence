@@ -9,11 +9,15 @@ var letter := "A"
 var flight_frames := []
 var flight_time := 0.0
 var sprite := Sprite2D.new()
+var golden := false
 
 func _ready() -> void:
 	add_child(sprite)
 
-func configure(student, amount: int) -> void:
+func configure(student, amount: int, is_golden: bool = false) -> void:
+	golden = is_golden
+	sprite.modulate = Color(1.4,1.18,0.75) if golden else Color.WHITE
+	sprite.scale = Vector2.ONE * (1.25 if golden else 1.0)
 	target = student
 	knowledge = amount
 	previous = position
@@ -22,11 +26,21 @@ func configure(student, amount: int) -> void:
 	for i in range(3):
 		flight_frames.append(load("res://assets/effects/letter_%s_%d.png" % [letter,i]))
 	sprite.texture = flight_frames[0]
+	queue_redraw()
+
+func _draw() -> void:
+	if not golden: return
+	for i in range(4):
+		var point := Vector2.from_angle(flight_time*2+i*TAU/4) * 31
+		point = point.round()
+		draw_rect(Rect2(point-Vector2(2,6),Vector2(4,12)),Color("ffe873"))
+		draw_rect(Rect2(point-Vector2(6,2),Vector2(12,4)),Color("fff4b2"))
 
 func _process(delta: float) -> void:
 	if spent:
 		return
 	flight_time += delta
+	if golden: queue_redraw()
 	if not flight_frames.is_empty():
 		sprite.texture = flight_frames[int(flight_time*12) % 3]
 	if not is_instance_valid(target) or target.done:

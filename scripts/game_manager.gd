@@ -23,6 +23,17 @@ func try_build(slot, tower_type: String = "book") -> bool:
 	changed.emit()
 	return true
 
+func try_upgrade(slot) -> bool:
+	if finished or get_tree().paused or not is_instance_valid(slot) or not slot.occupied or not is_instance_valid(slot.tower): return false
+	var tower = slot.tower
+	if tower.game != self or tower.is_queued_for_deletion() or tower.tower_type not in ["book","blackboard"]: return false
+	var cost: int = tower.get_upgrade_cost()
+	if cost <= 0 or gold < cost: return false
+	if not tower.upgrade_level(): return false
+	gold -= cost
+	changed.emit()
+	return true
+
 func try_sell(slot) -> bool:
 	if finished or not is_instance_valid(slot) or not slot.occupied or not is_instance_valid(slot.tower):
 		return false
@@ -30,6 +41,8 @@ func try_sell(slot) -> bool:
 	if tower.game != self or not TOWER_COSTS.has(tower.tower_type) or tower.is_queued_for_deletion():
 		return false
 	var refund: int = int(TOWER_COSTS[tower.tower_type] / 2)
+	if tower.tower_type in ["book","blackboard"]:
+		refund = tower.get_sell_refund()
 	# Clear ownership before emitting changed; repeated input cannot refund twice.
 	slot.tower = null
 	slot.occupied = false

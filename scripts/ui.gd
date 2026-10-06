@@ -6,6 +6,7 @@ signal build_requested(slot, tower_type: String)
 signal pause_requested
 signal map_requested
 signal sell_requested(slot)
+signal upgrade_requested(slot)
 
 const Artwork = preload("res://scripts/ui_skin.gd")
 const RadialMenu = preload("res://scripts/radial_menu.gd")
@@ -29,6 +30,19 @@ var tower_panel: Control
 var tower_title: Label
 var tower_description: Label
 var sell_button: Button
+var upgrade_button: Button
+var upgrade_caption: Label
+var tower_banner: Control
+var banner_title: Label
+var banner_description: Label
+var banner_extra: Label
+var banner_sprite: TextureRect
+var banner_sell: Button
+var invested_label: Label
+var assistant_panel: Control
+var assistant_title: Label
+var assistant_description: Label
+var assistant_sell: Button
 var tower_slot
 var level_label: Label
 var selected_slot
@@ -46,7 +60,7 @@ func _ready() -> void:
 	root.add_child(header)
 	Artwork.panel(header, Vector2.ZERO, header.size)
 	Artwork.label(header,"ACADEMIC DEFENCE",Vector2(46,54),Vector2(365,42),28)
-	level_label = Artwork.label(header,"Skogsstien · v0.007",Vector2(47,96),Vector2(350,28),18,Color("bfd6b9"))
+	level_label = Artwork.label(header,"Skogsstien · v" + ProjectSettings.get_setting("application/config/version"),Vector2(47,96),Vector2(350,28),18,Color("bfd6b9"))
 	Artwork.image(header,"icon_resources",Vector2(433,62),Vector2(65,65))
 	gold_label = Artwork.label(header,"",Vector2(505,78),Vector2(155,35),26)
 	Artwork.image(header,"icon_reputation",Vector2(670,56),Vector2(76,76))
@@ -75,37 +89,99 @@ func _ready() -> void:
 	create_result(root)
 
 func set_level_title(title: String) -> void:
-	level_label.text = title + " · v0.007"
+	level_label.text = title + " · v" + ProjectSettings.get_setting("application/config/version")
 
 func create_tower_panel(root: Control) -> void:
-	tower_panel = Control.new()
-	tower_panel.name = "TowerPanel"
-	tower_panel.size = Vector2(600,320)
-	tower_panel.visible = false
-	root.add_child(tower_panel)
-	Artwork.panel(tower_panel,Vector2.ZERO,tower_panel.size)
-	tower_title = Artwork.label(tower_panel,"",Vector2(72,55),Vector2(450,38),27)
-	tower_description = Artwork.label(tower_panel,"",Vector2(72,103),Vector2(450,74),19)
-	tower_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	sell_button = Artwork.plain_button(tower_panel,"SELL",Vector2(145,197),Vector2(310,56))
-	sell_button.pressed.connect(func():
-		if is_instance_valid(tower_slot): sell_requested.emit(tower_slot))
+	# Keep the Assistant's existing rally/selection panel separate.
+	assistant_panel = Control.new()
+	assistant_panel.size = Vector2(600,320)
+	assistant_panel.visible = false
+	root.add_child(assistant_panel)
+	Artwork.panel(assistant_panel,Vector2.ZERO,assistant_panel.size)
+	assistant_title = Artwork.label(assistant_panel,"Teaching Assistant Post",Vector2(72,55),Vector2(450,38),27)
+	assistant_description = Artwork.label(assistant_panel,"2 assistenter · stopp 3 sek. · +5 kunnskap/sek\nKlikk nær veien innenfor radius for å flytte rally.",Vector2(72,103),Vector2(450,74),19)
+	assistant_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	assistant_sell = Artwork.plain_button(assistant_panel,"SELL · +60 KP",Vector2(145,197),Vector2(310,56))
+	assistant_sell.pressed.connect(request_sell)
+	tower_banner = Control.new()
+	tower_banner.name = "TowerInformationBanner"
+	tower_banner.position = Vector2(24,947)
+	tower_banner.size = Vector2(1624,168)
+	tower_banner.visible = false
+	root.add_child(tower_banner)
+	Artwork.panel(tower_banner,Vector2.ZERO,tower_banner.size,true)
+	banner_sprite = TextureRect.new()
+	banner_sprite.position = Vector2(35,5)
+	banner_sprite.size = Vector2(120,153)
+	banner_sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	banner_sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	banner_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	banner_sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tower_banner.add_child(banner_sprite)
+	banner_title = Artwork.label(tower_banner,"",Vector2(175,18),Vector2(880,32),26)
+	banner_description = Artwork.label(tower_banner,"",Vector2(175,61),Vector2(500,68),20)
+	banner_extra = Artwork.label(tower_banner,"",Vector2(690,55),Vector2(405,84),20,Color("c0edca"))
+	banner_extra.add_theme_constant_override("line_spacing",-6)
+	banner_sell = Artwork.plain_button(tower_banner,"SELL",Vector2(1110,52),Vector2(210,52))
+	banner_sell.pressed.connect(request_sell)
+	invested_label = Artwork.label(tower_banner,"",Vector2(1110,104),Vector2(250,26),18)
+	upgrade_button = preload("res://scripts/upgrade_button.gd").new()
+	upgrade_button.position = Vector2(1400,25)
+	upgrade_button.size = Vector2(100,83)
+	upgrade_button.focus_mode = Control.FOCUS_NONE
+	tower_banner.add_child(upgrade_button)
+	upgrade_button.pressed.connect(func():
+		if is_instance_valid(tower_slot): upgrade_requested.emit(tower_slot))
+	upgrade_caption = Artwork.label(tower_banner,"",Vector2(1345,104),Vector2(235,26),20)
+	upgrade_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tower_panel = tower_banner
+	tower_title = banner_title
+	tower_description = banner_description
+	sell_button = banner_sell
+
+func request_sell() -> void:
+	if is_instance_valid(tower_slot): sell_requested.emit(tower_slot)
 
 func open_tower_panel(slot) -> void:
+	close_tower_panel()
 	tower_slot = slot
-	tower_panel.position = Vector2(clampf(slot.global_position.x-300,24,1048),clampf(slot.global_position.y+45,320,785))
-	var board: bool = slot.tower.tower_type == "blackboard"
-	tower_title.text = "Blackboard Tower" if board else "Book Tower"
-	tower_description.text = "Gruppeundervisning · +15 kunnskap\n30 % slow i 2 sek. · rekkevidde 225" if board else "Ett mål · +20 kunnskap per treff\nEtt skudd per sekund · rekkevidde 260"
-	sell_button.text = "SELL · +%d KP" % (50 if board else 35)
-	if slot.tower.tower_type=="assistant":
-		tower_title.text="Teaching Assistant Post"
-		tower_description.text="2 assistenter · stopp 3 sek. · +5 kunnskap/sek\nKlikk nær veien innenfor radius for å flytte rally."
-		sell_button.text="SELL · +60 KP"
+	if slot.tower.tower_type == "assistant":
+		tower_panel = assistant_panel
+		tower_title = assistant_title
+		tower_description = assistant_description
+		sell_button = assistant_sell
+		assistant_panel.position = Vector2(clampf(slot.global_position.x-300,24,1048),clampf(slot.global_position.y+45,320,785))
+	else:
+		tower_panel = tower_banner
+		tower_title = banner_title
+		tower_description = banner_description
+		sell_button = banner_sell
+		refresh_tower_banner(slot.tower.game)
 	tower_panel.visible = true
 
+func refresh_tower_banner(game) -> void:
+	if not is_instance_valid(tower_slot) or not is_instance_valid(tower_slot.tower): return
+	var tower = tower_slot.tower
+	if tower.tower_type == "assistant": return
+	banner_title.text = tower.get_display_name()
+	banner_sprite.texture = tower.frames[0]
+	banner_description.text = "Level %d · Knowledge per attack: %d\nAttack speed: %.2f/s (%.2f sec)" % [tower.level,tower.knowledge_per_hit,1.0/tower.fire_interval,tower.fire_interval]
+	if tower.tower_type == "blackboard":
+		banner_extra.text = "Range: %d\nSlow: %d %% · %.1f sec\nAoE radius: %d" % [tower.teaching_range,roundi(tower.slow_strength*100),tower.slow_duration,tower.area_radius]
+	else:
+		banner_extra.text = "Range: %d\n" % tower.teaching_range + ("Single target" if tower.level < 3 else "Every 5th letter: Golden\n2× Knowledge · 60 per hit")
+	banner_sell.text = "SELL · +%d KP" % tower.get_sell_refund()
+	invested_label.text = "Invested: %d KP" % tower.total_invested
+	var cost: int = tower.get_upgrade_cost()
+	upgrade_button.disabled = cost == 0 or game.gold < cost or game.finished
+	upgrade_caption.text = "MAX LEVEL" if cost == 0 else "Upgrade – %d KP" % cost
+	upgrade_caption.modulate = Color("aaa59c") if upgrade_button.disabled else Color("bbf59d")
+	upgrade_button.tooltip_text = "MAX LEVEL" if cost == 0 else "Upgrade – %d KP%s" % [cost," · ikke nok KP" if game.gold < cost else ""]
+	upgrade_button.queue_redraw()
+
 func close_tower_panel() -> void:
-	if tower_panel != null: tower_panel.visible = false
+	if tower_banner != null: tower_banner.visible = false
+	if assistant_panel != null: assistant_panel.visible = false
 	tower_slot = null
 
 func create_build_menu(root: Control) -> void:
@@ -235,6 +311,8 @@ func update_state(game, waves) -> void:
 		activity_label.text = "%d på vei · %d venter · %d lært opp" % [waves.students.size(),waves.remaining,game.graduated]
 	else:
 		activity_label.text = "Bygg tårn, og start neste bølge når du er klar."
+	if tower_banner.visible:
+		refresh_tower_banner(game)
 	if build_menu.visible:
 		update_build_buttons(game)
 

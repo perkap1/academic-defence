@@ -1,5 +1,6 @@
 extends Node2D
 
+const Presentation=preload("res://scripts/tower_presentation.gd")
 const ProjectileScene = preload("res://scenes/projectile.tscn")
 var tower_type := "book"
 var teaching_range := 260.0
@@ -11,16 +12,52 @@ var show_range := false
 var map
 var game
 var frames := []
+var base_sprite: Sprite2D
+var level := 1
+var total_invested := 70
+var visual_time := 0.0
+var level3_shots := 0
 @onready var sprite: Sprite2D = $Sprite
 
 func _ready() -> void:
-	for i in range(5):
-		frames.append(load("res://assets/tower_%d.png" % i))
-	sprite.texture = frames[0]
+	Presentation.apply(self)
 
 func configure(level, manager) -> void:
 	map = level
 	game = manager
+
+func get_upgrade_cost() -> int:
+	if level >= 3: return 0
+	return [80,130][level-1] if tower_type == "book" else [100,150][level-1]
+
+func get_display_name() -> String:
+	return ["Book Tower","Advanced Book Tower","Scholar Tower"][level-1] if tower_type == "book" else ["Blackboard Tower","Advanced Blackboard","Master Blackboard"][level-1]
+
+func get_sell_refund() -> int:
+	return int(total_invested / 2)
+
+func upgrade_level() -> bool:
+	var cost := get_upgrade_cost()
+	if cost == 0: return false
+	total_invested += cost
+	level += 1
+	if tower_type == "book":
+		knowledge_per_hit = [20,25,30][level-1]
+		fire_interval = [1.0,0.8,0.65][level-1]
+		teaching_range = [260.0,286.0,312.0][level-1]
+	Presentation.apply(self)
+	update_sprite(0)
+	queue_redraw()
+	return true
+
+func get_visual_frame() -> int:
+	if animation_time > 0:return 4
+	var period:=int(floor(visual_time*4.0))%8
+	return period if period<4 else 0
+
+func update_sprite(delta: float) -> void:
+	visual_time += delta
+	sprite.texture = frames[get_visual_frame()]
 
 func _draw() -> void:
 	if show_range:
@@ -36,7 +73,7 @@ func _process(delta: float) -> void:
 		return
 	cooldown = maxf(0, cooldown - delta)
 	animation_time = maxf(0, animation_time - delta)
-	sprite.texture = frames[2] if animation_time > 0 else frames[0]
+	update_sprite(delta)
 	if cooldown > 0:
 		return
 	var nearest = null
@@ -52,6 +89,9 @@ func _process(delta: float) -> void:
 		var projectile = ProjectileScene.instantiate()
 		map.projectiles.add_child(projectile)
 		projectile.global_position = global_position + Vector2(0, -102)
-		projectile.configure(nearest, knowledge_per_hit)
+		if level == 3: level3_shots += 1
+		var golden := level == 3 and level3_shots % 5 == 0
+		projectile.configure(nearest, knowledge_per_hit * (2 if golden else 1), golden)
 		cooldown = fire_interval
 		animation_time = 0.25
+		update_sprite(0)

@@ -1,12 +1,15 @@
 extends PathFollow2D
 
 signal resolved(student, graduated: bool)
+const UnitLayout=preload("res://scripts/unit_layout.gd")
+var lane_offset:=0.0
 const AttackEffect = preload("res://scripts/attack_effect.gd")
 
 const MAX_KNOWLEDGE := 100
 var speed := 85.0
 var base_speed := 85.0
 var slow_remaining := 0.0
+var slow_strength := 0.0
 var slow_indicator := Sprite2D.new()
 var drop_frames := []
 var drop_time := 0.0
@@ -28,13 +31,16 @@ func configure(kind: String, sex: String = "boy") -> void:
 	speed = 114.75 if student_type == "pe" else 85.0
 	base_speed = speed
 	slow_remaining = 0.0
+	slow_strength = 0.0
 
-func apply_slow(duration: float = 2.0) -> void:
+func apply_slow(duration: float = 2.0, strength: float = 0.30) -> void:
 	if done or duration <= 0:
 		return
 	if slow_remaining <= 0: drop_time = 0.0
 	slow_remaining = maxf(slow_remaining, duration)
-	speed = base_speed * 0.70
+	# A weaker board cannot remove an existing stronger slow; neither stacks.
+	slow_strength = maxf(slow_strength,clampf(strength,0,1))
+	speed = base_speed * (1.0-slow_strength)
 	slow_indicator.visible = true
 	queue_redraw()
 
@@ -61,7 +67,16 @@ func face_teacher(point:Vector2) -> void:
 	sprite.flip_h=direction=="side" and vector.x>0
 	sprite.texture=frames[direction][0]
 
+func update_lane_position()->void:
+	if get_parent() is Path2D:
+		position=UnitLayout.lane_position(get_parent().curve,progress,lane_offset)
+
 func _ready() -> void:
+	UnitLayout.apply_scale(self)
+	lane_offset=UnitLayout.choose_lane()
+	bar.scale=Vector2.ONE/UnitLayout.SCALE
+	bar.position=Vector2(-40,-92)
+	update_lane_position()
 	rotates = false
 	loop = false
 	add_to_group("students")
@@ -106,9 +121,11 @@ func _process(delta: float) -> void:
 	# Split a long frame at expiry so the un-slowed part travels at base speed.
 	var slowed_time := minf(delta, slow_remaining)
 	if not assistant_hold:
-		progress = minf(progress + base_speed * (delta - slowed_time * 0.30), length)
+		progress = minf(progress + base_speed * (delta - slowed_time * slow_strength), length)
+	update_lane_position()
 	slow_remaining = maxf(0.0, slow_remaining - delta)
-	speed = base_speed * 0.70 if slow_remaining > 0 else base_speed
+	if slow_remaining <= 0: slow_strength = 0.0
+	speed = base_speed * (1.0-slow_strength)
 	slow_indicator.visible = slow_remaining > 0
 	if slow_remaining > 0:
 		drop_time += delta

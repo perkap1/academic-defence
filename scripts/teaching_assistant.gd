@@ -1,4 +1,5 @@
 extends Node2D
+const UnitLayout=preload("res://scripts/unit_layout.gd")
 var post
 var index := 0
 var state := "return"
@@ -14,6 +15,7 @@ var sprite := Sprite2D.new()
 var teaching_effect := Sprite2D.new()
 var effect_frames := []
 func _ready() -> void:
+ UnitLayout.apply_scale(self)
  sprite.position=Vector2(0,-41)
  add_child(sprite)
  for kind in ["idle","walk","teach"]:
@@ -82,7 +84,7 @@ func _process(delta:float) -> void:
   return
  if state=="approach":
   var side:float=-1 if global_position.x<=target.global_position.x else 1
-  var meeting:Vector2=target.global_position+Vector2(side*34,0)
+  var meeting:Vector2=target.global_position+Vector2(side*UnitLayout.MEETING_GAP,0)
   if move_to(meeting,delta):
    target.assistant_hold=true
    state="teach"
@@ -94,7 +96,7 @@ func _process(delta:float) -> void:
   facing=target.global_position-global_position
   target.face_teacher(global_position)
   animate(delta,"teach")
-  teaching_effect.global_position=(global_position+target.global_position)*0.5+Vector2(0,-67)
+  teaching_effect.global_position=(global_position+target.global_position)*0.5+Vector2(0,-67*UnitLayout.SCALE)
   teaching_effect.texture=effect_frames[int(animation_time*7)%5]
   var teaching_time:float=minf(delta,3.0-elapsed)
   elapsed+=teaching_time

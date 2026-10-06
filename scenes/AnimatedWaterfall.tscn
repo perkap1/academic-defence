@@ -1,0 +1,63 @@
+[gd_scene load_steps=12 format=3]
+[ext_resource type="Texture2D" path="res://assets/waterfall/waterfall_sheet.png" id="1"]
+[ext_resource type="Shader" path="res://scripts/waterfall_water_only.gdshader" id="2"]
+[ext_resource type="Script" path="res://scripts/animated_waterfall.gd" id="3"]
+
+[sub_resource type="AtlasTexture" id="Frame_0"]
+atlas = ExtResource("1")
+region = Rect2(25, 135, 335, 455)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Frame_1"]
+atlas = ExtResource("1")
+region = Rect2(387, 135, 335, 455)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Frame_2"]
+atlas = ExtResource("1")
+region = Rect2(749, 135, 335, 455)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Frame_3"]
+atlas = ExtResource("1")
+region = Rect2(1111, 135, 335, 455)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Frame_4"]
+atlas = ExtResource("1")
+region = Rect2(1473, 135, 335, 455)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Frame_5"]
+atlas = ExtResource("1")
+region = Rect2(1835, 135, 335, 455)
+filter_clip = true
+
+[sub_resource type="SpriteFrames" id="Frames"]
+animations = [{
+"frames": [
+{"duration": 1.0, "texture": SubResource("Frame_0")},
+{"duration": 1.0, "texture": SubResource("Frame_1")},
+{"duration": 1.0, "texture": SubResource("Frame_2")},
+{"duration": 1.0, "texture": SubResource("Frame_3")},
+{"duration": 1.0, "texture": SubResource("Frame_4")},
+{"duration": 1.0, "texture": SubResource("Frame_5")}
+],
+"loop": true,
+"name": &"flow",
+"speed": 7.0
+}]
+
+[sub_resource type="ShaderMaterial" id="WaterOnly"]
+shader = ExtResource("2")
+resource_local_to_scene = true
+
+[node name="AnimatedWaterfall" type="AnimatedSprite2D"]
+texture_filter = 1
+material = SubResource("WaterOnly")
+z_index = -8
+script = ExtResource("3")
+sprite_frames = SubResource("Frames")
+animation = &"flow"
+autoplay = "flow"
+centered = false

@@ -23,6 +23,7 @@ func _ready() -> void:
 	ui.pause_requested.connect(toggle_pause)
 	ui.map_requested.connect(return_to_map)
 	ui.sell_requested.connect(sell)
+	ui.upgrade_requested.connect(upgrade)
 	ui.set_level_title(map.level_title)
 	update_ui()
 
@@ -57,13 +58,19 @@ func _input(event: InputEvent) -> void:
 					return
 			clear_selection()
 
+func upgrade(slot) -> bool:
+	if get_tree().paused or not is_instance_valid(slot) or slot != selected_tower_slot or slot.get_parent() != map.slots: return false
+	if not game.try_upgrade(slot): return false
+	ui.show_message("%s · Level %d" % [slot.tower.get_display_name(),slot.tower.level],false)
+	return true
+
 func sell(slot) -> bool:
 	if get_tree().paused or not is_instance_valid(slot) or slot.get_parent() != map.slots:
 		return false
 	if not game.try_sell(slot):
 		return false
 	clear_selection()
-	ui.show_message("Tårnet er solgt · 50 % av byggeprisen tilbake.",false)
+	ui.show_message("Tårnet er solgt · 50 % av investeringen tilbake.",false)
 	return true
 
 func build(slot, tower_type: String = "book") -> void:

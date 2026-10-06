@@ -10,7 +10,7 @@ const PLACEMENTS := {
  },
  2: {
   "water": [Vector2(382,245),Vector2(1420,273),Vector2(289,825),Vector2(689,870),Vector2(1549,825)],
-  "waterfall": [Vector2(85,680),Vector2(1515,214)],
+  "waterfall": [Vector2(85,680)],
   "bush": [Vector2(359,298),Vector2(842,543),Vector2(1460,674)],
   "leaves": [Vector2(440,610),Vector2(774,486),Vector2(1395,758)],
   "plant": [Vector2(1090,690),Vector2(1040,202)]
