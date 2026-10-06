@@ -78,3 +78,7 @@ Students and teaching assistants are 70% of their previous visual size. Knowledg
 
 Local verification: **3,570 checks, 0 failures**, including graphical tests and complete rounds on both maps. See `VERIFISERING-v0.009.md`. Local Web build: http://127.0.0.1:8765/ .
 
+
+## v0.009.1 — consistent Normal Student animation
+Normal Student now uses fixed atlas regions from the original sheet, a shared foot pivot and identical scale for every pose. The old individually resized assets are retained. PE students and gameplay are unchanged. Verified all 18 poses visually and 1,869 targeted regression checks.
+

@@ -85,6 +85,12 @@ func _ready() -> void:
 		for i in range(6):
 			var prefix := "pe_%s" % variant if student_type == "pe" else "student"
 			frames[key].append(load("res://assets/%s_%s_%d.png" % [prefix, key, i]))
+	if student_type == "normal":
+		frames=preload("res://scripts/normal_student_frames.gd").create()
+		sprite.centered=false
+		sprite.offset=Vector2(-150,-310)
+		sprite.position=Vector2(0,-3)
+		sprite.scale=Vector2(0.28,0.28)
 	sprite.texture = frames["side"][2]
 	sprite.flip_h = true
 	var background := StyleBoxFlat.new()
