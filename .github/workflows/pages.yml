@@ -33,11 +33,13 @@ jobs:
       - name: Export same game for Web
         run: |
           mkdir -p build/web
-          Godot_v4.4.1-stable_linux.x86_64 --headless --path . --export-release Web build/web/index.html
+          # Fresh asset URLs per commit avoid serving an older cached game pack.
+          Godot_v4.4.1-stable_linux.x86_64 --headless --path . --export-release Web "build/web/game-${GITHUB_SHA}.html"
+          mv "build/web/game-${GITHUB_SHA}.html" build/web/index.html
           test -s build/web/index.html
-          test -s build/web/index.js
-          test -s build/web/index.wasm
-          test -s build/web/index.pck
+          test -s "build/web/game-${GITHUB_SHA}.js"
+          test -s "build/web/game-${GITHUB_SHA}.wasm"
+          test -s "build/web/game-${GITHUB_SHA}.pck"
           touch build/web/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
