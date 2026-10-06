@@ -1,7 +1,7 @@
 extends RefCounted
 # Fixed source-pixel scale, canvas and foot pivot; never resize individual poses.
 static func create()->Dictionary:
- var sheet:Texture2D=load("res://assets/source/normal_students.png")
+ var sheet:Texture2D=load("res://assets/normal_students.png")
  var centers=[190,456,739,1014,1299,1584]
  var boundaries=[75,320,600,885,1168,1450,1725]
  var result={}
@@ -19,3 +19,4 @@ static func create()->Dictionary:
    frame.filter_clip=true
    result[directions[row]].append(frame)
  return result
+
