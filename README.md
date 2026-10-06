@@ -82,3 +82,7 @@ Local verification: **3,570 checks, 0 failures**, including graphical tests and 
 ## v0.009.1 — consistent Normal Student animation
 Normal Student now uses fixed atlas regions from the original sheet, a shared foot pivot and identical scale for every pose. The old individually resized assets are retained. PE students and gameplay are unchanged. Verified all 18 poses visually and 1,869 targeted regression checks.
 
+
+## v0.009.2 — shared Assistant information banner
+Teaching Assistant Post uses the same fixed bottom banner as Book and Blackboard: icon, teaching rate, hold duration, range, rally guidance and Sell. Its upgrade arrow is disabled; no Assistant upgrades or gameplay changes are introduced. Both maps checked visually; 181 targeted regression checks passed.
+

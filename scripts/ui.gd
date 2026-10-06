@@ -39,10 +39,6 @@ var banner_extra: Label
 var banner_sprite: TextureRect
 var banner_sell: Button
 var invested_label: Label
-var assistant_panel: Control
-var assistant_title: Label
-var assistant_description: Label
-var assistant_sell: Button
 var tower_slot
 var level_label: Label
 var selected_slot
@@ -92,17 +88,6 @@ func set_level_title(title: String) -> void:
 	level_label.text = title + " · v" + ProjectSettings.get_setting("application/config/version")
 
 func create_tower_panel(root: Control) -> void:
-	# Keep the Assistant's existing rally/selection panel separate.
-	assistant_panel = Control.new()
-	assistant_panel.size = Vector2(600,320)
-	assistant_panel.visible = false
-	root.add_child(assistant_panel)
-	Artwork.panel(assistant_panel,Vector2.ZERO,assistant_panel.size)
-	assistant_title = Artwork.label(assistant_panel,"Teaching Assistant Post",Vector2(72,55),Vector2(450,38),27)
-	assistant_description = Artwork.label(assistant_panel,"2 assistenter · stopp 3 sek. · +5 kunnskap/sek\nKlikk nær veien innenfor radius for å flytte rally.",Vector2(72,103),Vector2(450,74),19)
-	assistant_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	assistant_sell = Artwork.plain_button(assistant_panel,"SELL · +60 KP",Vector2(145,197),Vector2(310,56))
-	assistant_sell.pressed.connect(request_sell)
 	tower_banner = Control.new()
 	tower_banner.name = "TowerInformationBanner"
 	tower_banner.position = Vector2(24,947)
@@ -145,24 +130,29 @@ func request_sell() -> void:
 func open_tower_panel(slot) -> void:
 	close_tower_panel()
 	tower_slot = slot
-	if slot.tower.tower_type == "assistant":
-		tower_panel = assistant_panel
-		tower_title = assistant_title
-		tower_description = assistant_description
-		sell_button = assistant_sell
-		assistant_panel.position = Vector2(clampf(slot.global_position.x-300,24,1048),clampf(slot.global_position.y+45,320,785))
-	else:
-		tower_panel = tower_banner
-		tower_title = banner_title
-		tower_description = banner_description
-		sell_button = banner_sell
-		refresh_tower_banner(slot.tower.game)
+	tower_panel = tower_banner
+	tower_title = banner_title
+	tower_description = banner_description
+	sell_button = banner_sell
+	refresh_tower_banner(slot.tower.game)
 	tower_panel.visible = true
 
 func refresh_tower_banner(game) -> void:
 	if not is_instance_valid(tower_slot) or not is_instance_valid(tower_slot.tower): return
 	var tower = tower_slot.tower
-	if tower.tower_type == "assistant": return
+	if tower.tower_type == "assistant":
+		banner_title.text = "Teaching Assistant Post"
+		banner_sprite.texture = tower.get_node("Sprite").texture
+		banner_description.text = "2 assistenter · Hold: 3 sec\nKnowledge: 5/sec · 15 totalt"
+		banner_extra.text = "Range: %d · Rally: %d\nKlikk nær veien: flytt rally" % [tower.teaching_range,tower.work_radius]
+		banner_sell.text = "SELL · +60 KP"
+		invested_label.text = "Invested: 120 KP"
+		upgrade_button.disabled = true
+		upgrade_caption.text = "Ingen upgrades"
+		upgrade_caption.modulate = Color("aaa59c")
+		upgrade_button.tooltip_text = "Dette tårnet har ingen oppgraderinger ennå."
+		upgrade_button.queue_redraw()
+		return
 	banner_title.text = tower.get_display_name()
 	banner_sprite.texture = tower.frames[0]
 	banner_description.text = "Level %d · Knowledge per attack: %d\nAttack speed: %.2f/s (%.2f sec)" % [tower.level,tower.knowledge_per_hit,1.0/tower.fire_interval,tower.fire_interval]
@@ -181,7 +171,6 @@ func refresh_tower_banner(game) -> void:
 
 func close_tower_panel() -> void:
 	if tower_banner != null: tower_banner.visible = false
-	if assistant_panel != null: assistant_panel.visible = false
 	tower_slot = null
 
 func create_build_menu(root: Control) -> void:
@@ -331,5 +320,7 @@ func show_result(won: bool, game, wave: int, total: int = 7) -> void:
 	result_overlay.visible = true
 	result_title.text = "Akademisk seier!" if won else "Prøv et nytt opplegg"
 	result_body.text = "Bølge %d av %d · Omdømme %d\n%d studenter lært opp\n%d studenter nådde broen" % [wave,total,game.lives,game.graduated,game.escaped]
+
+
 
 
