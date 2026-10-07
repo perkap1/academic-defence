@@ -118,7 +118,10 @@ func run() -> void:
 				if student.student_type == "pe": pe += 1
 			check(main.waves.students.size() == [6,8,10,13,15,17,19,21,23,26,28,32][wave],"Map2 total students per wave")
 			check(pe == [0,0,2,3,5,5,7,7,9,10,10,12][wave],"Map2 PE distribution")
-			for student in main.waves.students.duplicate(): student.teach(100)
+			for student in main.waves.students.duplicate():
+				if student.student_type=="bookworm":
+					for hit in range(3): student.teach(100)
+				student.teach(100)
 		check(main.game.won and main.waves.wave == 12,"Map2 victory waits for wave12")
 		check(main.game.graduated == 218,"All Map2 students resolve once")
 		check(main.ui.wave_label.text == "12 / 12","Map2 HUD uses twelve waves")

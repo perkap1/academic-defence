@@ -73,6 +73,8 @@ func run() -> void:
 		check(count_pe == expected_pe, "Wave %d PE distribution" % (wave+1))
 		check(main.waves.students.size() == [4,6,8,11,14,17,20][wave], "Wave %d total" % (wave+1))
 		for student in main.waves.students.duplicate():
+			if student.student_type=="bookworm":
+				for hit in range(3): student.teach(100)
 			student.teach(100)
 	check(main.game.won, "Mixed-wave full completion reaches victory")
 	print("V0.002: %d checks, %d failures" % [checks, failures])
