@@ -16,6 +16,7 @@ static func atlas(sheet:Texture2D,region:Rect2,pivot:Vector2,canvas:Vector2=Vect
  return frame
 static func tower_frames(kind:String,level:int)->Array:
  if kind=="book": return comic_book_frames()
+ if kind=="blackboard": return science_teacher_frames()
  var sheet:Texture2D=load("res://assets/presentation/%s_sheet.png"%kind)
  var row:Vector2=BOOK_ROWS[level-1] if kind=="book" else BOARD_ROWS[level-1]
  var cells:Array=BOOK_CELLS[level-1] if kind=="book" else BOARD_CELLS
@@ -40,11 +41,39 @@ static func comic_book_frames()->Array:
 static func thrown_book()->AtlasTexture:
  var sheet:Texture2D=load("res://assets/presentation/thrown_book.png")
  return atlas(sheet,Rect2(355,280,525,710),Vector2(617.5,635),Vector2(600,760),Vector2(300,380))
+static func science_teacher_frames()->Array:
+ var sheet:Texture2D=load("res://assets/presentation/science_teacher_sheet.png")
+ var result=[]
+ var cells=[0,320,622,926,1230,1536]
+ var centers=[171,475,779,1084,1386]
+ for i in range(5):
+  result.append(atlas(sheet,Rect2(cells[i],60,cells[i+1]-cells[i],438),Vector2(centers[i],490),Vector2(500,500),Vector2(250,470)))
+ var attack_cells=[0,365,687,1090,1536]
+ var attack_centers=[175,528,877,1282]
+ for i in range(4):
+  result.append(atlas(sheet,Rect2(attack_cells[i],498,attack_cells[i+1]-attack_cells[i],475),Vector2(attack_centers[i],954),Vector2(500,500),Vector2(250,470)))
+ return result
+static func science_orb_frames()->Array:
+ var sheet:Texture2D=load("res://assets/presentation/science_attack_sheet.png")
+ var result=[]
+ var lefts=[235,500,790,1140]
+ var rights=[445,785,1125,1510]
+ var pivots=[Vector2(364,295),Vector2(684,295),Vector2(1006,297),Vector2(1401,298)]
+ for i in range(4):
+  result.append(atlas(sheet,Rect2(lefts[i],200,rights[i]-lefts[i],205),pivots[i],Vector2(420,280),Vector2(275,140)))
+ return result
+static func science_cloud_frames()->Array:
+ var sheet:Texture2D=load("res://assets/presentation/science_attack_sheet.png")
+ var result=[]
+ var cells=[25,310,638,1009,1343,1672]
+ for i in range(5):
+  result.append(atlas(sheet,Rect2(cells[i],480,cells[i+1]-cells[i],360),Vector2((cells[i]+cells[i+1])*0.5,810),Vector2(400,400),Vector2(200,330)))
+ return result
 static func apply(tower)->void:
  tower.frames=tower_frames(tower.tower_type,tower.level)
- var factor:float=0.38 if tower.tower_type=="book" else [0.54,0.48,0.44][tower.level-1]
+ var factor:float=0.38 if tower.tower_type=="book" else 0.35
  tower.sprite.position=Vector2(0,-3)
- tower.sprite.offset=Vector2(-220,-385) if tower.tower_type=="book" else Vector2(-200,-365)
+ tower.sprite.offset=Vector2(-220,-385) if tower.tower_type=="book" else Vector2(-250,-470)
  tower.sprite.centered=false
  tower.sprite.scale=Vector2.ONE*factor
  tower.sprite.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
@@ -59,7 +88,7 @@ static func apply(tower)->void:
  base.scale=tower.sprite.scale
  base.texture=tower.frames[0]
  base.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
- var cut:float=-180.0 if tower.tower_type=="book" else [-54.0,-66.0,-88.0][tower.level-1]
+ var cut:float=-180.0 if tower.tower_type=="book" else -190.0
  for pair in [[base,false],[tower.sprite,true]]:
   var material=ShaderMaterial.new()
   material.shader=BASE_SHADER

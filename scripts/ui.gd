@@ -84,7 +84,7 @@ func _ready() -> void:
 	reset_button.pressed.connect(func(): restart_requested.emit())
 	instruction_panel = Artwork.panel(root,Vector2(24,202),Vector2(790,116),true)
 	var instruction := instruction_panel
-	message_label = Artwork.label(instruction,"Book 70 · Blackboard 100 · Assistant 120 · Study Hall 100 KP",Vector2(45,34),Vector2(708,27),19)
+	message_label = Artwork.label(instruction,"Book 70 · Science 100 · Assistant 120 · Study Hall 100 KP",Vector2(45,34),Vector2(708,27),19)
 	activity_label = Artwork.label(instruction,"Bygg først, og start bølgen når du er klar.",Vector2(45,61),Vector2(708,23),16,Color("b7d5c2"))
 	create_build_menu(root)
 	create_tower_panel(root)
@@ -256,6 +256,14 @@ func create_build_menu(root: Control) -> void:
 	var book_name=Artwork.label(book_button,"Book Tower",Vector2(0,146),Vector2(160,25),18)
 	book_name.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	blackboard_button = radial_button("blackboard",Vector2(255,89),Vector2(160,172))
+	var science_frames:Array=preload("res://scripts/tower_presentation.gd").science_teacher_frames()
+	blackboard_button.texture_normal=science_frames[0]
+	blackboard_button.texture_hover=science_frames[1]
+	blackboard_button.texture_pressed=science_frames[1]
+	blackboard_button.texture_disabled=science_frames[0]
+	blackboard_button.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
+	var science_name=Artwork.label(blackboard_button,"Science Tower",Vector2(0,146),Vector2(160,25),18)
+	science_name.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	var book_cost := Artwork.label(build_menu,"70 KP",Vector2(30,264),Vector2(150,27),20)
 	book_cost.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var board_cost := Artwork.label(build_menu,"100 KP",Vector2(260,264),Vector2(150,27),20)
@@ -281,7 +289,7 @@ func create_build_menu(root: Control) -> void:
 	cancel.tooltip_text = "Avbryt"
 	cancel.pressed.connect(close_build_menu)
 	book_button.tooltip_text = "Book Tower · 70 KP · ett mål, +20 kunnskap"
-	blackboard_button.tooltip_text = "Blackboard Tower · 100 KP · gruppe, +15 kunnskap og 30 % slow"
+	blackboard_button.tooltip_text = "Science Tower · 100 KP · gruppe, +15 kunnskap og 30 % slow"
 	book_button.pressed.connect(func(): choose_tower("book"))
 	blackboard_button.pressed.connect(func(): choose_tower("blackboard"))
 
@@ -352,7 +360,7 @@ func _process(delta: float) -> void:
 	if message_time > 0:
 		message_time -= delta
 		if message_time <= 0:
-			message_label.text = "Book 70 · Blackboard 100 · Assistant 120 · Study Hall 100 KP"
+			message_label.text = "Book 70 · Science 100 · Assistant 120 · Study Hall 100 KP"
 			message_label.add_theme_color_override("font_color",Color("fff0c7"))
 
 func open_build_menu(slot, game) -> void:
@@ -375,6 +383,7 @@ func update_build_buttons(game) -> void:
 	book_button.disabled = game.finished or game.gold < 70
 	book_button.modulate=Color(0.45,0.45,0.45) if book_button.disabled else Color.WHITE
 	blackboard_button.disabled = game.finished or game.gold < 100
+	blackboard_button.modulate=Color(0.45,0.45,0.45) if blackboard_button.disabled else Color.WHITE
 	study_button.disabled = game.finished or game.gold < 100
 	study_button.self_modulate = Color("777777") if study_button.disabled else Color.WHITE
 

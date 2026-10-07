@@ -86,17 +86,17 @@ func run() -> void:
 	check(targets[0].slow_remaining == 2.0 and targets[1].slow_remaining == 2.0 and targets[2].slow_remaining == 0,"Normal and PE slowed; outside target untouched")
 	var swipes := []
 	for child in main.map.effects.get_children():
-		if child.get("kind") == "sponge_swipe": swipes.append(child)
-	check(swipes.size() == 1,"Blackboard creates supplied sponge swipe")
+		if child.get("kind") == "science_cloud": swipes.append(child)
+	check(swipes.size() == 1,"Science creates supplied cloud and animated orb")
 	if not swipes.is_empty():
 		check(swipes[0].global_position.distance_to(targets[0].global_position) < 1,"Swipe centered at original AoE target")
-		swipes[0].advance(0.5)
+		swipes[0].advance(0.7)
 		check(swipes[0].is_queued_for_deletion(),"Short sponge swipe frees itself")
 	for i in range(3):
 		var splash := false
 		for child in targets[i].get_children():
 			if child.get("kind") == "wet_splash": splash = true
-		check(splash == (i < 2),"Wet splash only on hit students")
+		check(not splash,"Science replaces old wet splash"); if i<2: check(targets[i].drop_frames.size()==4,"Science slow indicator uses four orb frames")
 	main.free()
 	print("V0.005: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)

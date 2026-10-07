@@ -109,7 +109,7 @@ func build(slot, tower_type: String = "book") -> void:
 	slot.refresh_visuals()
 	tower.set_range_visible(false)
 	ui.close_build_menu()
-	ui.show_message("Study Hall bygget · +15 KP etter hver bølge." if tower_type=="economy" else "%s bygget. Klar for undervisning!" % ("Teaching Assistant Post" if tower_type=="assistant" else ("Blackboard Tower" if tower_type == "blackboard" else "Book Tower")), false)
+	ui.show_message("Study Hall bygget · +15 KP etter hver bølge." if tower_type=="economy" else "%s bygget. Klar for undervisning!" % ("Teaching Assistant Post" if tower_type=="assistant" else ("Science Tower" if tower_type == "blackboard" else "Book Tower")), false)
 
 func student_resolved(student, graduated: bool) -> void:
 	if graduated: economy.student_graduated(student)

@@ -135,7 +135,7 @@ func _process(delta: float) -> void:
 	slow_indicator.visible = slow_remaining > 0
 	if slow_remaining > 0:
 		drop_time += delta
-		slow_indicator.texture = drop_frames[int(drop_time*8) % 3]
+		slow_indicator.texture = drop_frames[int(drop_time*8) % drop_frames.size()]
 	if slowed_time > 0:
 		queue_redraw()
 	if assistant_hold:

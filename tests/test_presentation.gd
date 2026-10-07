@@ -36,18 +36,18 @@ func run()->void:
   tower.animation_time=0
   for time in [0.0,0.4,1.2,5.0]:
    tower.visual_time=time
-   check(tower.get_visual_frame()==0,"Blackboard static idle")
+   check(tower.get_visual_frame()==int(floor(time*3.0+0.00001))%5,"Science calm idle")
   for i in range(4):
    tower.animation_time=0.4-i*0.1
-   check(tower.get_visual_frame()==i+1,"Ordered4 Blackboard attack frames")
+   check(tower.get_visual_frame()==i+5,"Ordered4 science attack frames")
   var effect=tower.create_attack_effect()
   main.map.effects.add_child(effect)
-  check(effect.frames.size()==5 and effect.frames[0] is AtlasTexture,"Five level-specific sponge frames")
-  check(effect.effect_level==level,"Blue/blue/purple variant by level")
+  check(effect.frames.size()==5 and effect.frames[0] is AtlasTexture,"Five science cloud frames")
+  check(effect.effect_level==level,"Science effect retains gameplay level")
   for i in range(5):
    effect.elapsed=0
    effect.advance((i+0.02)*0.09)
-   check(effect.sprite.texture==effect.frames[i],"Five sponge frames shown in order")
+   check(effect.sprite.texture==effect.frames[i],"Five science cloud frames shown in order")
   effect.free()
  check(main.ui.upgrade_button.state_frames.size()==4,"Supplied4 arrow states")
  var student=load("res://scenes/student.tscn").instantiate()

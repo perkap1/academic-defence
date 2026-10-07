@@ -9,9 +9,9 @@ A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before th
 ## Controls
 
 - Choose Skogsstien or Elvesvingene on the world map. Complete Elvesvingene to unlock Bokruinene (Map 3).
-- Click a **+** building spot and select Book Tower, Blackboard Tower, Assistant or Study Hall in the radial menu.
+- Click a **+** building spot and select Book Tower, Science Tower, Assistant or Study Hall in the radial menu.
 - Click **Start bølge** to start the next wave. Towers attack automatically.
-- Click a built Book/Blackboard tower to inspect its stats and range. Use the green up arrow to upgrade to levels 2 and 3, or **SELL** for 50% of total investment. Assistant retains its existing rally controls.
+- Click a built Book/Science tower to inspect its stats and range. Use the green up arrow to upgrade to levels 2 and 3, or **SELL** for 50% of total investment. Assistant retains its existing rally controls.
 - Use the pause button or **Esc** to pause/resume. Esc first closes an open building menu.
 - **Kart** returns to the world map; **Ny** restarts the current map.
 
@@ -39,9 +39,9 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.011 — playable prototype.** Three maps (7, 12 and 15 waves), normal and PE students and The Bookworm, Book, Blackboard and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Blackboard Tower uses a sponge swipe with splash and droplets; slow refreshes without stacking. Map 3 unlocks after completing Map 2; two further world-map nodes remain locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
+**v0.013 — playable prototype.** Three maps (7, 12 and 15 waves), normal and PE students and The Bookworm, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 unlocks after completing Map 2; two further world-map nodes remain locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.012.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.013.md` for the latest checks and `VERIFISERING.md` for earlier verification.
 
 ## Automatic publishing
 

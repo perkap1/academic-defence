@@ -35,7 +35,7 @@ func get_upgrade_cost() -> int:
 	return [80,130][level-1] if tower_type == "book" else [100,150][level-1]
 
 func get_display_name() -> String:
-	return ["Book Tower","Advanced Book Tower","Scholar Tower"][level-1] if tower_type == "book" else ["Blackboard Tower","Advanced Blackboard","Master Blackboard"][level-1]
+	return ["Book Tower","Advanced Book Tower","Scholar Tower"][level-1] if tower_type == "book" else ["Science Tower","Advanced Science Tower","Master Science Tower"][level-1]
 
 func get_sell_refund() -> int:
 	return int(total_invested / 2)
