@@ -21,6 +21,10 @@ var level3_shots := 0
 
 func _ready() -> void:
 	Presentation.apply(self)
+	var badge=preload("res://scripts/book_level_badge.gd").new()
+	badge.name="LevelBadge"
+	badge.z_index=2
+	add_child(badge)
 
 func configure(level, manager) -> void:
 	map = level
@@ -47,13 +51,13 @@ func upgrade_level() -> bool:
 		teaching_range = [260.0,286.0,312.0][level-1]
 	Presentation.apply(self)
 	update_sprite(0)
+	if has_node("LevelBadge"): get_node("LevelBadge").queue_redraw()
 	queue_redraw()
 	return true
 
 func get_visual_frame() -> int:
-	if animation_time > 0:return 4
-	var period:=int(floor(visual_time*4.0))%8
-	return period if period<4 else 0
+	if animation_time > 0: return 8+clampi(int(floor((0.4-animation_time)*10.0+0.00001)),0,3)
+	return int(floor(visual_time*3.0))%8
 
 func update_sprite(delta: float) -> void:
 	visual_time += delta
@@ -93,5 +97,5 @@ func _process(delta: float) -> void:
 		var golden := level == 3 and level3_shots % 5 == 0
 		projectile.configure(nearest, knowledge_per_hit * (2 if golden else 1), golden)
 		cooldown = fire_interval
-		animation_time = 0.25
+		animation_time = 0.4
 		update_sprite(0)

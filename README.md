@@ -39,9 +39,9 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.011 — playable prototype.** Three maps (7, 12 and 15 waves), normal and PE students and The Bookworm, Book, Blackboard and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower fires randomly selected animated A/B/C projectiles. Blackboard Tower uses a sponge swipe with splash and droplets; slow refreshes without stacking. Map 3 unlocks after completing Map 2; two further world-map nodes remain locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
+**v0.011 — playable prototype.** Three maps (7, 12 and 15 waves), normal and PE students and The Bookworm, Book, Blackboard and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Blackboard Tower uses a sponge swipe with splash and droplets; slow refreshes without stacking. Map 3 unlocks after completing Map 2; two further world-map nodes remain locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.011.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.012.md` for the latest checks and `VERIFISERING.md` for earlier verification.
 
 ## Automatic publishing
 
@@ -104,3 +104,9 @@ Verified 3,310 headless checks and 92 graphical checks, including real UI purcha
 Bokruinene uses the supplied forest/ruins map with two alternating entrances, a shared exit, 14 building spots and 15 waves. Bookworms begin in wave 4 and walk at Normal Student speed. Three books shield them: each Knowledge hit removes one book and gives zero Knowledge, including the hit that removes the last book. Later hits teach normally. Golden Letters and Blackboard AoE still remove at most one book per attack event; slows and Assistant lessons work through the shield.
 
 Each shield loss plays a short comic book-fall reaction without changing the student's path progress. All four shield states use the original sprite sheet, and graduation and rewards follow the existing rules. A brief first-encounter explanation appears once. No Aseprite work or changes to the earlier maps' balance were needed.
+
+## Comic Book Tower (v0.012)
+
+The supplied original sheets replace Book Tower art at all three levels. Eight calm reading/coffee idle frames loop at 3 FPS; four throw poses run for 0.4 seconds on each attack. A fixed lower brick base and independently drawn gold pixel numeral keep the footing and level banner stable. The radial build icon and tower information portrait use the new character.
+
+Projectiles use one supplied book frame, centered and spun in Godot at 12 radians/second with nearest filtering. Targeting, flight speed, one-spend collision, Knowledge, upgrade costs/stats and selling are preserved. Every fifth Level 3 book remains Golden and deals twice the normal Knowledge; Bookworm shielding still removes only one book per hit. No Aseprite was used; earlier assets remain in the project.

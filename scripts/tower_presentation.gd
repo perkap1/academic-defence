@@ -15,6 +15,7 @@ static func atlas(sheet:Texture2D,region:Rect2,pivot:Vector2,canvas:Vector2=Vect
  frame.filter_clip=true
  return frame
 static func tower_frames(kind:String,level:int)->Array:
+ if kind=="book": return comic_book_frames()
  var sheet:Texture2D=load("res://assets/presentation/%s_sheet.png"%kind)
  var row:Vector2=BOOK_ROWS[level-1] if kind=="book" else BOARD_ROWS[level-1]
  var cells:Array=BOOK_CELLS[level-1] if kind=="book" else BOARD_CELLS
@@ -24,11 +25,26 @@ static func tower_frames(kind:String,level:int)->Array:
   var rect=Rect2(cells[i],row.x,cells[i+1]-cells[i],row.y-row.x)
   frames.append(atlas(sheet,rect,Vector2(pivots[i][0],pivots[i][1])))
  return frames
+static func comic_book_frames()->Array:
+ var sheet:Texture2D=load("res://assets/presentation/comic_book_sheet.png")
+ var result=[]
+ var cells=[60,400,735,1065,1424]
+ var rows=[Vector2(0,383),Vector2(383,765),Vector2(765,1086)]
+ var centers=[[235,568,902,1237],[233,568,903,1237],[236,565,909,1236]]
+ var feet=[380,761,1080]
+ for row in range(3):
+  for i in range(4):
+   var right:float=796 if row==2 and i==1 else cells[i+1]
+   result.append(atlas(sheet,Rect2(cells[i],rows[row].x,right-cells[i],rows[row].y-rows[row].x),Vector2(centers[row][i],feet[row]),Vector2(440,420),Vector2(220,385)))
+ return result
+static func thrown_book()->AtlasTexture:
+ var sheet:Texture2D=load("res://assets/presentation/thrown_book.png")
+ return atlas(sheet,Rect2(355,280,525,710),Vector2(617.5,635),Vector2(600,760),Vector2(300,380))
 static func apply(tower)->void:
  tower.frames=tower_frames(tower.tower_type,tower.level)
- var factor:float=0.43 if tower.tower_type=="book" else [0.54,0.48,0.44][tower.level-1]
+ var factor:float=0.38 if tower.tower_type=="book" else [0.54,0.48,0.44][tower.level-1]
  tower.sprite.position=Vector2(0,-3)
- tower.sprite.offset=Vector2(-200,-365)
+ tower.sprite.offset=Vector2(-220,-385) if tower.tower_type=="book" else Vector2(-200,-365)
  tower.sprite.centered=false
  tower.sprite.scale=Vector2.ONE*factor
  tower.sprite.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
@@ -43,7 +59,7 @@ static func apply(tower)->void:
  base.scale=tower.sprite.scale
  base.texture=tower.frames[0]
  base.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
- var cut:float=[-150.0,-185.0,-198.0][tower.level-1] if tower.tower_type=="book" else [-54.0,-66.0,-88.0][tower.level-1]
+ var cut:float=-180.0 if tower.tower_type=="book" else [-54.0,-66.0,-88.0][tower.level-1]
  for pair in [[base,false],[tower.sprite,true]]:
   var material=ShaderMaterial.new()
   material.shader=BASE_SHADER

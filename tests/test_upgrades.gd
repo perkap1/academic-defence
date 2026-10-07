@@ -69,7 +69,7 @@ func run() -> void:
   var projectile=main.map.projectiles.get_child(main.map.projectiles.get_child_count()-1)
   check(projectile.golden==((i+1)%5==0),"Every fifth actual Scholar shot golden")
   check(projectile.knowledge==(60 if (i+1)%5==0 else 30),"Golden doubles Knowledge only")
-  check(projectile.letter in ["A","B","C"] and projectile.flight_frames.size()==3,"Golden retains letter animation")
+  check(projectile.letter in ["A","B","C"] and projectile.flight_frames.size()==1,"Golden retains single-frame book")
   projectile.free()
  student.free()
  for kind in ["normal","pe"]:

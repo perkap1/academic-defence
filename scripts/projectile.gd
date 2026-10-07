@@ -17,14 +17,14 @@ func _ready() -> void:
 func configure(student, amount: int, is_golden: bool = false) -> void:
 	golden = is_golden
 	sprite.modulate = Color(1.4,1.18,0.75) if golden else Color.WHITE
-	sprite.scale = Vector2.ONE * (1.25 if golden else 1.0)
+	sprite.scale = Vector2.ONE * (0.0875 if golden else 0.07)
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	target = student
 	knowledge = amount
 	previous = position
 	letter = ["A","B","C"][randi() % 3]
 	flight_frames.clear()
-	for i in range(3):
-		flight_frames.append(load("res://assets/effects/letter_%s_%d.png" % [letter,i]))
+	flight_frames.append(preload("res://scripts/tower_presentation.gd").thrown_book())
 	sprite.texture = flight_frames[0]
 	queue_redraw()
 
@@ -42,7 +42,8 @@ func _process(delta: float) -> void:
 	flight_time += delta
 	if golden: queue_redraw()
 	if not flight_frames.is_empty():
-		sprite.texture = flight_frames[int(flight_time*12) % 3]
+		sprite.texture = flight_frames[0]
+		sprite.rotation = flight_time*12.0
 	if not is_instance_valid(target) or target.done:
 		spent = true
 		queue_free()

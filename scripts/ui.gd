@@ -222,7 +222,7 @@ func refresh_tower_banner(game) -> void:
 	if tower.tower_type == "blackboard":
 		banner_extra.text = "Range: %d\nSlow: %d %% · %.1f sec\nAoE radius: %d" % [tower.teaching_range,roundi(tower.slow_strength*100),tower.slow_duration,tower.area_radius]
 	else:
-		banner_extra.text = "Range: %d\n" % tower.teaching_range + ("Single target" if tower.level < 3 else "Every 5th letter: Golden\n2× Knowledge · 60 per hit")
+		banner_extra.text = "Range: %d\n" % tower.teaching_range + ("Single target" if tower.level < 3 else "Every 5th book: Golden\n2× Knowledge · 60 per hit")
 	banner_sell.text = "SELL · +%d KP" % tower.get_sell_refund()
 	invested_label.text = "Invested: %d KP" % tower.total_invested
 	var cost: int = tower.get_upgrade_cost()
@@ -247,6 +247,14 @@ func create_build_menu(root: Control) -> void:
 	assistant_button.tooltip_text="Teaching Assistant Post · 120 KP · 2 assistenter, hold 3 sek., +5 kunnskap/sek"
 	assistant_button.pressed.connect(func(): choose_tower("assistant"))
 	book_button = radial_button("book",Vector2(25,89),Vector2(160,172))
+	var comic_frames:Array=preload("res://scripts/tower_presentation.gd").comic_book_frames()
+	book_button.texture_normal=comic_frames[0]
+	book_button.texture_hover=comic_frames[2]
+	book_button.texture_pressed=comic_frames[2]
+	book_button.texture_disabled=comic_frames[0]
+	book_button.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
+	var book_name=Artwork.label(book_button,"Book Tower",Vector2(0,146),Vector2(160,25),18)
+	book_name.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	blackboard_button = radial_button("blackboard",Vector2(255,89),Vector2(160,172))
 	var book_cost := Artwork.label(build_menu,"70 KP",Vector2(30,264),Vector2(150,27),20)
 	book_cost.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -365,6 +373,7 @@ func choose_tower(kind: String) -> void:
 func update_build_buttons(game) -> void:
 	assistant_button.disabled = game.finished or game.gold < 120
 	book_button.disabled = game.finished or game.gold < 70
+	book_button.modulate=Color(0.45,0.45,0.45) if book_button.disabled else Color.WHITE
 	blackboard_button.disabled = game.finished or game.gold < 100
 	study_button.disabled = game.finished or game.gold < 100
 	study_button.self_modulate = Color("777777") if study_button.disabled else Color.WHITE
