@@ -11,7 +11,7 @@ var level_title := "Skogsstien"
 var build_positions := BUILD_POSITIONS
 var route_points := ROUTE_POINTS
 
-@onready var route: Path2D = $Route
+@onready var route: Path2D = get_node("Route") if has_node("Route") else get_node("UpperPath")
 @onready var slots: Node2D = $BuildSlots
 @onready var towers: Node2D = $Towers
 @onready var projectiles: Node2D = $Projectiles
@@ -21,19 +21,37 @@ func _ready() -> void:
 	var environment = EnvironmentLayer.new()
 	add_child(environment)
 	environment.configure(level_id)
-	var curve := Curve2D.new()
-	curve.bake_interval = 3
-	for i in range(route_points.size()):
-		var p: Vector2 = route_points[i]
-		var before: Vector2 = route_points[maxi(0, i - 1)]
-		var after: Vector2 = route_points[mini(route_points.size() - 1, i + 1)]
-		var tangent := (after - before).normalized()
-		curve.add_point(p, -tangent * p.distance_to(before) * 0.25, tangent * p.distance_to(after) * 0.25)
-	route.curve = curve
+	route.curve = create_route_curve(route_points)
 	for p in build_positions:
 		var slot = BuildSlotScene.instantiate()
 		slot.position = p
 		slots.add_child(slot)
+
+func create_route_curve(points: Array) -> Curve2D:
+	var curve := Curve2D.new()
+	curve.bake_interval = 3
+	for i in range(points.size()):
+		var p: Vector2 = points[i]
+		var before: Vector2 = points[maxi(0, i - 1)]
+		var after: Vector2 = points[mini(points.size() - 1, i + 1)]
+		var tangent := (after - before).normalized()
+		curve.add_point(p, -tangent * p.distance_to(before) * 0.25, tangent * p.distance_to(after) * 0.25)
+	return curve
+
+func get_routes() -> Array: return [route]
+func get_students() -> Array:
+	var result := []
+	for path in get_routes(): result.append_array(path.get_children())
+	return result
+func nearest_road_point(point: Vector2) -> Vector2:
+	var nearest := Vector2.ZERO
+	var distance := INF
+	for path in get_routes():
+		var candidate: Vector2 = path.to_global(path.curve.get_closest_point(path.to_local(point)))
+		if point.distance_squared_to(candidate) < distance:
+			nearest = candidate
+			distance = point.distance_squared_to(candidate)
+	return nearest
 
 func show_completion(student, graduated: bool) -> void:
 	if graduated:

@@ -78,7 +78,7 @@ func _process(delta: float) -> void:
 		return
 	var nearest = null
 	var closest := teaching_range
-	for student in map.route.get_children():
+	for student in map.get_students():
 		if not is_instance_valid(student) or student.done:
 			continue
 		var distance := global_position.distance_to(student.global_position)

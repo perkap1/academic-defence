@@ -21,6 +21,7 @@ func _ready() -> void:
 	game.ended.connect(on_ended)
 	waves.state_changed.connect(update_ui)
 	waves.wave_completed.connect(on_wave_completed)
+	waves.bookworm_introduced.connect(show_bookworm_tutorial)
 	ui.start_requested.connect(func(): waves.start_wave())
 	ui.restart_requested.connect(restart)
 	ui.build_requested.connect(build)
@@ -30,7 +31,14 @@ func _ready() -> void:
 	ui.upgrade_requested.connect(upgrade)
 	ui.specialize_requested.connect(specialize)
 	ui.set_level_title(map.level_title)
+	ui.configure_map(map.level_id)
 	update_ui()
+
+func show_bookworm_tutorial() -> void:
+	var progress = get_node("/root/Progression")
+	if progress.bookworm_seen: return
+	progress.mark_bookworm_seen()
+	ui.show_bookworm_tutorial()
 
 func select_slot(slot) -> void:
 	if game.finished or get_tree().paused:
@@ -118,6 +126,7 @@ func on_wave_completed(last_wave: bool) -> void:
 		ui.show_message("Bølge fullført! +%d KP. Gjør klar neste bølge." % (45+passive_income), false)
 
 func on_ended(won: bool) -> void:
+	if won: get_node("/root/Progression").complete_level(map.level_id)
 	get_tree().paused = false
 	clear_selection()
 	ui.close_build_menu()

@@ -47,6 +47,8 @@ var tower_slot
 var level_label: Label
 var selected_slot
 var message_time := 0.0
+var instruction_panel: Control
+var bookworm_tutorial: Control
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -80,13 +82,28 @@ func _ready() -> void:
 	var reset_button := Artwork.plain_button(header,"Ny",Vector2(1555,67),Vector2(60,58))
 	reset_button.tooltip_text = "Start banen på nytt"
 	reset_button.pressed.connect(func(): restart_requested.emit())
-	var instruction := Artwork.panel(root,Vector2(24,202),Vector2(790,116),true)
+	instruction_panel = Artwork.panel(root,Vector2(24,202),Vector2(790,116),true)
+	var instruction := instruction_panel
 	message_label = Artwork.label(instruction,"Book 70 · Blackboard 100 · Assistant 120 · Study Hall 100 KP",Vector2(45,34),Vector2(708,27),19)
 	activity_label = Artwork.label(instruction,"Bygg først, og start bølgen når du er klar.",Vector2(45,61),Vector2(708,23),16,Color("b7d5c2"))
 	create_build_menu(root)
 	create_tower_panel(root)
 	create_pause_overlay(root)
 	create_result(root)
+	bookworm_tutorial = Artwork.panel(root,Vector2(866,322),Vector2(770,136),true)
+	bookworm_tutorial.name = "BookwormIntroduction"
+	Artwork.label(bookworm_tutorial,"THE BOOKWORM",Vector2(42,25),Vector2(686,30),23)
+	var explanation := Artwork.label(bookworm_tutorial,"Books act as shields. Each hit removes one book before Knowledge can affect him.",Vector2(42,57),Vector2(686,60),19)
+	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	bookworm_tutorial.hide()
+
+func configure_map(level_id: int) -> void:
+	if level_id == 3: instruction_panel.position = Vector2(860,202)
+
+func show_bookworm_tutorial() -> void:
+	bookworm_tutorial.show()
+	get_tree().create_timer(6.0).timeout.connect(func():
+		if is_instance_valid(bookworm_tutorial): bookworm_tutorial.hide())
 
 func set_level_title(title: String) -> void:
 	level_label.text = title + " · v" + ProjectSettings.get_setting("application/config/version")

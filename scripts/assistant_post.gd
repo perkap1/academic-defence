@@ -21,8 +21,7 @@ func _ready() -> void:
 func configure(level,manager) -> void:
  map=level
  game=manager
- var local:Vector2=map.route.to_local(global_position)
- rally_point=map.route.to_global(map.route.curve.get_closest_point(local))
+ rally_point=map.nearest_road_point(global_position)
  marker.global_position=rally_point
  for i in range(2):
   var a=Assistant.new()
@@ -36,7 +35,7 @@ func set_range_visible(value:bool) -> void:
  marker.visible=value
  queue_redraw()
 func try_move_rally(point:Vector2) -> bool:
- var snapped:Vector2=map.route.to_global(map.route.curve.get_closest_point(map.route.to_local(point)))
+ var snapped:Vector2=map.nearest_road_point(point)
  if point.distance_to(snapped)>28 or global_position.distance_to(snapped)>teaching_range:
   return false
  rally_point=snapped

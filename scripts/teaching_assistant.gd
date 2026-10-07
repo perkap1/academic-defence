@@ -72,7 +72,7 @@ func _process(delta:float) -> void:
   animate(delta,"idle")
   if cooldown>0: return
   # Route order makes reservation deterministic and exclusive across all posts.
-  for student in post.map.route.get_children():
+  for student in post.map.get_students():
    if student.done or student.global_position.distance_to(post.rally_point)>post.work_radius or student.global_position.distance_to(post.global_position)>post.teaching_range: continue
    if student.reserve_teacher(self):
     target=student

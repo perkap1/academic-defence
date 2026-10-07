@@ -42,7 +42,7 @@ func _process(delta: float) -> void:
 		return
 	var nearest = null
 	var closest := teaching_range
-	for student in map.route.get_children():
+	for student in map.get_students():
 		if not student.done:
 			var distance := global_position.distance_to(student.global_position)
 			if distance <= closest:
@@ -55,7 +55,7 @@ func _process(delta: float) -> void:
 	map.effects.add_child(swipe)
 	swipe.global_position = center
 	# Snapshot the group: a teaching hit may graduate and remove a student.
-	for student in map.route.get_children():
+	for student in map.get_students():
 		if is_instance_valid(student) and not student.done and student.global_position.distance_to(center) <= area_radius:
 			student.apply_slow(slow_duration,slow_strength)
 			student.show_wet_hit()
