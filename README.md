@@ -9,7 +9,7 @@ A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before th
 ## Controls
 
 - Choose Skogsstien or Elvesvingene on the world map.
-- Click a **+** building spot and select Book Tower, Blackboard Tower or Assistant in the radial menu.
+- Click a **+** building spot and select Book Tower, Blackboard Tower, Assistant or Study Hall in the radial menu.
 - Click **Start bølge** to start the next wave. Towers attack automatically.
 - Click a built Book/Blackboard tower to inspect its stats and range. Use the green up arrow to upgrade to levels 2 and 3, or **SELL** for 50% of total investment. Assistant retains its existing rally controls.
 - Use the pause button or **Esc** to pause/resume. Esc first closes an open building menu.
@@ -39,7 +39,7 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.009 — playable prototype.** Two playable maps (7 and 12 waves), normal and PE students, Book, Blackboard and Teaching Assistant towers, tower selling, pause, restart, radial building menu and shared graduation animation. Book Tower fires randomly selected animated A/B/C projectiles. Blackboard Tower uses a sponge swipe with splash and droplets while its 30% slow is active for 2 seconds; new hits refresh the duration without stacking. Three further world-map nodes remain locked.
+**v0.010 — playable prototype.** Two playable maps (7 and 12 waves), normal and PE students, Book, Blackboard and Teaching Assistant towers, tower selling, pause, restart, radial building menu and shared graduation animation. Book Tower fires randomly selected animated A/B/C projectiles. Blackboard Tower uses a sponge swipe with splash and droplets while its 30% slow is active for 2 seconds; new hits refresh the duration without stacking. Three further world-map nodes remain locked.
 
 The earlier v0.005 verification recorded 1,117 successful checks, including full rounds on both maps and graphical tests. See `VERIFISERING.md` for details.
 
@@ -86,3 +86,15 @@ Normal Student now uses fixed atlas regions from the original sheet, a shared fo
 ## v0.009.2 — shared Assistant information banner
 Teaching Assistant Post uses the same fixed bottom banner as Book and Blackboard: icon, teaching rate, hold duration, range, rally guidance and Sell. Its upgrade arrow is disabled; no Assistant upgrades or gameplay changes are introduced. Both maps checked visually; 181 targeted regression checks passed.
 
+
+## Economy buildings (v0.010)
+
+Study Hall costs 100 KP and pays 15 KP after each completed wave. Select it to choose one exclusive specialization for 120 KP:
+
+- **Library:** 45 KP per wave.
+- **Scholarship Office:** 10 KP per wave, plus 5 KP when a student graduates within its 260 radius, capped at 50 bonus KP per wave. Overlapping Offices award each student only once; the cap resets when the next wave starts. Select an Office to see its radius.
+- **Research Institute:** starts at 15 KP per completed wave after specialization, increasing by 10 to a maximum of 65.
+
+All four use the common bottom banner, four calm idle frames and a short active frame with an income popup. Selling refunds 50% of the total investment: 50 KP for Study Hall, 110 KP for a specialization. Existing combat and maps are unchanged.
+
+Verified 3,310 headless checks and 92 graphical checks, including real UI purchases on both maps, all student variants, income caps, wave deduplication and sale cleanup.

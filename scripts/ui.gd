@@ -7,6 +7,7 @@ signal pause_requested
 signal map_requested
 signal sell_requested(slot)
 signal upgrade_requested(slot)
+signal specialize_requested(slot, branch: String)
 
 const Artwork = preload("res://scripts/ui_skin.gd")
 const RadialMenu = preload("res://scripts/radial_menu.gd")
@@ -25,6 +26,9 @@ var build_menu: Control
 var book_button: TextureButton
 var assistant_button: TextureButton
 var blackboard_button: TextureButton
+var study_button: TextureButton
+var specialization_panel: Control
+var specialization_buttons := []
 var pause_overlay: Control
 var tower_panel: Control
 var tower_title: Label
@@ -77,7 +81,7 @@ func _ready() -> void:
 	reset_button.tooltip_text = "Start banen på nytt"
 	reset_button.pressed.connect(func(): restart_requested.emit())
 	var instruction := Artwork.panel(root,Vector2(24,202),Vector2(790,116),true)
-	message_label = Artwork.label(instruction,"Velg tårn · Book 70 · Blackboard 100 · Assistant 120 KP",Vector2(45,34),Vector2(708,27),19)
+	message_label = Artwork.label(instruction,"Book 70 · Blackboard 100 · Assistant 120 · Study Hall 100 KP",Vector2(45,34),Vector2(708,27),19)
 	activity_label = Artwork.label(instruction,"Bygg først, og start bølgen når du er klar.",Vector2(45,61),Vector2(708,23),16,Color("b7d5c2"))
 	create_build_menu(root)
 	create_tower_panel(root)
@@ -119,6 +123,21 @@ func create_tower_panel(root: Control) -> void:
 		if is_instance_valid(tower_slot): upgrade_requested.emit(tower_slot))
 	upgrade_caption = Artwork.label(tower_banner,"",Vector2(1345,104),Vector2(235,26),20)
 	upgrade_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	specialization_panel = Control.new()
+	specialization_panel.position = Vector2(625,55)
+	specialization_panel.size = Vector2(460,90)
+	tower_banner.add_child(specialization_panel)
+	var choices := ["library","scholarship","research"]
+	var names := ["Library","Scholarship\nOffice","Research\nInstitute"]
+	for i in range(3):
+		var choice: String = choices[i]
+		var button := Artwork.plain_button(specialization_panel,names[i]+"\n120 KP",Vector2(i*155,0),Vector2(148,84))
+		button.add_theme_font_size_override("font_size",17)
+		button.tooltip_text = ["+45 KP etter hver bølge","+10 KP/bølge · +5 per fullført student innen radius, maks +50","+15 KP første bølge, deretter +10 til maks +65"][i]
+		button.pressed.connect(func():
+			if is_instance_valid(tower_slot): specialize_requested.emit(tower_slot,choice))
+		specialization_buttons.append(button)
+	specialization_panel.visible = false
 	tower_panel = tower_banner
 	tower_title = banner_title
 	tower_description = banner_description
@@ -140,6 +159,33 @@ func open_tower_panel(slot) -> void:
 func refresh_tower_banner(game) -> void:
 	if not is_instance_valid(tower_slot) or not is_instance_valid(tower_slot.tower): return
 	var tower = tower_slot.tower
+	specialization_panel.visible = false
+	upgrade_button.visible = true
+	banner_extra.visible = true
+	banner_description.size.x = 500
+	if tower.tower_type == "economy":
+		banner_title.text = tower.get_display_name()
+		banner_sprite.texture = tower.frames[0]
+		banner_sell.text = "SELL · +%d KP" % tower.get_sell_refund()
+		invested_label.text = "Invested: %d KP" % tower.total_invested
+		upgrade_button.visible = false
+		upgrade_caption.text = "Velg én retning" if tower.branch == "study" else "Spesialisert"
+		upgrade_caption.modulate = Color("c0edca")
+		banner_description.text = "Passive income: +%d KP / wave\nIngen angrep" % tower.get_income()
+		banner_extra.text = ""
+		match tower.branch:
+			"study":
+				banner_description.size.x = 440
+				banner_extra.visible = false
+				specialization_panel.visible = true
+				for button in specialization_buttons: button.disabled = game.finished or game.gold < 120
+			"scholarship":
+				banner_description.text = "Base income: +10 KP / wave\nBonus: +5 per student i radius"
+				banner_extra.text = "Wave bonus: %d / 50 KP\nRadius: %d" % [tower.wave_bonus,tower.SCHOLARSHIP_RADIUS]
+			"research":
+				banner_description.text = "Current income: +%d KP / wave\nNext income: +%d KP" % [tower.get_income(),tower.get_next_income()]
+				banner_extra.text = "Max income: +65 KP / wave\nØker etter fullført bølge"
+		return
 	if tower.tower_type == "assistant":
 		banner_title.text = "Teaching Assistant Post"
 		banner_sprite.texture = tower.get_node("Sprite").texture
@@ -189,7 +235,24 @@ func create_build_menu(root: Control) -> void:
 	book_cost.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var board_cost := Artwork.label(build_menu,"100 KP",Vector2(260,264),Vector2(150,27),20)
 	board_cost.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var cancel := radial_button("cancel",Vector2(175,292),Vector2(90,98))
+	study_button = TextureButton.new()
+	var study_frames: Array = preload("res://scripts/economy_artwork.gd").frames("study")
+	study_button.texture_normal = study_frames[0]
+	study_button.texture_hover = study_frames[4]
+	study_button.texture_pressed = study_frames[4]
+	study_button.texture_disabled = study_frames[0]
+	study_button.ignore_texture_size = true
+	study_button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	study_button.position = Vector2(145,282)
+	study_button.size = Vector2(150,134)
+	study_button.focus_mode = Control.FOCUS_NONE
+	study_button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	study_button.tooltip_text = "Study Hall · 100 KP · +15 KP etter hver bølge"
+	build_menu.add_child(study_button)
+	study_button.pressed.connect(func(): choose_tower("economy"))
+	var study_name := Artwork.label(build_menu,"Study Hall · 100 KP",Vector2(120,413),Vector2(200,27),17)
+	study_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var cancel := radial_button("cancel",Vector2(188,182),Vector2(64,70))
 	cancel.tooltip_text = "Avbryt"
 	cancel.pressed.connect(close_build_menu)
 	book_button.tooltip_text = "Book Tower · 70 KP · ett mål, +20 kunnskap"
@@ -264,7 +327,7 @@ func _process(delta: float) -> void:
 	if message_time > 0:
 		message_time -= delta
 		if message_time <= 0:
-			message_label.text = "Velg tårn · Book 70 · Blackboard 100 · Assistant 120 KP"
+			message_label.text = "Book 70 · Blackboard 100 · Assistant 120 · Study Hall 100 KP"
 			message_label.add_theme_color_override("font_color",Color("fff0c7"))
 
 func open_build_menu(slot, game) -> void:
@@ -286,6 +349,8 @@ func update_build_buttons(game) -> void:
 	assistant_button.disabled = game.finished or game.gold < 120
 	book_button.disabled = game.finished or game.gold < 70
 	blackboard_button.disabled = game.finished or game.gold < 100
+	study_button.disabled = game.finished or game.gold < 100
+	study_button.self_modulate = Color("777777") if study_button.disabled else Color.WHITE
 
 func update_state(game, waves) -> void:
 	gold_label.text = "KP  %d" % game.gold

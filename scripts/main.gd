@@ -3,6 +3,8 @@ extends Node2D
 const TowerScene = preload("res://scenes/book_tower.tscn")
 const AssistantScene = preload("res://scenes/assistant_post.tscn")
 const BlackboardScene = preload("res://scenes/blackboard_tower.tscn")
+const EconomyScene = preload("res://scenes/economy_building.tscn")
+var economy = preload("res://scripts/economy_controller.gd").new()
 @onready var map = $Map1
 @onready var game = $GameManager
 @onready var waves = $WaveManager
@@ -11,6 +13,8 @@ var selected_tower_slot
 
 func _ready() -> void:
 	waves.configure(map, game, student_resolved)
+	economy.configure(map,game,waves)
+	waves.wave_started.connect(economy.begin_wave)
 	for slot in map.slots.get_children():
 		slot.build_requested.connect(select_slot)
 	game.changed.connect(update_ui)
@@ -24,6 +28,7 @@ func _ready() -> void:
 	ui.map_requested.connect(return_to_map)
 	ui.sell_requested.connect(sell)
 	ui.upgrade_requested.connect(upgrade)
+	ui.specialize_requested.connect(specialize)
 	ui.set_level_title(map.level_title)
 	update_ui()
 
@@ -64,6 +69,13 @@ func upgrade(slot) -> bool:
 	ui.show_message("%s · Level %d" % [slot.tower.get_display_name(),slot.tower.level],false)
 	return true
 
+func specialize(slot, branch: String) -> bool:
+	if get_tree().paused or not is_instance_valid(slot) or slot != selected_tower_slot or slot.get_parent() != map.slots: return false
+	if not game.try_specialize(slot,branch): return false
+	slot.tower.set_range_visible(true)
+	ui.show_message("%s klar · passiv inntekt etter bølgen." % slot.tower.get_display_name(),false)
+	return true
+
 func sell(slot) -> bool:
 	if get_tree().paused or not is_instance_valid(slot) or slot.get_parent() != map.slots:
 		return false
@@ -80,7 +92,7 @@ func build(slot, tower_type: String = "book") -> void:
 		if not game.finished:
 			ui.show_message("Du har ikke nok kunnskapspoeng til dette tårnet.", true)
 		return
-	var scene = AssistantScene if tower_type=="assistant" else (BlackboardScene if tower_type=="blackboard" else TowerScene)
+	var scene = EconomyScene if tower_type=="economy" else (AssistantScene if tower_type=="assistant" else (BlackboardScene if tower_type=="blackboard" else TowerScene))
 	var tower = scene.instantiate()
 	map.towers.add_child(tower)
 	tower.position = slot.position
@@ -89,19 +101,21 @@ func build(slot, tower_type: String = "book") -> void:
 	slot.refresh_visuals()
 	tower.set_range_visible(false)
 	ui.close_build_menu()
-	ui.show_message("%s bygget. Klar for undervisning!" % ("Teaching Assistant Post" if tower_type=="assistant" else ("Blackboard Tower" if tower_type == "blackboard" else "Book Tower")), false)
+	ui.show_message("Study Hall bygget · +15 KP etter hver bølge." if tower_type=="economy" else "%s bygget. Klar for undervisning!" % ("Teaching Assistant Post" if tower_type=="assistant" else ("Blackboard Tower" if tower_type == "blackboard" else "Book Tower")), false)
 
 func student_resolved(student, graduated: bool) -> void:
+	if graduated: economy.student_graduated(student)
 	map.show_completion(student, graduated)
 	game.resolve_student(graduated)
 	waves.resolve_student(student)
 
 func on_wave_completed(last_wave: bool) -> void:
+	var passive_income: int = economy.complete_wave(waves.wave)
 	game.reward_wave()
 	if last_wave:
 		game.finish(true)
 	else:
-		ui.show_message("Bølge fullført! +45 KP. Gjør klar neste bølge.", false)
+		ui.show_message("Bølge fullført! +%d KP. Gjør klar neste bølge." % (45+passive_income), false)
 
 func on_ended(won: bool) -> void:
 	get_tree().paused = false

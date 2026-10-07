@@ -2,6 +2,7 @@ extends Node
 
 signal state_changed
 signal wave_completed(last_wave: bool)
+signal wave_started(wave_id: int)
 
 const StudentScene = preload("res://scenes/student.tscn")
 var counts := [4, 6, 8, 11, 14, 17, 20]
@@ -34,6 +35,7 @@ func start_wave() -> bool:
 	countdown = 0.0
 	spawn_index = 0
 	active = true
+	wave_started.emit(wave)
 	state_changed.emit()
 	return true
 

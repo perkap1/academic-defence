@@ -4,7 +4,7 @@ signal changed
 signal ended(won: bool)
 
 const TOWER_COST := 70
-const TOWER_COSTS := {"book": 70, "blackboard": 100, "assistant": 120}
+const TOWER_COSTS := {"book": 70, "blackboard": 100, "assistant": 120, "economy": 100}
 var gold := 200
 var lives := 10
 var graduated := 0
@@ -34,6 +34,15 @@ func try_upgrade(slot) -> bool:
 	changed.emit()
 	return true
 
+func try_specialize(slot, branch: String) -> bool:
+	if finished or get_tree().paused or not is_instance_valid(slot) or not slot.occupied or not is_instance_valid(slot.tower): return false
+	var building = slot.tower
+	if building.game != self or building.is_queued_for_deletion() or building.tower_type != "economy": return false
+	if gold < building.SPECIALIZATION_COST or not building.specialize(branch): return false
+	gold -= building.SPECIALIZATION_COST
+	changed.emit()
+	return true
+
 func try_sell(slot) -> bool:
 	if finished or not is_instance_valid(slot) or not slot.occupied or not is_instance_valid(slot.tower):
 		return false
@@ -41,7 +50,7 @@ func try_sell(slot) -> bool:
 	if tower.game != self or not TOWER_COSTS.has(tower.tower_type) or tower.is_queued_for_deletion():
 		return false
 	var refund: int = int(TOWER_COSTS[tower.tower_type] / 2)
-	if tower.tower_type in ["book","blackboard"]:
+	if tower.tower_type in ["book","blackboard","economy"]:
 		refund = tower.get_sell_refund()
 	# Clear ownership before emitting changed; repeated input cannot refund twice.
 	slot.tower = null
