@@ -71,8 +71,8 @@ static func science_cloud_frames()->Array:
  return result
 static func apply(tower)->void:
  tower.frames=tower_frames(tower.tower_type,tower.level)
- var factor:float=0.19 if tower.tower_type=="book" else 0.175
- tower.sprite.position=Vector2(0,-1.5)
+ var factor:float=0.247 if tower.tower_type=="book" else 0.2275
+ tower.sprite.position=Vector2(0,-1.95)
  tower.sprite.offset=Vector2(-220,-385) if tower.tower_type=="book" else Vector2(-250,-470)
  tower.sprite.centered=false
  tower.sprite.scale=Vector2.ONE*factor

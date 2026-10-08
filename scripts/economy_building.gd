@@ -20,7 +20,7 @@ var base_sprite: Sprite2D
 func _ready() -> void:
 	sprite.centered = false
 	sprite.offset = Vector2(-180,-290)
-	sprite.scale = Vector2.ONE * 0.29
+	sprite.scale = Vector2.ONE * 0.377
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	base_sprite = Sprite2D.new()
 	base_sprite.centered = false
