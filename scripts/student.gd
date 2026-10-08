@@ -64,8 +64,8 @@ func release_teacher(candidate) -> void:
 func face_teacher(point:Vector2) -> void:
 	var vector:Vector2=point-global_position
 	direction="side" if absf(vector.x)>absf(vector.y)*0.8 else ("front" if vector.y>0 else "back")
-	sprite.flip_h=direction=="side" and vector.x>0
-	sprite.texture=frames[direction][0]
+	sprite.flip_h=side_flipped(vector.x)
+	sprite.texture=frames[direction][animation_frame()]
 
 func update_lane_position()->void:
 	if get_parent() is Path2D:
@@ -80,19 +80,18 @@ func _ready() -> void:
 	rotates = false
 	loop = false
 	add_to_group("students")
-	for key in ["front", "side", "back"]:
-		frames[key] = []
-		for i in range(6):
-			var prefix := "pe_%s" % variant if student_type == "pe" else "student"
-			frames[key].append(load("res://assets/%s_%s_%d.png" % [prefix, key, i]))
-	if student_type == "normal":
+	if student_type == "pe":
+		frames=preload("res://scripts/pe_student_frames.gd").create(variant)
+		sprite.offset=Vector2(-110,-210)
+		sprite.scale=Vector2.ONE*0.43
+	else:
 		frames=preload("res://scripts/normal_student_frames.gd").create()
-		sprite.centered=false
 		sprite.offset=Vector2(-150,-310)
-		sprite.position=Vector2(0,-3)
-		sprite.scale=Vector2(0.28,0.28)
+		sprite.scale=Vector2.ONE*0.28
+	sprite.centered=false
+	sprite.position=Vector2(0,-3)
 	sprite.texture = frames["side"][2]
-	sprite.flip_h = true
+	sprite.flip_h = side_flipped(1)
 	var background := StyleBoxFlat.new()
 	background.bg_color = Color("102e31")
 	background.set_border_width_all(2)
@@ -138,6 +137,7 @@ func _process(delta: float) -> void:
 		slow_indicator.texture = drop_frames[int(drop_time*8) % drop_frames.size()]
 	if slowed_time > 0:
 		queue_redraw()
+	animation_time += delta
 	if assistant_hold:
 		if is_instance_valid(teacher): face_teacher(teacher.global_position)
 		else: assistant_hold=false
@@ -147,9 +147,8 @@ func _process(delta: float) -> void:
 		direction = "front" if tangent.y > 0 else "back"
 	else:
 		direction = "side"
-	sprite.flip_h = direction == "side" and tangent.x > 0
-	animation_time += delta
-	var frame := 2 + int(animation_time * 8) % 4
+	sprite.flip_h = side_flipped(tangent.x)
+	var frame := animation_frame()
 	sprite.texture = frames[direction][frame]
 	if progress >= length:
 		complete(false)
@@ -176,3 +175,11 @@ func complete(graduated: bool) -> void:
 	hide()
 	resolved.emit(self, graduated)
 	queue_free()
+
+func animation_frame() -> int:
+	if assistant_hold: return int(animation_time*2) % 2
+	return 2+int(animation_time*(10 if student_type=="pe" else 8)) % 4
+
+func side_flipped(horizontal: float) -> bool:
+	# Girl run poses face right, while her idle poses and the other sets face left.
+	return direction=="side" and (horizontal<0 if student_type=="pe" and variant=="girl" and animation_frame() in [2,3,4] else horizontal>0)

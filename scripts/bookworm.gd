@@ -11,11 +11,11 @@ func _ready() -> void:
 	sprite.centered = false
 	sprite.offset = Vector2(-90,-190)
 	sprite.position = Vector2(0,-3)
-	sprite.scale = Vector2.ONE*0.40
+	sprite.scale = Vector2.ONE*0.73
 	update_shield_art()
 func update_shield_art() -> void:
 	frames = BookwormFrames.create(books)
-	var frame: int = 0 if assistant_hold else 2+int(animation_time*8)%4
+	var frame: int = animation_frame()
 	sprite.texture = frames[direction][frame]
 func teach(amount: int) -> void:
 	if done or amount <= 0: return

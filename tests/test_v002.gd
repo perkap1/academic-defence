@@ -48,14 +48,14 @@ func run() -> void:
 		pe.configure("pe", sex)
 		main.map.route.add_child(pe)
 		check(is_equal_approx(pe.speed, 114.75) and pe.MAX_KNOWLEDGE == 100, "PE %s speed and knowledge" % sex)
-		check(pe.frames["side"][2].resource_path.contains("pe_%s" % sex), "PE %s correct sheet" % sex)
+		check(pe.frames["side"][2].atlas.resource_path.ends_with("enemies_v014/pe.png"), "PE %s correct sheet" % sex)
 		pe._process(1.0)
 		check(is_equal_approx(pe.progress, 114.75), "PE movement comes from route speed")
 		pe.teach(20)
 		check(pe.bar.value == 20, "PE uses live progress bar")
 		for frames in pe.frames.values():
 			for texture in frames:
-				check(texture.get_size() == Vector2(80,90), "PE frame size stable")
+				check(texture.get_size() == Vector2(220,220), "PE frame size stable")
 	for texture in board.frames:
 		check(texture.get_size() == Vector2(500,500), "Science atlas canvas stable")
 	main.free()

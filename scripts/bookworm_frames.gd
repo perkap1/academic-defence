@@ -1,30 +1,23 @@
 extends RefCounted
 const Atlas = preload("res://scripts/tower_presentation.gd")
-# Headers and grid borders are excluded. Every state uses the same foot canvas.
-const STATES := [Vector2(66,422),Vector2(434,762),Vector2(775,1094),Vector2(1108,1437)]
-const IDLE_ROWS := [Vector2(136,305),Vector2(480,642),Vector2(812,949)]
-const WALK_ROWS := [Vector2(307,462),Vector2(654,796),Vector2(956,1072)]
-const IDLE_CENTERS := [[128,244],[495,613],[835,951],[1176,1294]]
-const WALK_CENTERS := [[108,197,285,374],[476,560,643,721],[815,896,980,1058],[1151,1236,1316,1392]]
+# Two idle and four distinct walk poses. The extra closing walk pose in
+# the supplied sheet is omitted; headers, labels and borders stay outside.
+const ROWS = [[Vector2(44,141),Vector2(145,242),Vector2(246,340)],
+	[Vector2(391,490),Vector2(493,590),Vector2(593,687)],
+	[Vector2(741,840),Vector2(843,939),Vector2(944,1039)],
+	[Vector2(1091,1188),Vector2(1191,1288),Vector2(1292,1389)]]
 static func create(books: int) -> Dictionary:
-	var state: int = clampi(3-books,0,3)
-	var sheet: Texture2D = load("res://assets/bookworm/bookworm_sheet.png")
-	var result := {}
-	for direction_index in range(3):
-		var direction: String = ["front","side","back"][direction_index]
-		var list := []
+	var state = clampi(3-books,0,3)
+	var sheet: Texture2D = load("res://assets/enemies_v014/bookworm.png")
+	var result = {}
+	var centers = [414,514,617,719,820,921]
+	var bounds = [363,465,565,668,770,871,971]
+	for row in range(3):
+		var list = []
+		var span: Vector2 = ROWS[state][row]
 		for i in range(6):
-			var idle: bool = i < 2
-			var centers: Array = IDLE_CENTERS[state] if idle else WALK_CENTERS[state]
-			var frame_index: int = i if idle else i-2
-			var center: float = centers[frame_index]
-			var left: float = STATES[state].x if frame_index==0 else floorf((centers[frame_index-1]+center)*0.5)
-			var right: float = STATES[state].y if frame_index==centers.size()-1 else floorf((center+centers[frame_index+1])*0.5)
-			if idle: right = minf(right,center+61)
-			if idle: left = maxf(left,center-61)
-			var row: Vector2 = IDLE_ROWS[direction_index] if idle else WALK_ROWS[direction_index]
-			list.append(Atlas.atlas(sheet,Rect2(left,row.x,right-left,row.y-row.x),Vector2(center,row.y),Vector2(180,200),Vector2(90,190)))
-		result[direction] = list
+			list.append(Atlas.atlas(sheet,Rect2(bounds[i],span.x,bounds[i+1]-bounds[i],span.y-span.x),Vector2(centers[i],span.y-2),Vector2(180,200),Vector2(90,190)))
+		result[["front","side","back"][row]]=list
 	return result
 static func reaction_frames() -> Array:
 	var sheet: Texture2D = load("res://assets/bookworm/reaction_sheet.png")
