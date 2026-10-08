@@ -13,6 +13,8 @@ var marker_frames := []
 var animation_time := 0.0
 func _ready() -> void:
  $Sprite.texture = load("res://assets/assistant/post.png")
+ $Sprite.scale=Vector2.ONE*0.425
+ $Sprite.position=Vector2(0,-42.5)
  for i in range(5): marker_frames.append(load("res://assets/assistant/rally_%d.png" % i))
  marker.texture=marker_frames[0]
  marker.scale=Vector2(0.8,0.55)

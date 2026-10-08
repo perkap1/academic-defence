@@ -71,8 +71,8 @@ static func science_cloud_frames()->Array:
  return result
 static func apply(tower)->void:
  tower.frames=tower_frames(tower.tower_type,tower.level)
- var factor:float=0.38 if tower.tower_type=="book" else 0.35
- tower.sprite.position=Vector2(0,-3)
+ var factor:float=0.19 if tower.tower_type=="book" else 0.175
+ tower.sprite.position=Vector2(0,-1.5)
  tower.sprite.offset=Vector2(-220,-385) if tower.tower_type=="book" else Vector2(-250,-470)
  tower.sprite.centered=false
  tower.sprite.scale=Vector2.ONE*factor
@@ -96,6 +96,14 @@ static func apply(tower)->void:
   material.set_shader_parameter("upper",pair[1])
   pair[0].material=material
  tower.sprite.texture=tower.frames[0]
+ face_entrance(tower,tower.map)
+static func face_entrance(tower,level_map)->void:
+ var flip:=true
+ if level_map!=null:
+  var curve:Curve2D=level_map.route.curve
+  flip=curve.get_point_position(0).x<curve.get_point_position(curve.point_count-1).x
+ tower.sprite.flip_h=flip
+ if tower.base_sprite!=null: tower.base_sprite.flip_h=flip
 static func sponge_frames(level:int)->Array:
  var sheet:Texture2D=load("res://assets/presentation/sponge_sheet.png")
  var rows=[Vector2(80,355),Vector2(378,691),Vector2(695,1062)]

@@ -24,11 +24,13 @@ func _ready() -> void:
 	var badge=preload("res://scripts/book_level_badge.gd").new()
 	badge.name="LevelBadge"
 	badge.z_index=2
+	badge.scale=Vector2.ONE*0.5
 	add_child(badge)
 
 func configure(level, manager) -> void:
 	map = level
 	game = manager
+	Presentation.face_entrance(self,map)
 
 func get_upgrade_cost() -> int:
 	if level >= 3: return 0
@@ -92,7 +94,7 @@ func _process(delta: float) -> void:
 	if nearest != null:
 		var projectile = ProjectileScene.instantiate()
 		map.projectiles.add_child(projectile)
-		projectile.global_position = global_position + Vector2(0, -102)
+		projectile.global_position = global_position + Vector2(0, -51)
 		if level == 3: level3_shots += 1
 		var golden := level == 3 and level3_shots % 5 == 0
 		projectile.configure(nearest, knowledge_per_hit * (2 if golden else 1), golden)

@@ -15,6 +15,7 @@ func _ready() -> void:
 	var badge=preload("res://scripts/book_level_badge.gd").new()
 	badge.name="LevelBadge"
 	badge.z_index=2
+	badge.scale=Vector2.ONE*0.5
 	add_child(badge)
 
 func upgrade_level() -> bool:
@@ -57,7 +58,7 @@ func _process(delta: float) -> void:
 	var swipe = create_attack_effect()
 	map.effects.add_child(swipe)
 	swipe.global_position = center
-	swipe.launch_from(global_position+Vector2(0,-100))
+	swipe.launch_from(global_position+Vector2(0,-50))
 	# Snapshot the group: a teaching hit may graduate and remove a student.
 	for student in map.get_students():
 		if is_instance_valid(student) and not student.done and student.global_position.distance_to(center) <= area_radius:

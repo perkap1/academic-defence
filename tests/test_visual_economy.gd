@@ -65,7 +65,7 @@ func run() -> void:
 				building.active_time = 0.45 if frame_index == 4 else 0.0
 				building._process(0)
 				check(building.frames[frame_index].get_size() == Vector2(360,320),"Identical frame canvas")
-				check(building.global_position == position_before and building.sprite.scale == Vector2.ONE*0.58,"Stable origin and scale")
+				check(building.global_position == position_before and building.sprite.scale == Vector2.ONE*0.29,"Stable origin and scale")
 				await capture("%s-%s-%d" % [scene,building.branch,frame_index])
 			await click_at(main.ui.banner_sell.get_global_rect().get_center())
 		main.free()
