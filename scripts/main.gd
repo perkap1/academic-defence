@@ -26,6 +26,7 @@ func _ready() -> void:
 	ui.start_requested.connect(func(): waves.start_wave())
 	ui.restart_requested.connect(restart)
 	ui.build_requested.connect(build)
+	ui.clear_site_requested.connect(clear_site)
 	ui.pause_requested.connect(toggle_pause)
 	ui.map_requested.connect(return_to_map)
 	ui.sell_requested.connect(sell)
@@ -46,6 +47,9 @@ func select_slot(slot) -> void:
 		return
 	clear_selection()
 	ui.close_build_menu()
+	if slot.is_blocked():
+		ui.open_clear_menu(slot,game)
+		return
 	if slot.occupied:
 		selected_tower_slot = slot
 		slot.tower.set_range_visible(true)
@@ -94,8 +98,15 @@ func sell(slot) -> bool:
 	ui.show_message("Tårnet er solgt · 50 % av investeringen tilbake.",false)
 	return true
 
+func clear_site(slot) -> bool:
+	if get_tree().paused or not is_instance_valid(slot) or slot.get_parent() != map.slots or slot != ui.clear_slot: return false
+	if not game.try_clear_site(slot): return false
+	ui.close_build_menu()
+	ui.show_message("Build site cleared! Ready to build.",false)
+	return true
+
 func build(slot, tower_type: String = "book") -> void:
-	if get_tree().paused or slot.occupied:
+	if get_tree().paused or slot.occupied or slot.is_blocked():
 		return
 	if not game.try_build(slot, tower_type):
 		if not game.finished:

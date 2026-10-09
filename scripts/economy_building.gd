@@ -2,7 +2,7 @@ extends Node2D
 const Artwork = preload("res://scripts/economy_artwork.gd")
 const BRANCHES := ["library","scholarship"]
 const NAMES := {"study":"Study Hall","library":"Library","scholarship":"Scholarship Office"}
-const SPECIALIZATION_COST := 120
+const SPECIALIZATION_COST := 140
 const SCHOLARSHIP_RADIUS := 260.0
 var tower_type := "economy"
 var branch := "study"

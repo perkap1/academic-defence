@@ -59,7 +59,8 @@ func run() -> void:
 	for wave in range(7):
 		for index in build_order:
 			var slot = main.map.slots.get_child(index)
-			if not slot.occupied and main.game.gold >= 70:
+			if not slot.occupied and main.game.gold >= 70 + slot.get_clear_cost():
+				if slot.is_blocked(): main.game.try_clear_site(slot)
 				main.build(slot, "blackboard" if wave >= 2 and index in [2,1,3] and main.game.gold >= 100 else "book")
 		check(main.waves.start_wave(), "Start wave %d in strategy run" % (wave + 1))
 		simulate(main, 110)

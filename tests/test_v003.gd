@@ -15,6 +15,8 @@ func _initialize() -> void:
 func battle(scene: String = "main"):
 	var main = load("res://scenes/%s.tscn" % scene).instantiate()
 	root.add_child(main)
+	# Unit fixture: isolate tower/combat behavior from paid site clearing.
+	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	return main
 

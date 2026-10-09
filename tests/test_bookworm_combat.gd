@@ -9,6 +9,8 @@ func spawn(main, path, point: Vector2):
 func run() -> void:
 	var main = load("res://scenes/main_map3.tscn").instantiate()
 	root.add_child(main)
+	# Unit fixture: isolate tower/combat behavior from paid site clearing.
+	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	var a = spawn(main,main.map.route,Vector2(950,466)+main.map.global_position)
 	var b = spawn(main,main.map.lower_route,a.global_position)

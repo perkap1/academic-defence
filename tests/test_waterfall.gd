@@ -15,6 +15,8 @@ func run() -> void:
  map1.free()
  var main=load("res://scenes/main_map2.tscn").instantiate()
  root.add_child(main)
+ # Unit fixture: isolate tower/combat behavior from paid site clearing.
+ for site in main.map.slots.get_children(): site.set_blocker("")
  main.process_mode=Node.PROCESS_MODE_DISABLED
  check(main.map.has_node("AnimatedWaterfall"),"Map2 uses reusable waterfall scene")
  if main.map.has_node("AnimatedWaterfall"):

@@ -11,6 +11,8 @@ func run() -> void:
 	for scene in ["main", "main_map2"]:
 		var main = load("res://scenes/%s.tscn" % scene).instantiate()
 		root.add_child(main)
+		# Unit fixture: isolate tower/combat behavior from paid site clearing.
+		for site in main.map.slots.get_children(): site.set_blocker("")
 		main.process_mode = Node.PROCESS_MODE_DISABLED
 		check(main.game.TOWER_COSTS.has("economy"), "Study Hall available in existing project")
 		if not main.game.TOWER_COSTS.has("economy"):
@@ -31,13 +33,13 @@ func run() -> void:
 		check(main.game.gold == 4915, "Wave cannot pay twice")
 		check(main.specialize(slot, "library"), "Library specialization")
 		check(slot.tower == building and building.position == slot.position, "Same node and position after specialization")
-		check(main.game.gold == 4795 and building.get_sell_refund() == 110, "Specialization cost and refund")
-		check(not main.specialize(slot, "research") and main.game.gold == 4795, "Exclusive branch cannot charge twice")
+		check(main.game.gold == 4775 and building.get_sell_refund() == 120, "Specialization cost and refund")
+		check(not main.specialize(slot, "research") and main.game.gold == 4775, "Exclusive branch cannot charge twice")
 		main.economy.complete_wave(2)
-		check(main.game.gold == 4840, "Library pays 45")
-		check(main.sell(slot) and main.game.gold == 4950, "Sell returns half total investment")
+		check(main.game.gold == 4820, "Library pays 45")
+		check(main.sell(slot) and main.game.gold == 4940, "Sell returns half total investment")
 		main.economy.complete_wave(3)
-		check(main.game.gold == 4950, "Sold building has no income")
+		check(main.game.gold == 4940, "Sold building has no income")
 		main.build(slot, "economy")
 		main.select_slot(slot)
 		main.game.gold = 119

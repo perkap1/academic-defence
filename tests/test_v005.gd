@@ -11,6 +11,8 @@ func _initialize() -> void:
 func run() -> void:
 	var main = load("res://scenes/main_map2.tscn").instantiate()
 	root.add_child(main)
+	# Unit fixture: isolate tower/combat behavior from paid site clearing.
+	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	var student = load("res://scenes/student.tscn").instantiate()
 	main.map.route.add_child(student)
@@ -71,6 +73,8 @@ func run() -> void:
 	main.free()
 	main = load("res://scenes/main_map2.tscn").instantiate()
 	root.add_child(main)
+	# Unit fixture: isolate tower/combat behavior from paid site clearing.
+	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	var slot = main.map.slots.get_child(2)
 	main.build(slot,"blackboard")

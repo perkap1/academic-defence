@@ -12,6 +12,8 @@ func run() -> void:
 	for scene in ["main","main_map2"]:
 		var main = load("res://scenes/%s.tscn" % scene).instantiate()
 		root.add_child(main)
+		# Unit fixture: isolate tower/combat behavior from paid site clearing.
+		for site in main.map.slots.get_children(): site.set_blocker("")
 		main.process_mode = Node.PROCESS_MODE_DISABLED
 		check(main.ui.build_menu.has_method("contains_point"),"Build menu is radial with circular outside-hit test")
 		if main.ui.build_menu.has_method("contains_point"):

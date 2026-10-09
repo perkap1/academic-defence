@@ -2,6 +2,8 @@ extends "res://tests/test_bookworm.gd"
 func run()->void:
 	var main=load("res://scenes/main_map3.tscn").instantiate()
 	root.add_child(main)
+	# Unit fixture: isolate tower/combat behavior from paid site clearing.
+	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode=Node.PROCESS_MODE_DISABLED
 	main.game.gold=2000
 	var slot=main.map.slots.get_child(4)
@@ -33,7 +35,7 @@ func run()->void:
 		effect.elapsed=0;effect.advance((frame+0.02)*0.09)
 		check(effect.sprite.texture==effect.frames[frame],"Stable ordered cloud animation")
 	check(main.ui.blackboard_button.texture_normal.atlas.resource_path.ends_with("science_teacher_sheet.png"),"Radial menu uses new science art")
-	check(tower.get_sell_refund()==175,"Half of 100+100+150 investment")
+	check(tower.get_sell_refund()==195,"Half of 100+120+170 investment")
 	main.free()
 	print("SCIENCE TOWER: %d checks, %d failures"%[checks,failures])
 	quit(1 if failures else 0)

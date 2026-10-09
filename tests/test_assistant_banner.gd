@@ -9,6 +9,8 @@ func run():
  for scene in ["main","main_map2"]:
   var main=load("res://scenes/%s.tscn"%scene).instantiate()
   root.add_child(main)
+  # Unit fixture: isolate tower/combat behavior from paid site clearing.
+  for site in main.map.slots.get_children(): site.set_blocker("")
   main.process_mode=Node.PROCESS_MODE_DISABLED
   main.game.gold=1000
   var slot=main.map.slots.get_child(2)

@@ -10,6 +10,8 @@ func run()->void:
   print("SNACK: %d checks, %d failures"%[checks,failures]);quit(1);return
  var main=load("res://scenes/main_map3.tscn").instantiate()
  root.add_child(main)
+ # Unit fixture: isolate tower/combat behavior from paid site clearing.
+ for site in main.map.slots.get_children(): site.set_blocker("")
  main.process_mode=Node.PROCESS_MODE_DISABLED
  for route in main.map.get_routes():
   var s=load("res://scenes/snack_monster.tscn").instantiate()

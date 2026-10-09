@@ -16,10 +16,20 @@ func try_build(slot, tower_type: String = "book") -> bool:
 	if not TOWER_COSTS.has(tower_type):
 		return false
 	var cost: int = TOWER_COSTS[tower_type]
-	if finished or slot.occupied or gold < cost:
+	if finished or slot.occupied or slot.is_blocked() or gold < cost:
 		return false
 	gold -= cost
 	slot.occupied = true
+	changed.emit()
+	return true
+
+func try_clear_site(slot) -> bool:
+	if finished or get_tree().paused or not is_instance_valid(slot) or slot.occupied or not slot.is_blocked(): return false
+	var cost: int = slot.get_clear_cost()
+	if cost <= 0 or gold < cost: return false
+	# Mutation before notification prevents repeated clicks from charging twice.
+	gold -= cost
+	slot.set_blocker("")
 	changed.emit()
 	return true
 

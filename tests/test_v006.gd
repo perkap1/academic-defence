@@ -10,6 +10,8 @@ func _initialize() -> void: call_deferred("run")
 func run() -> void:
  var main=load("res://scenes/main_map2.tscn").instantiate()
  root.add_child(main)
+ # Unit fixture: isolate tower/combat behavior from paid site clearing.
+ for site in main.map.slots.get_children(): site.set_blocker("")
  main.process_mode=Node.PROCESS_MODE_DISABLED
  check(main.game.TOWER_COSTS.get("assistant",0)==120,"Assistant costs120")
  if not main.game.TOWER_COSTS.has("assistant"):
@@ -109,6 +111,8 @@ func run() -> void:
   for sex in ["boy","girl"]:
    main=load("res://scenes/main_map2.tscn").instantiate()
    root.add_child(main)
+   # Unit fixture: isolate tower/combat behavior from paid site clearing.
+   for site in main.map.slots.get_children(): site.set_blocker("")
    main.process_mode=Node.PROCESS_MODE_DISABLED
    main.build(main.map.slots.get_child(2),"assistant")
    post=main.map.slots.get_child(2).tower
@@ -133,6 +137,8 @@ func run() -> void:
   for sex in ["boy","girl"]:
    main=load("res://scenes/main_map2.tscn").instantiate()
    root.add_child(main)
+   # Unit fixture: isolate tower/combat behavior from paid site clearing.
+   for site in main.map.slots.get_children(): site.set_blocker("")
    main.process_mode=Node.PROCESS_MODE_DISABLED
    main.build(main.map.slots.get_child(2),"assistant")
    post=main.map.slots.get_child(2).tower

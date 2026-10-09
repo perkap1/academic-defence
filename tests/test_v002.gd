@@ -19,6 +19,8 @@ func run() -> void:
 		return
 	var main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
+	# Unit fixture: isolate tower/combat behavior from paid site clearing.
+	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	var slot = main.map.slots.get_child(1)
 	main.build(slot, "blackboard")
@@ -61,6 +63,8 @@ func run() -> void:
 	main.free()
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
+	# Unit fixture: isolate tower/combat behavior from paid site clearing.
+	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	for wave in range(7):
 		check(main.waves.start_wave(), "Mixed wave can start")

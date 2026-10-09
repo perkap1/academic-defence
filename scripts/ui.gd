@@ -1,5 +1,6 @@
 extends CanvasLayer
 
+signal clear_site_requested(slot)
 signal start_requested
 signal restart_requested
 signal build_requested(slot, tower_type: String)
@@ -45,6 +46,10 @@ var banner_sell: Button
 var invested_label: Label
 var tower_slot
 var level_label: Label
+var clear_menu: Control
+var clear_button: Button
+var clear_price: Label
+var clear_slot
 var selected_slot
 var message_time := 0.0
 var instruction_panel: Control
@@ -87,6 +92,7 @@ func _ready() -> void:
 	message_label = Artwork.label(instruction,"Book 70 · Science 100 · Assistant 120 · Study Hall 100 KP",Vector2(45,34),Vector2(708,27),19)
 	activity_label = Artwork.label(instruction,"Bygg først, og start bølgen når du er klar.",Vector2(45,61),Vector2(708,23),16,Color("b7d5c2"))
 	create_build_menu(root)
+	create_clear_menu(root)
 	create_tower_panel(root)
 	create_pause_overlay(root)
 	create_result(root)
@@ -148,7 +154,7 @@ func create_tower_panel(root: Control) -> void:
 	var names := ["Library","Scholarship\nOffice"]
 	for i in range(2):
 		var choice: String = choices[i]
-		var button := Artwork.plain_button(specialization_panel,names[i]+"\n120 KP",Vector2(30+i*215,0),Vector2(200,84))
+		var button := Artwork.plain_button(specialization_panel,names[i]+"\n%d KP" % preload("res://scripts/economy_building.gd").SPECIALIZATION_COST,Vector2(30+i*215,0),Vector2(200,84))
 		button.add_theme_font_size_override("font_size",17)
 		button.tooltip_text = ["+45 KP etter hver bølge","+10 KP/bølge · +5 per fullført student innen radius, maks +50","+15 KP første bølge, deretter +10 til maks +65"][i]
 		button.pressed.connect(func():
@@ -195,7 +201,7 @@ func refresh_tower_banner(game) -> void:
 				banner_description.size.x = 440
 				banner_extra.visible = false
 				specialization_panel.visible = true
-				for button in specialization_buttons: button.disabled = game.finished or game.gold < 120
+				for button in specialization_buttons: button.disabled = game.finished or game.gold < tower.SPECIALIZATION_COST
 			"scholarship":
 				banner_description.text = "Base income: +10 KP / wave\nBonus: +5 per student i radius"
 				banner_extra.text = "Wave bonus: %d / 50 KP\nRadius: %d" % [tower.wave_bonus,tower.SCHOLARSHIP_RADIUS]
@@ -351,7 +357,7 @@ func create_result(root: Control) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
-		if build_menu.visible:
+		if build_menu.visible or clear_menu.visible:
 			close_build_menu()
 		elif tower_panel.visible:
 			# Main owns both range and panel; pause also clears selection.
@@ -362,6 +368,10 @@ func _input(event: InputEvent) -> void:
 		if not build_menu.contains_point(event.position):
 			close_build_menu()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and clear_menu.visible:
+		if not clear_menu.get_global_rect().has_point(event.position): close_build_menu()
+
 func _process(delta: float) -> void:
 	if message_time > 0:
 		message_time -= delta
@@ -370,12 +380,49 @@ func _process(delta: float) -> void:
 			message_label.add_theme_color_override("font_color",Color("fff0c7"))
 
 func open_build_menu(slot, game) -> void:
+	if slot.is_blocked():
+		open_clear_menu(slot,game)
+		return
 	selected_slot = slot
 	build_menu.position = slot.global_position - RadialMenu.CENTER
 	build_menu.visible = true
 	update_build_buttons(game)
 
+func create_clear_menu(root: Control) -> void:
+	clear_menu = Artwork.panel(root,Vector2.ZERO,Vector2(390,242),true)
+	clear_menu.name = "ClearBuildSite"
+	clear_menu.z_index = 20
+	clear_menu.mouse_filter = Control.MOUSE_FILTER_STOP
+	Artwork.label(clear_menu,"CLEAR BUILD SITE",Vector2(35,28),Vector2(320,35),23).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	clear_price = Artwork.label(clear_menu,"",Vector2(30,77),Vector2(330,30),21)
+	clear_price.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	clear_button = Artwork.plain_button(clear_menu,"Clear",Vector2(35,126),Vector2(155,68))
+	clear_button.pressed.connect(func():
+		if is_instance_valid(clear_slot): clear_site_requested.emit(clear_slot))
+	var cancel = Artwork.plain_button(clear_menu,"Cancel",Vector2(200,126),Vector2(155,68))
+	cancel.pressed.connect(close_build_menu)
+	clear_menu.hide()
+
+func open_clear_menu(slot, game) -> void:
+	close_build_menu()
+	clear_slot = slot
+	clear_menu.position = (slot.global_position + Vector2(65,-120)).clamp(Vector2(8,195),Vector2(1274,880))
+	clear_menu.show()
+	update_clear_button(game)
+
+func update_clear_button(game) -> void:
+	if not is_instance_valid(clear_slot) or not clear_slot.is_blocked():
+		clear_menu.hide()
+		return
+	var cost: int = clear_slot.get_clear_cost()
+	var missing: int = maxi(0,cost-game.gold)
+	clear_price.text = "%d KP" % cost if missing == 0 else "%d KP - missing %d KP" % [cost,missing]
+	clear_button.disabled = game.finished or game.gold < cost
+	clear_button.text = "Clear - %d" % cost
+
 func close_build_menu() -> void:
+	if is_instance_valid(clear_menu): clear_menu.hide()
+	clear_slot = null
 	if build_menu != null:
 		build_menu.visible = false
 	selected_slot = null
@@ -411,6 +458,7 @@ func update_state(game, waves) -> void:
 		refresh_tower_banner(game)
 	if build_menu.visible:
 		update_build_buttons(game)
+	if clear_menu.visible: update_clear_button(game)
 
 func show_message(text: String, error: bool) -> void:
 	message_label.text = text

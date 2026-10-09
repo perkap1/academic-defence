@@ -22,10 +22,13 @@ func _ready() -> void:
 	add_child(environment)
 	environment.configure(level_id)
 	route.curve = create_route_curve(route_points)
-	for p in build_positions:
+	var blockers: Dictionary = preload("res://scripts/site_blockers.gd").LAYOUTS.get(level_id,{})
+	for index in range(build_positions.size()):
+		var p: Vector2 = build_positions[index]
 		var slot = BuildSlotScene.instantiate()
 		slot.position = p
 		slots.add_child(slot)
+		if blockers.has(index): slot.set_blocker(blockers[index])
 
 func create_route_curve(points: Array) -> Curve2D:
 	var curve := Curve2D.new()

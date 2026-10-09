@@ -2,6 +2,7 @@ extends "res://tests/test_bookworm.gd"
 func run():
  var main=load("res://scenes/main_map4.tscn").instantiate()
  root.add_child(main);main.process_mode=Node.PROCESS_MODE_DISABLED
+ for site in main.map.slots.get_children(): site.set_blocker("")
  main.game.gold=10000
  var slot=main.map.slots.get_child(6)
  for route in main.map.get_routes():

@@ -11,7 +11,8 @@ func run() -> void:
 			var slot = main.map.slots.get_child(index)
 			var kind := "blackboard" if index in [3,0,7] else "book"
 			var cost := 100 if kind == "blackboard" else 70
-			if not slot.occupied and main.game.gold >= cost:
+			if not slot.occupied and main.game.gold >= cost + slot.get_clear_cost():
+				if slot.is_blocked(): main.game.try_clear_site(slot)
 				main.build(slot,kind)
 		check(main.waves.start_wave(),"Map2 ordinary-budget wave %d starts" % (wave+1))
 		simulate(main,160)

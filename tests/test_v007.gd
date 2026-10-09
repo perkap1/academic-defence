@@ -11,6 +11,8 @@ func run() -> void:
  for scene in ["main", "main_map2"]:
   var main = load("res://scenes/"+scene+".tscn").instantiate()
   root.add_child(main)
+  # Unit fixture: isolate tower/combat behavior from paid site clearing.
+  for site in main.map.slots.get_children(): site.set_blocker("")
   main.process_mode = Node.PROCESS_MODE_DISABLED
   check(main.map.has_node("Environment"), scene+" has ambient layer")
   if main.map.has_node("Environment"):

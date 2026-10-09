@@ -14,6 +14,8 @@ func run() -> void:
 		return
 	var main = load("res://scenes/main_map3.tscn").instantiate()
 	root.add_child(main)
+	# Unit fixture: isolate tower/combat behavior from paid site clearing.
+	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	check(main.map.slots.get_child_count() == 14,"Fourteen user-confirmed slots")
 	check(main.map.get_routes().size() == 2,"Two entrances")
