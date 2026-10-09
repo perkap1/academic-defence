@@ -7,6 +7,16 @@ const TOWER_COST := 70
 const TOWER_COSTS := {"book": 70, "blackboard": 100, "assistant": 120, "economy": 100}
 var gold := 200
 var lives := 10
+var starting_reputation := 10
+const TWO_STAR_RATIO := 0.70
+
+func _ready() -> void:
+	starting_reputation = lives
+
+func get_star_rating() -> int:
+	if not won or starting_reputation <= 0: return 0
+	if lives >= starting_reputation: return 3
+	return 2 if float(lives)/starting_reputation >= TWO_STAR_RATIO else 1
 var graduated := 0
 var escaped := 0
 var finished := false

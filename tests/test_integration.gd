@@ -24,6 +24,8 @@ func simulate(main, seconds: float) -> void:
 		for projectile in main.map.projectiles.get_children():
 			if not projectile.is_queued_for_deletion():
 				projectile._process(1.0 / 30.0)
+		for effect in main.map.effects.get_children():
+			if effect.has_method("advance") and not effect.is_queued_for_deletion(): effect.advance(1.0/30.0)
 		if main.game.finished:
 			break
 

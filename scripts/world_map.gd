@@ -45,6 +45,12 @@ func _ready() -> void:
 		else:
 			var title := Artwork.label(root,"%d · LÅST" % (i+1),pos+Vector2(-79,54),Vector2(158,30),20,Color("e0dac6"))
 			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if i < 4:
+			var stars = preload("res://scripts/stars_display.gd").new()
+			stars.name = "Level%dStars" % (i+1)
+			stars.position = pos+Vector2(-90,170 if can_open_level(i) else 83)
+			root.add_child(stars)
+			stars.configure(get_node("/root/Progression").get_stars(i+1),false,60.0)
 	queue_redraw()
 
 func _draw() -> void:

@@ -109,6 +109,8 @@ func run() -> void:
   tower.global_position=students[0].global_position+Vector2(0,-10)
   tower.cooldown=0
   tower._process(0)
+  for effect in main.map.effects.get_children():
+   if effect.has_method("advance"):effect.advance(0.7)
   for s in students:
    check(s.knowledge==[15,19,22][level-1],"Actual Board hit Knowledge all types, level%d" % level)
    check(s.slow_remaining==tower.slow_duration and s.slow_strength==tower.slow_strength,"Actual Board slow/drips all types")

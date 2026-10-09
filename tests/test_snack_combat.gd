@@ -27,6 +27,7 @@ func run()->void:
  check(main.map.projectiles.get_child_count()==0,"Book Tower ignores eating target")
  var other=load("res://scenes/student.tscn").instantiate()
  main.map.route.add_child(other)
+ other.assistant_hold=true # Static neighbor fixture.
  other.global_position=s.global_position+Vector2(20,0)
  slot.tower._process(0.1)
  var projectile=main.map.projectiles.get_child(0)
@@ -37,6 +38,8 @@ func run()->void:
  check(inflight.spent and s.knowledge==50,"In-flight golden book is harmless")
  main.sell(slot);main.build(slot,"blackboard")
  slot.tower._process(0.1)
+ for effect in main.map.effects.get_children():
+  if effect.has_method("advance"):effect.advance(0.7)
  check(other.knowledge==15 and other.slow_remaining>0,"AoE still affects neighbor")
  check(s.knowledge==50 and s.slow_remaining==0,"AoE and slow exclude eating enemy")
  var remaining:float=s.eating_remaining

@@ -15,6 +15,8 @@ func run():
   check(shot.target==s,"Book acquires each independent route")
   main.sell(slot)
   main.build(slot,"blackboard");slot.tower._process(0.1)
+  for effect in main.map.effects.get_children():
+   if effect.has_method("advance"):effect.advance(0.7)
   check(s.teaching_points==15 and s.slow_remaining>0,"Science affects each route")
   main.sell(slot)
   main.build(slot,"assistant")

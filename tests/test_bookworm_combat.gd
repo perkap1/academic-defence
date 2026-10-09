@@ -20,6 +20,8 @@ func run() -> void:
 	main.build(slot,"blackboard")
 	var board = slot.tower
 	board._process(0.1)
+	for effect in main.map.effects.get_children():
+		if effect.has_method("advance"): effect.advance(0.7)
 	for student in [a,b]:
 		check(student.books==2 and student.knowledge==0,"One AoE event removes one book on either entrance")
 		check(student.slow_remaining==2.0 and student.slow_strength==0.3,"Slow passes through book shield")

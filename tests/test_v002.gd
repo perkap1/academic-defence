@@ -38,9 +38,12 @@ func run() -> void:
 	for offset in [Vector2(0,80), Vector2(35,90), Vector2(60,95), Vector2(200,0)]:
 		var student = load("res://scenes/student.tscn").instantiate()
 		main.map.route.add_child(student)
+		student.assistant_hold = true # Static AoE fixture.
 		student.position = slot.position + offset
 		near.append(student)
 	board._process(0.1)
+	for effect in main.map.effects.get_children():
+		if effect.has_method("advance"): effect.advance(0.7)
 	check(near[0].knowledge == 15 and near[1].knowledge == 15 and near[2].knowledge == 15, "Pulse teaches three nearby students")
 	check(near[3].knowledge == 0, "Pulse leaves student outside AoE unchanged")
 	board._process(0.1)

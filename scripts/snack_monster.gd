@@ -28,8 +28,10 @@ func teach(amount:int)->void:
   snack_break_used=true
   eating_remaining=EATING_DURATION
   animation_time=0
+  slow_sources.clear()
   slow_remaining=0
   slow_strength=0
+  update_bar_status()
   speed=base_speed
   slow_indicator.hide()
   if is_instance_valid(teacher):teacher.student_completed(self)
@@ -40,8 +42,8 @@ func teach(amount:int)->void:
   queue_redraw()
   return
  if teaching_points>=400:complete(true)
-func apply_slow(duration:float=2.0,strength:float=0.30)->void:
- if is_targetable():super.apply_slow(duration,strength)
+func apply_slow(duration:float=2.0,strength:float=0.30,source:String="other")->void:
+ if is_targetable():super.apply_slow(duration,strength,source)
 func show_wet_hit()->void:
  if is_targetable():super.show_wet_hit()
 func reserve_teacher(candidate)->bool:

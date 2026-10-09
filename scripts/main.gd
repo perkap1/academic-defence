@@ -138,7 +138,7 @@ func on_wave_completed(last_wave: bool) -> void:
 		ui.show_message("Bølge fullført! +%d KP. Gjør klar neste bølge." % (45+passive_income), false)
 
 func on_ended(won: bool) -> void:
-	if won: get_node("/root/Progression").complete_level(map.level_id)
+	if won: get_node("/root/Progression").complete_level(map.level_id,game.get_star_rating())
 	get_tree().paused = false
 	clear_selection()
 	ui.close_build_menu()
@@ -148,6 +148,9 @@ func on_ended(won: bool) -> void:
 			student.set_process(false)
 	for projectile in map.projectiles.get_children():
 		projectile.set_process(false)
+	for effect in map.effects.get_children():
+		if effect.get_script() == preload("res://scripts/science_attack.gd"): effect.queue_free()
+		else: effect.set_process(false)
 	ui.show_result(won, game, waves.wave, waves.counts.size())
 
 func update_ui() -> void:

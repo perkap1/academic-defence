@@ -10,6 +10,10 @@ var speed := 85.0
 var base_speed := 85.0
 var slow_remaining := 0.0
 var slow_strength := 0.0
+# Source durations belong to the slow status, not to a separate color animation.
+var slow_sources: Dictionary = {}
+var bar_fill: StyleBoxFlat
+var normal_bar_color := Color("64dfc5")
 var slow_indicator := Sprite2D.new()
 var drop_frames := []
 var drop_time := 0.0
@@ -32,20 +36,37 @@ func configure(kind: String, sex: String = "boy") -> void:
 	base_speed = speed
 	slow_remaining = 0.0
 	slow_strength = 0.0
+	slow_sources.clear()
+	update_bar_status()
 
 func is_targetable()->bool:
 	return not done
 
-func apply_slow(duration: float = 2.0, strength: float = 0.30) -> void:
+func apply_slow(duration: float = 2.0, strength: float = 0.30, source: String = "other") -> void:
 	if done or duration <= 0:
 		return
 	if slow_remaining <= 0: drop_time = 0.0
+	slow_sources[source] = maxf(float(slow_sources.get(source,0.0)),duration)
 	slow_remaining = maxf(slow_remaining, duration)
 	# A weaker board cannot remove an existing stronger slow; neither stacks.
 	slow_strength = maxf(slow_strength,clampf(strength,0,1))
 	speed = base_speed * (1.0-slow_strength)
 	slow_indicator.visible = true
+	update_bar_status()
 	queue_redraw()
+
+func has_science_slow() -> bool:
+	return slow_remaining > 0 and float(slow_sources.get("science",0.0)) > 0
+
+func update_bar_status() -> void:
+	if is_instance_valid(bar_fill): bar_fill.bg_color = Color("bd65ef") if has_science_slow() else normal_bar_color
+
+func predict_position(seconds: float) -> Vector2:
+	if assistant_hold or not get_parent() is Path2D: return global_position
+	var path: Path2D = get_parent()
+	var travel := base_speed*(seconds-minf(seconds,slow_remaining)*slow_strength)
+	var future := minf(progress+travel,path.curve.get_baked_length())
+	return path.to_global(UnitLayout.lane_position(path.curve,future,lane_offset))
 
 func show_wet_hit() -> void:
 	if done: return
@@ -100,7 +121,9 @@ func _ready() -> void:
 	background.set_border_width_all(2)
 	background.border_color = Color("fff1c6")
 	var fill := StyleBoxFlat.new()
-	fill.bg_color = Color("8ecfff") if student_type == "pe" else Color("64dfc5")
+	normal_bar_color = Color("8ecfff") if student_type == "pe" else Color("64dfc5")
+	fill.bg_color = normal_bar_color
+	bar_fill = fill
 	bar.add_theme_stylebox_override("background", background)
 	bar.add_theme_stylebox_override("fill", fill)
 	bar.value = knowledge
@@ -131,7 +154,11 @@ func _process(delta: float) -> void:
 	if not assistant_hold:
 		progress = minf(progress + base_speed * (delta - slowed_time * slow_strength), length)
 	update_lane_position()
+	for source in slow_sources.keys():
+		slow_sources[source] = maxf(0.0,float(slow_sources[source])-delta)
+		if slow_sources[source] <= 0: slow_sources.erase(source)
 	slow_remaining = maxf(0.0, slow_remaining - delta)
+	update_bar_status()
 	if slow_remaining <= 0: slow_strength = 0.0
 	speed = base_speed * (1.0-slow_strength)
 	slow_indicator.visible = slow_remaining > 0

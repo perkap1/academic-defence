@@ -21,6 +21,7 @@ var pause_button: Button
 var message_label: Label
 var activity_label: Label
 var result_overlay: Control
+var result_stars: Control
 var result_title: Label
 var result_body: Label
 var build_menu: Control
@@ -345,7 +346,9 @@ func create_result(root: Control) -> void:
 	result_panel.size = Vector2(740,470)
 	result_overlay.add_child(result_panel)
 	Artwork.panel(result_panel,Vector2.ZERO,result_panel.size)
-	Artwork.image(result_panel,"icon_reputation",Vector2(317,28),Vector2(106,106))
+	result_stars = preload("res://scripts/stars_display.gd").new()
+	result_stars.position = Vector2(220,27)
+	result_panel.add_child(result_stars)
 	result_title = Artwork.label(result_panel,"",Vector2(50,137),Vector2(640,59),37)
 	result_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_body = Artwork.label(result_panel,"",Vector2(70,214),Vector2(600,110),23,Color("d3ead7"))
@@ -443,7 +446,7 @@ func update_build_buttons(game) -> void:
 
 func update_state(game, waves) -> void:
 	gold_label.text = "KP  %d" % game.gold
-	life_label.text = "%d / 10" % game.lives
+	life_label.text = "%d / %d" % [game.lives,game.starting_reputation]
 	var total: int = waves.counts.size()
 	wave_label.text = "%d / %d" % [waves.wave,total]
 	start_button.disabled = waves.active or game.finished
@@ -473,8 +476,9 @@ func set_paused(value: bool) -> void:
 func show_result(won: bool, game, wave: int, total: int = 7) -> void:
 	set_paused(false)
 	result_overlay.visible = true
+	result_stars.configure(game.get_star_rating(),won,100.0)
 	result_title.text = "Akademisk seier!" if won else "Prøv et nytt opplegg"
-	result_body.text = "Bølge %d av %d · Omdømme %d\n%d studenter lært opp\n%d studenter nådde broen" % [wave,total,game.lives,game.graduated,game.escaped]
+	result_body.text = "%d / 3 stars - Reputation %d / %d\nWave %d / %d - %d students graduated\n%d students reached the exit" % [game.get_star_rating(),game.lives,game.starting_reputation,wave,total,game.graduated,game.escaped]
 
 
 

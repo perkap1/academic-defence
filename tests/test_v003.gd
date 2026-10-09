@@ -56,10 +56,13 @@ func run() -> void:
 		var student = load("res://scenes/student.tscn").instantiate()
 		student.configure("pe" if near.size() == 1 else "normal")
 		main.map.route.add_child(student)
+		student.assistant_hold = true # Static AoE fixture.
 		student.position = slot.position + offset
 		near.append(student)
 	normal.complete(true)
 	slot.tower._process(0.1)
+	for effect in main.map.effects.get_children():
+		if effect.has_method("advance"): effect.advance(0.7)
 	check(near[0].knowledge == 15 and near[1].knowledge == 15 and near[2].knowledge == 15, "Blackboard AoE teaches entire nearby group")
 	check(is_equal_approx(near[0].speed,59.5) and is_equal_approx(near[1].speed,80.325), "Blackboard AoE slows normal and PE")
 	check(near[3].knowledge == 0 and near[3].speed == 85.0, "AoE leaves outside student unchanged")

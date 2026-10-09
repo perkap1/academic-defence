@@ -83,9 +83,12 @@ func run() -> void:
 		var s = load("res://scenes/student.tscn").instantiate()
 		s.configure("normal" if targets.is_empty() else "pe","girl")
 		main.map.route.add_child(s)
+		s.assistant_hold = true # Static AoE fixture, outside normal route movement.
 		s.position = slot.position+offset
 		targets.append(s)
 	slot.tower._process(0.1)
+	for effect in main.map.effects.get_children():
+		if effect.has_method("advance"): effect.advance(0.7)
 	check(targets[0].knowledge == 15 and targets[1].knowledge == 15 and targets[2].knowledge == 0,"Sponge preserves15Knowledge and105AoE")
 	check(targets[0].slow_remaining == 2.0 and targets[1].slow_remaining == 2.0 and targets[2].slow_remaining == 0,"Normal and PE slowed; outside target untouched")
 	var swipes := []

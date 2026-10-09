@@ -39,9 +39,9 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.018 — playable prototype.** Four maps (7, 12, 15 and 17 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; Map 5 remains locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
+**v0.019 — playable prototype.** Four maps (7, 12, 15 and 17 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; Map 5 remains locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.018.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.019.md` for the latest checks and `VERIFISERING.md` for earlier verification.
 
 ## Automatic publishing
 
@@ -133,3 +133,7 @@ Blocked slots, numbered by the map's build-position list (starting at 1):
 | 4 | 1 school/trash, 5 nature/logs, 7 stone/rocks (between routes), 12 nature/planks, 14 stone/rubble |
 
 Book upgrades: 100/150 KP. Science upgrades: 120/170 KP. Study Hall specialization: 140 KP. Base building prices and all stats/incomes/waves remain unchanged. Selling refunds half actual building investment; clearing is excluded. Teaching Assistant Post still has no upgrades.
+
+### v0.019
+
+Best 0-3 star ratings are saved per map, with backwards-compatible progress and sequential Victory stars. Science Tower now lobs existing chemical sprites along a 0.7-second parabola toward a fixed predicted path/lane position. AoE Knowledge and slow happen once at landing. Science slow turns only the Knowledge fill purple; expiry and Snack Break restore its normal color. Prices, stats, waves, clearing costs and unlock rules are unchanged.
