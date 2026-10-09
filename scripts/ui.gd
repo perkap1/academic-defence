@@ -144,11 +144,11 @@ func create_tower_panel(root: Control) -> void:
 	specialization_panel.position = Vector2(625,55)
 	specialization_panel.size = Vector2(460,90)
 	tower_banner.add_child(specialization_panel)
-	var choices := ["library","scholarship","research"]
-	var names := ["Library","Scholarship\nOffice","Research\nInstitute"]
-	for i in range(3):
+	var choices := ["library","scholarship"]
+	var names := ["Library","Scholarship\nOffice"]
+	for i in range(2):
 		var choice: String = choices[i]
-		var button := Artwork.plain_button(specialization_panel,names[i]+"\n120 KP",Vector2(i*155,0),Vector2(148,84))
+		var button := Artwork.plain_button(specialization_panel,names[i]+"\n120 KP",Vector2(30+i*215,0),Vector2(200,84))
 		button.add_theme_font_size_override("font_size",17)
 		button.tooltip_text = ["+45 KP etter hver bølge","+10 KP/bølge · +5 per fullført student innen radius, maks +50","+15 KP første bølge, deretter +10 til maks +65"][i]
 		button.pressed.connect(func():
@@ -199,9 +199,6 @@ func refresh_tower_banner(game) -> void:
 			"scholarship":
 				banner_description.text = "Base income: +10 KP / wave\nBonus: +5 per student i radius"
 				banner_extra.text = "Wave bonus: %d / 50 KP\nRadius: %d" % [tower.wave_bonus,tower.SCHOLARSHIP_RADIUS]
-			"research":
-				banner_description.text = "Current income: +%d KP / wave\nNext income: +%d KP" % [tower.get_income(),tower.get_next_income()]
-				banner_extra.text = "Max income: +65 KP / wave\nØker etter fullført bølge"
 		return
 	if tower.tower_type == "assistant":
 		banner_title.text = "Teaching Assistant Post"
@@ -244,6 +241,15 @@ func create_build_menu(root: Control) -> void:
 	assistant_button = radial_button("assistant",Vector2(145,-55),Vector2(150,156))
 	var assistant_cost := Artwork.label(build_menu,"120 KP",Vector2(145,104),Vector2(150,27),20)
 	assistant_cost.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	var post_frames:Array=preload("res://scripts/building_frames.gd").post_idle()
+	assistant_button.texture_normal=post_frames[0]
+	assistant_button.texture_hover=post_frames[2]
+	assistant_button.texture_pressed=post_frames[2]
+	assistant_button.texture_disabled=post_frames[0]
+	assistant_button.stretch_mode=TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	assistant_button.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
+	var assistant_name=Artwork.label(assistant_button,"Assistant",Vector2(0,128),Vector2(150,25),18)
+	assistant_name.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	assistant_button.tooltip_text="Teaching Assistant Post · 120 KP · 2 assistenter, hold 3 sek., +5 kunnskap/sek"
 	assistant_button.pressed.connect(func(): choose_tower("assistant"))
 	book_button = radial_button("book",Vector2(25,89),Vector2(160,172))
@@ -271,8 +277,8 @@ func create_build_menu(root: Control) -> void:
 	study_button = TextureButton.new()
 	var study_frames: Array = preload("res://scripts/economy_artwork.gd").frames("study")
 	study_button.texture_normal = study_frames[0]
-	study_button.texture_hover = study_frames[4]
-	study_button.texture_pressed = study_frames[4]
+	study_button.texture_hover = study_frames[8]
+	study_button.texture_pressed = study_frames[8]
 	study_button.texture_disabled = study_frames[0]
 	study_button.ignore_texture_size = true
 	study_button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
@@ -380,6 +386,7 @@ func choose_tower(kind: String) -> void:
 
 func update_build_buttons(game) -> void:
 	assistant_button.disabled = game.finished or game.gold < 120
+	assistant_button.self_modulate=Color(0.45,0.45,0.45) if assistant_button.disabled else Color.WHITE
 	book_button.disabled = game.finished or game.gold < 70
 	book_button.modulate=Color(0.45,0.45,0.45) if book_button.disabled else Color.WHITE
 	blackboard_button.disabled = game.finished or game.gold < 100

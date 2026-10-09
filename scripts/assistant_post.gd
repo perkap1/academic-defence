@@ -11,10 +11,35 @@ var assistants := []
 var marker := Sprite2D.new()
 var marker_frames := []
 var animation_time := 0.0
+var point_remaining := 0.0
+var point_direction := "right"
+var point_frames := []
+var idle_frames := []
+var base_sprite: Sprite2D
+@onready var sprite: Sprite2D=$Sprite
 func _ready() -> void:
- $Sprite.texture = load("res://assets/assistant/post.png")
+ idle_frames=preload("res://scripts/building_frames.gd").post_idle()
+ $Sprite.texture=idle_frames[0]
  $Sprite.scale=Vector2.ONE*0.5525
- $Sprite.position=Vector2(0,-55.25)
+ $Sprite.centered=false
+ $Sprite.offset=Vector2(-180,-290)
+ $Sprite.position=Vector2(0,-5.5)
+ base_sprite=Sprite2D.new()
+ base_sprite.texture=idle_frames[0]
+ base_sprite.centered=false
+ base_sprite.offset=$Sprite.offset
+ base_sprite.position=$Sprite.position
+ base_sprite.scale=$Sprite.scale
+ add_child(base_sprite)
+ move_child(base_sprite,0)
+ for pair in [[base_sprite,false],[$Sprite,true]]:
+  var material=ShaderMaterial.new()
+  material.shader=preload("res://scripts/tower_base.gdshader")
+  material.set_shader_parameter("cut_y",-70.0)
+  material.set_shader_parameter("upper",pair[1])
+  pair[0].material=material
+ $Sprite.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
+ base_sprite.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
  for i in range(5): marker_frames.append(load("res://assets/assistant/rally_%d.png" % i))
  marker.texture=marker_frames[0]
  marker.scale=Vector2(0.8,0.55)
@@ -52,8 +77,19 @@ func _draw() -> void:
   draw_arc(to_local(rally_point),work_radius,0,TAU,64,Color(1,0.8,0.3,0.7),2)
 func _process(delta:float) -> void:
  animation_time+=delta
+ point_remaining=maxf(0,point_remaining-delta)
+ sprite.texture=point_frames[clampi(int((0.3-point_remaining)*10),0,2)] if point_remaining>0 else idle_frames[int(animation_time*4)%4]
  marker.texture=marker_frames[int(animation_time*5)%5]
 func _exit_tree() -> void:
  for a in assistants:
   if is_instance_valid(a): a.release_student()
 
+
+func point_at(point:Vector2)->void:
+ var vector=point-global_position
+ var sector=posmod(int(round(vector.angle()/(PI/4))),8)
+ var direction=["right","down_right","down","down_left","left","up_left","up","up_right"][sector]
+ point_direction=direction
+ point_frames=preload("res://scripts/building_frames.gd").pointing(direction)
+ point_remaining=0.3
+ sprite.texture=point_frames[0]

@@ -1,14 +1,13 @@
 extends Node2D
 const Artwork = preload("res://scripts/economy_artwork.gd")
-const BRANCHES := ["library","scholarship","research"]
-const NAMES := {"study":"Study Hall","library":"Library","scholarship":"Scholarship Office","research":"Research Institute"}
+const BRANCHES := ["library","scholarship"]
+const NAMES := {"study":"Study Hall","library":"Library","scholarship":"Scholarship Office"}
 const SPECIALIZATION_COST := 120
 const SCHOLARSHIP_RADIUS := 260.0
 var tower_type := "economy"
 var branch := "study"
 var total_invested := 100
 var wave_bonus := 0
-var research_payouts := 0
 var show_range := false
 var visual_time := 0.0
 var active_time := 0.0
@@ -33,7 +32,7 @@ func _ready() -> void:
 	for pair in [[base_sprite,false],[sprite,true]]:
 		var material := ShaderMaterial.new()
 		material.shader = preload("res://scripts/tower_base.gdshader")
-		material.set_shader_parameter("cut_y",-35.0)
+		material.set_shader_parameter("cut_y",-110.0)
 		material.set_shader_parameter("upper",pair[1])
 		pair[0].material = material
 	apply_artwork()
@@ -59,16 +58,15 @@ func get_income() -> int:
 	match branch:
 		"library": return 45
 		"scholarship": return 10
-		"research": return mini(15 + 10 * research_payouts,65)
 	return 15
 func get_next_income() -> int:
-	return mini(get_income()+10,65) if branch == "research" else get_income()
+	return get_income()
 func set_range_visible(value: bool) -> void:
 	show_range = value and branch == "scholarship"
 	queue_redraw()
 func show_income(amount: int) -> void:
-	active_time = 0.45
-	sprite.texture = frames[4]
+	active_time = 0.3
+	sprite.texture = frames[8]
 	var popup := Label.new()
 	popup.text = "+%d KP" % amount
 	popup.position = Vector2(-60,-160)
@@ -87,7 +85,7 @@ func show_income(amount: int) -> void:
 func _process(delta: float) -> void:
 	visual_time += delta
 	active_time = maxf(0,active_time-delta)
-	sprite.texture = frames[4] if active_time > 0 else frames[int(visual_time*3) % 4]
+	sprite.texture = frames[8+clampi(int((0.3-active_time)/0.3*(frames.size()-8)),0,frames.size()-9)] if active_time > 0 else frames[int(visual_time*3) % 8]
 func _draw() -> void:
 	if show_range:
 		draw_circle(Vector2.ZERO,SCHOLARSHIP_RADIUS,Color(0.40,0.78,0.52,0.09))

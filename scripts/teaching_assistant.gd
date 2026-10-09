@@ -77,6 +77,7 @@ func _process(delta:float) -> void:
    if student.reserve_teacher(self):
     target=student
     state="approach"
+    post.point_at(student.global_position)
     return
   return
  if not valid_target():

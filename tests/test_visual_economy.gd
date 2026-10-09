@@ -39,7 +39,7 @@ func run() -> void:
 		check(slot.occupied and slot.tower.tower_type == "economy" and main.game.gold == 1400,"Real Study build click")
 		check(not main.ui.build_menu.visible,"Build closes radial")
 		await click_at(slot.global_position)
-		check(main.ui.specialization_panel.visible and not main.ui.upgrade_button.visible,"Real Study banner with three choices")
+		check(main.ui.specialization_panel.visible and not main.ui.upgrade_button.visible,"Real Study banner with two choices")
 		await capture(scene+"-study")
 		var position_before: Vector2 = slot.tower.global_position
 		await click_at(main.ui.specialization_buttons[1].get_global_rect().get_center())
@@ -52,17 +52,17 @@ func run() -> void:
 		await click_at(slot.global_position)
 		await click_at(main.ui.banner_sell.get_global_rect().get_center())
 		check(not slot.occupied and main.game.gold == 1390,"Real Office sale refunds110")
-		for branch_index in [0,2]:
+		for branch_index in [0]:
 			await click_at(slot.global_position)
 			await click_at(main.ui.study_button.get_global_rect().get_center())
 			await click_at(slot.global_position)
 			await click_at(main.ui.specialization_buttons[branch_index].get_global_rect().get_center())
 			var building = slot.tower
-			check(building.branch == ("library" if branch_index == 0 else "research"),"Actual branch button selects correct branch")
-			check(not building.show_range,"Library/Research no circle")
-			for frame_index in range(5):
+			check(building.branch == ("library" if branch_index == 0 else "scholarship"),"Actual branch button selects correct branch")
+			check(not building.show_range,"Library no circle")
+			for frame_index in range(9):
 				building.visual_time = float(frame_index) / 3.0
-				building.active_time = 0.45 if frame_index == 4 else 0.0
+				building.active_time = 0.45 if frame_index == 8 else 0.0
 				building._process(0)
 				check(building.frames[frame_index].get_size() == Vector2(360,320),"Identical frame canvas")
 				check(building.global_position == position_before and building.sprite.scale == Vector2.ONE*0.377,"Stable origin and scale")

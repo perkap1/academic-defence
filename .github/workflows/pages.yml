@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for test in test_rules test_v002 test_integration test_v003 test_map2_integration test_v004 test_v005 test_v006 test_v007 test_upgrades test_presentation test_unit_layout test_waterfall test_normal_animation test_assistant_banner test_economy test_bookworm test_map3 test_bookworm_combat test_progression test_map3_integration test_comic_book test_science_tower test_early_bookworms test_enemy_refresh test_tower_size; do
+          for test in test_rules test_v002 test_integration test_v003 test_map2_integration test_v004 test_v005 test_v006 test_v007 test_upgrades test_presentation test_unit_layout test_waterfall test_normal_animation test_assistant_banner test_economy test_bookworm test_map3 test_bookworm_combat test_progression test_map3_integration test_comic_book test_science_tower test_early_bookworms test_enemy_refresh test_tower_size test_building_refresh; do
             Godot_v4.4.1-stable_linux.x86_64 --headless --audio-driver Dummy --path . --script "res://tests/$test.gd"
           done
       - name: Export same game for Web

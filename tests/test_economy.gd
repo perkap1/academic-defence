@@ -24,7 +24,7 @@ func run() -> void:
 		check(building.position == slot.position, "Build stays on slot")
 		main.select_slot(slot)
 		check(main.ui.tower_banner.visible and not building.show_range, "Study uses common banner without range")
-		check(main.ui.specialization_buttons.size() == 3, "Three specialization choices")
+		check(main.ui.specialization_buttons.size() == 2, "Two specialization choices")
 		main.economy.complete_wave(1)
 		check(main.game.gold == 4915 and building.active_time > 0, "Study income and active frame")
 		main.economy.complete_wave(1)
@@ -44,16 +44,7 @@ func run() -> void:
 		main.update_ui()
 		check(main.ui.specialization_buttons[0].disabled and not main.specialize(slot, "research"), "Unaffordable specialization disabled")
 		main.game.gold = 5000
-		check(main.specialize(slot, "research"), "Research specialization")
-		building = slot.tower
-		for wave_id in range(4, 12):
-			var before: int = main.game.gold
-			var expected: int = mini(15 + (wave_id - 4) * 10, 65)
-			main.economy.complete_wave(wave_id)
-			check(main.game.gold - before == expected, "Research progression wave %d" % wave_id)
-			main.economy.complete_wave(wave_id)
-			check(main.game.gold - before == expected, "Research duplicate does not advance")
-		check(building.get_income() == 65 and building.get_next_income() == 65, "Research capped at 65")
+		check(not main.specialize(slot, "research"), "Removed branch cannot be purchased")
 		main.sell(slot)
 		var offices := []
 		for index in [0, 1]:

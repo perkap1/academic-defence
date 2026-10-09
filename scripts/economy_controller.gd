@@ -29,7 +29,6 @@ func complete_wave(wave_id: int) -> int:
 		var income: int = building.get_income()
 		total += income
 		building.show_income(income)
-		if building.branch == "research": building.research_payouts += 1
 	game.gold += total
 	if total > 0: game.changed.emit()
 	return total

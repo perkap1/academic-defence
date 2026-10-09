@@ -39,9 +39,9 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.014.2 — playable prototype.** Three maps (7, 12 and 15 waves), normal and PE students and The Bookworm on all three maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 unlocks after completing Map 2; two further world-map nodes remain locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
+**v0.015 — playable prototype.** Three maps (7, 12 and 15 waves), normal and PE students and The Bookworm on all three maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 unlocks after completing Map 2; two further world-map nodes remain locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.014.2.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.015.md` for the latest checks and `VERIFISERING.md` for earlier verification.
 
 ## Automatic publishing
 
@@ -93,7 +93,6 @@ Study Hall costs 100 KP and pays 15 KP after each completed wave. Select it to c
 
 - **Library:** 45 KP per wave.
 - **Scholarship Office:** 10 KP per wave, plus 5 KP when a student graduates within its 260 radius, capped at 50 bonus KP per wave. Overlapping Offices award each student only once; the cap resets when the next wave starts. Select an Office to see its radius.
-- **Research Institute:** starts at 15 KP per completed wave after specialization, increasing by 10 to a maximum of 65.
 
 All four use the common bottom banner, four calm idle frames and a short active frame with an income popup. Selling refunds 50% of the total investment: 50 KP for Study Hall, 110 KP for a specialization. Existing combat and maps are unchanged.
 

@@ -3,7 +3,7 @@ config_version=5
 
 [application]
 config/name="Academic Defence"
-config/version="0.014.2"
+config/version="0.015"
 config/icon="res://assets/ui/icon_reputation.png"
 boot_splash/image="res://assets/ui/icon_reputation.png"
 boot_splash/bg_color=Color(0.035, 0.07, 0.08, 1)
