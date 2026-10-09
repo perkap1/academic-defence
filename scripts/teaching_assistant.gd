@@ -58,7 +58,7 @@ func move_to(point:Vector2,delta:float) -> bool:
  animate(delta,"walk")
  return global_position.distance_to(point)<1
 func valid_target() -> bool:
- return is_instance_valid(target) and not target.done and target.teacher==self and target.global_position.distance_to(post.rally_point)<=post.work_radius+45 and target.global_position.distance_to(post.global_position)<=post.teaching_range
+ return is_instance_valid(target) and target.is_targetable() and target.teacher==self and target.global_position.distance_to(post.rally_point)<=post.work_radius+45 and target.global_position.distance_to(post.global_position)<=post.teaching_range
 func _process(delta:float) -> void:
  if not is_instance_valid(post) or post.game==null: return
  if post.game.finished:
@@ -73,7 +73,7 @@ func _process(delta:float) -> void:
   if cooldown>0: return
   # Route order makes reservation deterministic and exclusive across all posts.
   for student in post.map.get_students():
-   if student.done or student.global_position.distance_to(post.rally_point)>post.work_radius or student.global_position.distance_to(post.global_position)>post.teaching_range: continue
+   if not student.is_targetable() or student.global_position.distance_to(post.rally_point)>post.work_radius or student.global_position.distance_to(post.global_position)>post.teaching_range: continue
    if student.reserve_teacher(self):
     target=student
     state="approach"

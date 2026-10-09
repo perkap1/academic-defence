@@ -44,7 +44,7 @@ func _process(delta: float) -> void:
 	if not flight_frames.is_empty():
 		sprite.texture = flight_frames[0]
 		sprite.rotation = flight_time*12.0
-	if not is_instance_valid(target) or target.done:
+	if not is_instance_valid(target) or not target.is_targetable():
 		spent = true
 		queue_free()
 		return

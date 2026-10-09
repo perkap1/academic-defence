@@ -33,6 +33,9 @@ func configure(kind: String, sex: String = "boy") -> void:
 	slow_remaining = 0.0
 	slow_strength = 0.0
 
+func is_targetable()->bool:
+	return not done
+
 func apply_slow(duration: float = 2.0, strength: float = 0.30) -> void:
 	if done or duration <= 0:
 		return

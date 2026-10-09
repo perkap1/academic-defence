@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/snack_monster.gd" id="1"]
+
+[node name="SnackMonster" type="PathFollow2D"]
+rotates = false
+loop = false
+script = ExtResource("1")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -43)
+
+[node name="KnowledgeBar" type="ProgressBar" parent="."]
+offset_left = -28.0
+offset_top = -92.0
+offset_right = 28.0
+offset_bottom = -83.0
+mouse_filter = 2
+show_percentage = false

@@ -18,7 +18,7 @@ func _ready() -> void:
 	Artwork.image(header,"icon_reputation",Vector2(1420,54),Vector2(87,87))
 	Artwork.label(header,"v" + ProjectSettings.get_setting("application/config/version"),Vector2(1520,78),Vector2(108,30),22)
 	var note := Artwork.panel(root,Vector2(24,202),Vector2(778,116),true)
-	Artwork.label(note,"Velg bane · fullfør bane 2 for å åpne Bokruinene",Vector2(46,34),Vector2(690,28),20)
+	Artwork.label(note,"Velg bane \u00b7 Bokruinene er tilgjengelig fra start",Vector2(46,34),Vector2(690,28),20)
 	Artwork.label(note,"Skogsstien: 7 · Elvesvingene: 12 · Bokruinene: 15 bølger",Vector2(46,62),Vector2(690,23),17,Color("bbd8bf"))
 	for i in range(5):
 		var pos: Vector2 = LEVEL_POSITIONS[i] + Vector2(0,190)
@@ -66,6 +66,6 @@ func choose_level(index: int) -> bool:
 	return true
 
 func can_open_level(index: int) -> bool:
-	return index in [0,1] or (index == 2 and 2 in get_node("/root/Progression").completed_levels)
+	return index in [0,1,2]
 
 

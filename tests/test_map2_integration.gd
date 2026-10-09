@@ -19,7 +19,7 @@ func run() -> void:
 		check(not main.waves.active,"Map2 wave fully resolves")
 		if main.game.finished: break
 	check(main.game.won and main.waves.wave == 12,"Map2 ordinary-budget mixed strategy wins12waves")
-	check(main.game.graduated + main.game.escaped == 218,"Map2 accounts for218 students exactly once")
+	check(main.game.graduated + main.game.escaped == main.waves.counts.reduce(func(a,b):return a+b,0),"Map2 accounts for all students exactly once")
 	check(main.map.towers.get_child_count() == 8,"Strategy uses only eight legal slots")
 	main.free()
 	main = packed.instantiate()

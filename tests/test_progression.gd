@@ -18,9 +18,9 @@ func run() -> void:
 	progress.bookworm_seen = false
 	var world = load("res://scenes/world_map.tscn").instantiate()
 	root.add_child(world)
-	check(not world.can_open_level(2),"Map3 initially locked")
+	check(world.can_open_level(2),"Map3 available from start")
 	progress.complete_level(1)
-	check(not world.can_open_level(2),"Map1 does not unlock Map3")
+	check(world.can_open_level(2),"Map3 remains available")
 	var main = load("res://scenes/main_map2.tscn").instantiate()
 	root.add_child(main)
 	main.game.finish(true)

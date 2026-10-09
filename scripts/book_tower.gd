@@ -85,7 +85,7 @@ func _process(delta: float) -> void:
 	var nearest = null
 	var closest := teaching_range
 	for student in map.get_students():
-		if not is_instance_valid(student) or student.done:
+		if not is_instance_valid(student) or not student.is_targetable():
 			continue
 		var distance := global_position.distance_to(student.global_position)
 		if distance <= closest:
