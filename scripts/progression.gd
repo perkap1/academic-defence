@@ -31,5 +31,5 @@ func load_progress() -> void:
 	if config.load(save_path) != OK: return
 	completed_levels.clear()
 	for level in config.get_value("progress","completed_levels",[]):
-		if level is int and level >= 1 and level <= 3: completed_levels.append(level)
+		if level is int and level >= 1 and level <= 4: completed_levels.append(level)
 	bookworm_seen = bool(config.get_value("progress","bookworm_seen",false))

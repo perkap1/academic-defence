@@ -28,7 +28,7 @@ func _ready() -> void:
 		choice.size = Vector2(94,94)
 		choice.focus_mode = Control.FOCUS_NONE
 		choice.disabled = not can_open_level(i)
-		choice.tooltip_text = ["Bane 1 · Skogsstien","Bane 2 · Elvesvingene","Bane 3 · Bokruinene"][i] if can_open_level(i) else ("Fullfør bane 2 for å åpne Bokruinene" if i == 2 else "Bane %d er låst" % (i+1))
+		choice.tooltip_text = ["Bane 1 · Skogsstien","Bane 2 · Elvesvingene","Bane 3 · Bokruinene","Level 4 - Autumn Campus"][i] if can_open_level(i) else ("Fullf\u00f8r bane 3 for \u00e5 \u00e5pne Autumn Campus" if i==3 else "Bane %d er l\u00e5st" % (i+1))
 		for state in ["normal","hover","pressed","disabled","focus"]:
 			choice.add_theme_stylebox_override(state,StyleBoxEmpty.new())
 		root.add_child(choice)
@@ -39,8 +39,9 @@ func _ready() -> void:
 			choice.mouse_exited.connect(func(): picture.modulate = Color.WHITE)
 			choice.pressed.connect(choose_level.bind(i))
 			var plate := Artwork.panel(root,pos+Vector2(-154,64),Vector2(308,112),true)
-			var title := Artwork.label(plate,["1 · Skogsstien","2 · Elvesvingene","3 · Bokruinene"][i],Vector2(43,38),Vector2(227,34),23)
+			var title := Artwork.label(plate,["1 · Skogsstien","2 · Elvesvingene","3 · Bokruinene","4 - Autumn Campus"][i],Vector2(43,38),Vector2(227,34),23)
 			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			if i==3:title.add_theme_font_size_override("font_size",19)
 		else:
 			var title := Artwork.label(root,"%d · LÅST" % (i+1),pos+Vector2(-79,54),Vector2(158,30),20,Color("e0dac6"))
 			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -62,10 +63,10 @@ func _draw() -> void:
 func choose_level(index: int) -> bool:
 	if not can_open_level(index):
 		return false
-	get_tree().change_scene_to_file(["res://scenes/main.tscn","res://scenes/main_map2.tscn","res://scenes/main_map3.tscn"][index])
+	get_tree().change_scene_to_file(["res://scenes/main.tscn","res://scenes/main_map2.tscn","res://scenes/main_map3.tscn","res://scenes/main_map4.tscn"][index])
 	return true
 
 func can_open_level(index: int) -> bool:
-	return index in [0,1,2]
+	return index in [0,1,2] or (index==3 and 3 in get_node("/root/Progression").completed_levels)
 
 

@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="Script" path="res://scripts/map4.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/map4.png" id="2"]
+[node name="Map4" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1")
+[node name="Background" type="Sprite2D" parent="."]
+texture_filter = 1
+z_index = -10
+texture = ExtResource("2")
+centered = false
+[node name="BuildSlots" type="Node2D" parent="."]
+z_index = -1
+[node name="UpperPath" type="Path2D" parent="."]
+y_sort_enabled = true
+[node name="LowerPath" type="Path2D" parent="."]
+y_sort_enabled = true
+[node name="Towers" type="Node2D" parent="."]
+y_sort_enabled = true
+[node name="Projectiles" type="Node2D" parent="."]
+z_index = 5
+[node name="Effects" type="Node2D" parent="."]
+z_index = 6

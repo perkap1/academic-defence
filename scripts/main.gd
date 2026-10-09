@@ -15,6 +15,7 @@ func _ready() -> void:
 	waves.configure(map, game, student_resolved)
 	economy.configure(map,game,waves)
 	waves.wave_started.connect(economy.begin_wave)
+	if map.level_id==4:waves.wave_started.connect(func(_id):ui.show_route_notice(waves.get_route_notice()))
 	for slot in map.slots.get_children():
 		slot.build_requested.connect(select_slot)
 	game.changed.connect(update_ui)

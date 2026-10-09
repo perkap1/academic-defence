@@ -39,9 +39,9 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.016 — playable prototype.** Three maps (7, 12 and 15 waves), normal and PE students and The Bookworm on all three maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; two further world-map nodes remain locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
+**v0.017 — playable prototype.** Four maps (7, 12, 15 and 17 waves), normal and PE students and The Bookworm on all three maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; Map 5 remains locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.016.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.017.md` for the latest checks and `VERIFISERING.md` for earlier verification.
 
 ## Automatic publishing
 
@@ -110,6 +110,10 @@ The supplied original sheets replace Book Tower art at all three levels. Eight c
 
 Projectiles use one supplied book frame, centered and spun in Godot at 12 radians/second with nearest filtering. Targeting, flight speed, one-spend collision, Knowledge, upgrade costs/stats and selling are preserved. Every fifth Level 3 book remains Golden and deals twice the normal Knowledge; Bookworm shielding still removes only one book per hit. No Aseprite was used; earlier assets remain in the project.
 
-## v0.016 - The Snack Monster
+## v0.017 - The Snack Monster
 
-Snack Monster appears from wave 5 on Map 2 and wave 4 on Map 3. He moves at 70% of normal speed, needs four times the teaching and takes one immune snack break lasting two active seconds at 50% Knowledge. Afterwards Knowledge becomes 25%. Snack enemies are added to the existing wave mix. Maps 4 and 5 remain locked.
+Snack Monster appears from wave 5 on Map 2 and wave 4 on Map 3. He moves at 70% of normal speed, needs four times the teaching and takes one immune snack break lasting two active seconds at 50% Knowledge. Afterwards Knowledge becomes 25%. Snack enemies are added to the existing wave mix. Autumn Campus unlocks after Map 3; Map 5 remains locked.
+
+## Autumn Campus (v0.017)
+
+The supplied 1672x941 map is used unchanged. Fourteen slots follow the painted stone circles: 5 above the upper road, 4 between the roads and 5 below the lower road. Independent upper/lower curves never merge. Waves 3/9/15 use upper only, 6/12 lower only, and all other waves use both. The final wave has three pulses of tanks/shields followed by faster students. Existing tower, economy and enemy behavior is retained. Completing Map 3 unlocks Autumn Campus; completion of all 17 waves is saved.

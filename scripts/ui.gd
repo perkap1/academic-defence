@@ -98,7 +98,7 @@ func _ready() -> void:
 	bookworm_tutorial.hide()
 
 func configure_map(level_id: int) -> void:
-	if level_id == 3: instruction_panel.position = Vector2(860,202)
+	if level_id in [3,4]: instruction_panel.position = Vector2(860,202)
 
 func show_bookworm_tutorial() -> void:
 	bookworm_tutorial.show()
@@ -431,3 +431,19 @@ func show_result(won: bool, game, wave: int, total: int = 7) -> void:
 
 
 
+
+var route_notice:Control
+var route_notice_generation:=0
+func show_route_notice(text:String)->void:
+	if not is_instance_valid(route_notice):
+		route_notice=Artwork.panel(instruction_panel.get_parent(),Vector2(550,160),Vector2(570,105),true)
+		route_notice.z_index=10
+		var caption=Artwork.label(route_notice,"",Vector2(35,32),Vector2(500,35),23)
+		caption.name="Caption"
+		caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	route_notice.get_node("Caption").text=text
+	route_notice.show()
+	route_notice_generation+=1
+	var generation=route_notice_generation
+	get_tree().create_timer(2.2,false).timeout.connect(func():
+		if is_instance_valid(route_notice) and generation==route_notice_generation:route_notice.hide())

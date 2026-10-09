@@ -41,6 +41,15 @@ func configure(level, manager, resolved_callback: Callable) -> void:
 		bookworm_counts = [0,0,0,2,3,3,5,5,7,6,8,8,10,10,12]
 		intervals = [1.8,1.65,1.55,1.5,1.45,1.4,1.35,1.3,1.25,1.2,1.15,1.1,1.05,1.0,0.95]
 
+	elif level.level_id == 4:
+		counts=[6,8,10,12,20,23,26,29,32,34,37,40,43,46,49,53,64]
+		pe_counts=[0,1,2,2,4,5,6,7,8,8,9,10,11,12,13,14,18]
+		bookworm_counts=[1,2,3,3,6,7,8,9,10,11,12,13,15,17,18,20,24]
+		snack_counts=[0,1,1,1,2,3,3,4,4,5,5,6,6,7,7,8,10]
+		# Counts below include snacks already; the common addition retains earlier maps.
+		for i in range(counts.size()):counts[i]-=snack_counts[i]
+		intervals=[1.8,1.65,1.6,1.55,1.45,1.4,1.35,1.3,1.25,1.2,1.15,1.1,1.05,1.0,0.95,0.9,0.8]
+
 	for i in range(counts.size()): counts[i]+=snack_counts[i]
 
 func start_wave() -> bool:
@@ -65,7 +74,7 @@ func _process(delta: float) -> void:
 		# Visual variants are independent of the evenly distributed wave mix.
 		student.configure(kind, "boy" if randi() % 2 == 0 else "girl")
 		var paths: Array = map.get_routes()
-		var path: Path2D = paths[spawn_index % paths.size()]
+		var path: Path2D = paths[get_spawn_route(spawn_index)]
 		spawn_index += 1
 		student.resolved.connect(on_student_resolved)
 		path.add_child(student)
@@ -75,9 +84,16 @@ func _process(delta: float) -> void:
 		students.append(student)
 		remaining -= 1
 		countdown += intervals[wave - 1]
+		if map.level_id==4 and wave==17 and spawn_index in [14,35]:countdown+=3.0
 		state_changed.emit()
 
 func get_spawn_kind(index:int)->String:
+	if map.level_id==4 and wave==17:
+		var finale:Array=[]
+		for mix in [[2,6,4,2],[3,8,6,4],[5,10,8,6]]:
+			for kind in range(4):
+				for i in range(mix[kind]):finale.append(["snack","bookworm","pe","normal"][kind])
+		return finale[index]
 	var total:int=counts[wave-1]
 	var snacks:int=snack_counts[wave-1]
 	if int((index+1)*snacks/float(total))>int(index*snacks/float(total)):return "snack"
@@ -103,3 +119,13 @@ func stop() -> void:
 	active = false
 	remaining = 0
 	state_changed.emit()
+
+func get_spawn_route(index:int)->int:
+	if map.level_id==4:
+		if wave in [3,9,15]:return 0
+		if wave in [6,12]:return 1
+	return index%map.get_routes().size()
+func get_route_notice()->String:
+	if wave in [3,9,15]:return "UPPER PATH ONLY!"
+	if wave in [6,12]:return "LOWER PATH ONLY!"
+	return "BOTH PATHS!"
