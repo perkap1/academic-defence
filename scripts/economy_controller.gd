@@ -42,7 +42,7 @@ func student_graduated(student) -> void:
 	var chosen
 	var distance := INF
 	for building in buildings():
-		if building.branch != "scholarship" or building.wave_bonus >= 40: continue
+		if building.branch != "scholarship" or building.wave_bonus >= building.get_wave_cap(): continue
 		var candidate_distance: float = building.global_position.distance_to(student.global_position)
 		if candidate_distance <= building.SCHOLARSHIP_RADIUS and candidate_distance < distance:
 			chosen = building
@@ -52,6 +52,6 @@ func student_graduated(student) -> void:
 	game.gold += 5
 	chosen.stats.add("kp",5)
 	chosen.stats.add("rewarded")
-	if chosen.wave_bonus == 5: chosen.stats.add("waves")
+	chosen.stats.record_income_wave(current_wave)
 	chosen.show_income(5)
 	game.changed.emit()

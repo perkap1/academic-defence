@@ -46,7 +46,7 @@ func try_clear_site(slot) -> bool:
 func try_upgrade(slot) -> bool:
 	if finished or get_tree().paused or not is_instance_valid(slot) or not slot.occupied or not is_instance_valid(slot.tower): return false
 	var tower = slot.tower
-	if tower.game != self or tower.is_queued_for_deletion() or tower.tower_type not in ["book","blackboard"]: return false
+	if tower.game != self or tower.is_queued_for_deletion() or tower.tower_type not in ["book","blackboard","economy"]: return false
 	var cost: int = tower.get_upgrade_cost()
 	if cost <= 0 or gold < cost: return false
 	if not tower.upgrade_level(): return false
@@ -58,8 +58,9 @@ func try_specialize(slot, branch: String) -> bool:
 	if finished or get_tree().paused or not is_instance_valid(slot) or not slot.occupied or not is_instance_valid(slot.tower): return false
 	var building = slot.tower
 	if building.game != self or building.is_queued_for_deletion() or building.tower_type != "economy": return false
-	if gold < building.SPECIALIZATION_COST or not building.specialize(branch): return false
-	gold -= building.SPECIALIZATION_COST
+	var cost: int = building.get_specialization_cost(branch)
+	if cost <= 0 or gold < cost or not building.specialize(branch): return false
+	gold -= cost
 	changed.emit()
 	return true
 

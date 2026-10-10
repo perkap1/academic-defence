@@ -3,7 +3,10 @@ var stats = preload("res://scripts/building_stats.gd").new()
 const Artwork = preload("res://scripts/economy_artwork.gd")
 const BRANCHES := ["library","scholarship"]
 const NAMES := {"study":"Study Hall","library":"Library","scholarship":"Scholarship Office"}
-const SPECIALIZATION_COST := 140
+const SPECIALIZATION_COSTS := {"library":120,"scholarship":150}
+const IDLE_FPS := 3.0
+const ACTIVE_FPS := 6.0
+var level := 1
 const SCHOLARSHIP_RADIUS := 260.0
 var tower_type := "economy"
 var branch := "study"
@@ -49,17 +52,32 @@ func specialize(choice: String) -> bool:
 	if branch != "study" or choice not in BRANCHES: return false
 	branch = choice
 	stats.upgrade(NAMES[choice])
-	total_invested += SPECIALIZATION_COST
+	total_invested += SPECIALIZATION_COSTS[choice]
 	visual_time = 0.0
 	active_time = 0.0
 	apply_artwork()
 	queue_redraw()
 	return true
-func get_display_name() -> String: return NAMES[branch]
+func get_display_name() -> String:
+	if level == 2: return "Improved Library" if branch == "library" else "Expanded Scholarship Program"
+	return NAMES[branch]
+func get_specialization_cost(choice: String) -> int: return SPECIALIZATION_COSTS.get(choice,0)
+func get_upgrade_cost() -> int:
+	if branch == "study" or level == 2: return 0
+	return 30 if branch == "library" else 50
+func get_wave_cap() -> int: return 50 if level == 2 else 40
+func upgrade_level() -> bool:
+	var cost := get_upgrade_cost()
+	if cost == 0: return false
+	level = 2
+	total_invested += cost
+	stats.upgrade(get_display_name())
+	for item in [sprite,base_sprite]: item.material.set_shader_parameter("gold_banner",true)
+	return true
 func get_sell_refund() -> int: return int(total_invested / 2)
 func get_income() -> int:
 	match branch:
-		"library": return 30
+		"library": return 35 if level == 2 else 30
 		"scholarship": return 0
 	return 15
 func get_next_income() -> int:
@@ -68,7 +86,7 @@ func set_range_visible(value: bool) -> void:
 	show_range = value and branch == "scholarship"
 	queue_redraw()
 func show_income(amount: int) -> void:
-	active_time = 0.3
+	active_time = float(frames.size()-8)/ACTIVE_FPS
 	sprite.texture = frames[8]
 	var popup := Label.new()
 	popup.text = "+%d KP" % amount
@@ -88,7 +106,7 @@ func show_income(amount: int) -> void:
 func _process(delta: float) -> void:
 	visual_time += delta
 	active_time = maxf(0,active_time-delta)
-	sprite.texture = frames[8+clampi(int((0.3-active_time)/0.3*(frames.size()-8)),0,frames.size()-9)] if active_time > 0 else frames[int(visual_time*3) % 8]
+	sprite.texture = frames[8+clampi(int((float(frames.size()-8)/ACTIVE_FPS-active_time)*ACTIVE_FPS),0,frames.size()-9)] if active_time > 0 else frames[int(visual_time*IDLE_FPS) % 8]
 func _draw() -> void:
 	if show_range:
 		draw_circle(Vector2.ZERO,SCHOLARSHIP_RADIUS,Color(0.40,0.78,0.52,0.09))

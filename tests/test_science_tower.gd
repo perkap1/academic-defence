@@ -35,7 +35,7 @@ func run()->void:
 		effect.elapsed=0;effect.advance((frame+0.02)*0.09)
 		check(effect.sprite.texture==effect.frames[frame],"Stable ordered cloud animation")
 	check(main.ui.blackboard_button.texture_normal.atlas.resource_path.ends_with("science_teacher_sheet.png"),"Radial menu uses new science art")
-	check(tower.get_sell_refund()==220,"Half of 100+120+220 investment")
+	check(tower.get_sell_refund()==235,"Half of 100+120+250 investment")
 	main.free()
 	print("SCIENCE TOWER: %d checks, %d failures"%[checks,failures])
 	quit(1 if failures else 0)

@@ -37,6 +37,8 @@ var tower_title: Label
 var tower_description: Label
 var sell_button: Button
 var upgrade_button: Button
+var upgrade_confirmation: ConfirmationDialog
+var upgrade_confirmation_slot
 var upgrade_caption: Label
 var tower_banner: Control
 var banner_title: Label
@@ -151,7 +153,28 @@ func create_tower_panel(root: Control) -> void:
 	upgrade_button.focus_mode = Control.FOCUS_NONE
 	tower_banner.add_child(upgrade_button)
 	upgrade_button.pressed.connect(func():
-		if is_instance_valid(tower_slot): upgrade_requested.emit(tower_slot))
+		request_upgrade())
+	upgrade_confirmation = ConfirmationDialog.new()
+	upgrade_confirmation.title = "Oppgrader bygning"
+	upgrade_confirmation.ok_button_text = "Oppgrader"
+	upgrade_confirmation.cancel_button_text = "Avbryt"
+	var confirm_style := StyleBoxFlat.new()
+	confirm_style.bg_color = Color("102b2b")
+	confirm_style.border_color = Color("d9ad48")
+	confirm_style.set_border_width_all(3)
+	confirm_style.set_content_margin_all(18)
+	upgrade_confirmation.add_theme_stylebox_override("panel",confirm_style)
+	upgrade_confirmation.add_theme_color_override("font_color",Color("fff1c4"))
+	upgrade_confirmation.get_label().add_theme_font_size_override("font_size",20)
+	for button in [upgrade_confirmation.get_ok_button(),upgrade_confirmation.get_cancel_button()]:
+		button.add_theme_font_size_override("font_size",20)
+		button.add_theme_stylebox_override("normal",confirm_style)
+		button.add_theme_color_override("font_color",Color("fff1c4"))
+	add_child(upgrade_confirmation)
+	upgrade_confirmation.confirmed.connect(func():
+		if is_instance_valid(upgrade_confirmation_slot) and upgrade_confirmation_slot == tower_slot:
+			upgrade_requested.emit(upgrade_confirmation_slot)
+		upgrade_confirmation_slot = null)
 	upgrade_caption = Artwork.label(tower_banner,"",Vector2(1345,104),Vector2(235,26),20)
 	upgrade_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	specialization_panel = Control.new()
@@ -162,7 +185,7 @@ func create_tower_panel(root: Control) -> void:
 	var names := ["Library","Scholarship\nOffice"]
 	for i in range(2):
 		var choice: String = choices[i]
-		var button := Artwork.plain_button(specialization_panel,names[i]+"\n%d KP" % preload("res://scripts/economy_building.gd").SPECIALIZATION_COST,Vector2(30+i*215,0),Vector2(200,84))
+		var button := Artwork.plain_button(specialization_panel,names[i]+"\n%d KP" % preload("res://scripts/economy_building.gd").SPECIALIZATION_COSTS[choice],Vector2(30+i*215,0),Vector2(200,84))
 		button.add_theme_font_size_override("font_size",17)
 		button.tooltip_text = ["+30 KP etter hver bølge","Ingen grunninntekt · +5 per fullført student innen radius, maks 40 KP/bølge"][i]
 		button.pressed.connect(func():
@@ -228,7 +251,9 @@ func refresh_statistics() -> void:
 	var rows: Array = tower.stats.rows(tower.tower_type,branch)
 	stats_heading.text = "STATISTIKK"
 	stats_stage_heading.text = "NÅ · %s" % tower.stats.stage_name
+	if branch=="scholarship" and tower.level==2: stats_stage_heading.text = "NÅ · Expanded Office"
 	if branch=="scholarship": rows.append(["wave","Inntekt denne wave (KP)"])
+	if branch=="library": rows.append(["rate","Inntekt per wave (KP)"])
 	for i in range(5):
 		for cell in stats_rows[i]: cell.visible = i<rows.size()
 		if i>=rows.size(): continue
@@ -236,21 +261,29 @@ func refresh_statistics() -> void:
 		stats_rows[i][0].text = rows[i][1]
 		stats_rows[i][1].text = "%.1f" % tower.stats.total.get(key,0) if key=="time" else str(int(tower.stats.total.get(key,0)))
 		stats_rows[i][2].text = "%.1f" % tower.stats.current().get(key,0) if key=="time" else str(int(tower.stats.current().get(key,0)))
+		if key=="rate":
+			stats_rows[i][1].text = "-"
+			stats_rows[i][2].text = str(tower.get_income())
 		if key=="wave":
 			stats_rows[i][1].text = "-"
-			stats_rows[i][2].text = "%d / 40" % tower.wave_bonus
+			stats_rows[i][2].text = "%d / %d" % [tower.wave_bonus,tower.get_wave_cap()]
 
 func refresh_tower_properties(game) -> void:
 	if not is_instance_valid(tower_slot) or not is_instance_valid(tower_slot.tower): return
 	var tower = tower_slot.tower
 	banner_description.show()
+	banner_sprite.material = null
 	specialization_panel.visible = false
 	upgrade_button.visible = true
 	banner_extra.visible = true
 	banner_description.size.x = 500
 	if tower.tower_type == "economy":
-		banner_title.text = tower.get_display_name()
+		banner_title.text = "%s · Level %d" % [tower.get_display_name(),tower.level]
 		banner_sprite.texture = tower.frames[0]
+		if tower.level == 2:
+			banner_sprite.material = tower.sprite.material.duplicate()
+			banner_sprite.material.set_shader_parameter("cut_y",-9999.0)
+			banner_sprite.material.set_shader_parameter("upper",false)
 		banner_sell.text = "SELL · +%d KP" % tower.get_sell_refund()
 		invested_label.text = "Invested: %d KP" % tower.total_invested
 		upgrade_button.visible = false
@@ -263,10 +296,20 @@ func refresh_tower_properties(game) -> void:
 				banner_description.size.x = 440
 				banner_extra.visible = false
 				specialization_panel.visible = true
-				for button in specialization_buttons: button.disabled = game.finished or game.gold < tower.SPECIALIZATION_COST
+				for i in range(specialization_buttons.size()): specialization_buttons[i].disabled = game.finished or game.gold < tower.get_specialization_cost(["library","scholarship"][i])
 			"scholarship":
 				banner_description.text = "Base income: 0 KP / wave\nBonus: +5 per student i radius"
-				banner_extra.text = "Wave bonus: %d / 40 KP\nRadius: %d" % [tower.wave_bonus,tower.SCHOLARSHIP_RADIUS]
+				banner_extra.text = "Wave bonus: %d / %d KP\nRadius: %d" % [tower.wave_bonus,tower.get_wave_cap(),tower.SCHOLARSHIP_RADIUS]
+		if tower.branch != "study":
+			upgrade_button.visible = true
+			var price: int = tower.get_upgrade_cost()
+			upgrade_button.disabled = price == 0 or game.gold < price or game.finished
+			upgrade_caption.text = "MAX LEVEL" if price == 0 else "Upgrade – %d KP" % price
+			var improvement := "+5 KP / wave" if tower.branch == "library" else "Max KP / wave: 40 → 50"
+			upgrade_button.tooltip_text = "MAX LEVEL" if price == 0 else "%d KP · %s" % [price,improvement]
+			if price > 0: banner_extra.text += ("\n" if not banner_extra.text.is_empty() else "")+improvement
+			upgrade_caption.modulate = Color("aaa59c") if upgrade_button.disabled else Color("bbf59d")
+			upgrade_button.queue_redraw()
 		return
 	if tower.tower_type == "assistant":
 		banner_title.text = "Teaching Assistant Post"
@@ -561,3 +604,14 @@ func show_route_notice(text:String)->void:
 	var generation=route_notice_generation
 	get_tree().create_timer(2.2,false).timeout.connect(func():
 		if is_instance_valid(route_notice) and generation==route_notice_generation:route_notice.hide())
+
+func request_upgrade() -> void:
+	if not is_instance_valid(tower_slot) or not is_instance_valid(tower_slot.tower): return
+	var tower = tower_slot.tower
+	if tower.tower_type != "economy":
+		upgrade_requested.emit(tower_slot)
+		return
+	if tower.get_upgrade_cost() <= 0: return
+	upgrade_confirmation_slot = tower_slot
+	upgrade_confirmation.dialog_text = "%s\n%d KP\n%s" % [tower.get_display_name(),tower.get_upgrade_cost(),"Inntekt: 30 → 35 KP / wave" if tower.branch == "library" else "Max KP / wave: 40 → 50"]
+	upgrade_confirmation.popup_centered(Vector2i(440,180))

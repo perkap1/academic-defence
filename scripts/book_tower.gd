@@ -35,7 +35,7 @@ func configure(level, manager) -> void:
 
 func get_upgrade_cost() -> int:
 	if level >= 3: return 0
-	return [100,200][level-1] if tower_type == "book" else [120,220][level-1]
+	return [100,220][level-1] if tower_type == "book" else [120,250][level-1]
 
 func get_display_name() -> String:
 	return ["Book Tower","Advanced Book Tower","Scholar Tower"][level-1] if tower_type == "book" else ["Science Tower","Advanced Science Tower","Master Science Tower"][level-1]

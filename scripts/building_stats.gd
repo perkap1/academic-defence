@@ -33,3 +33,12 @@ func rows(kind: String, branch: String = "") -> Array:
  if kind=="assistant":return [["knowledge","Kunnskap gitt"],["graduated","Elever uteksaminert"],["stopped","Elever stoppet"],["time","Undervisningstid (s)"]]
  if kind=="blackboard":return [["knowledge","Kunnskap gitt"],["graduated","Elever uteksaminert"],["hits","Elever truffet"],["slows","Slow påført"],["shots","Prosjektiler kastet"]]
  return [["knowledge","Kunnskap gitt"],["graduated","Elever uteksaminert"],["shots","Bøker kastet"],["hits","Treffsikre kast"],["shields","Bokskjold fjernet"]]
+
+func record_income_wave(wave_id: int) -> void:
+ if current().get("_income_wave",-1) == wave_id: return
+ current()["_income_wave"] = wave_id
+ current()["waves"] = current().get("waves",0)+1
+ if total.get("_income_wave",-1) != wave_id:
+  total["_income_wave"] = wave_id
+  total["waves"] = total.get("waves",0)+1
+ changed.emit()

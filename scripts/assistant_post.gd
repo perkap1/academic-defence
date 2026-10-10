@@ -1,5 +1,7 @@
 extends Node2D
 var stats = preload("res://scripts/building_stats.gd").new()
+const IDLE_FPS := 3.0
+const POINT_FPS := 6.0
 const Assistant = preload("res://scripts/teaching_assistant.gd")
 var tower_type := "assistant"
 func _init() -> void: stats.stage_name = "Post"
@@ -80,7 +82,7 @@ func _draw() -> void:
 func _process(delta:float) -> void:
  animation_time+=delta
  point_remaining=maxf(0,point_remaining-delta)
- sprite.texture=point_frames[clampi(int((0.3-point_remaining)*10),0,2)] if point_remaining>0 else idle_frames[int(animation_time*4)%4]
+ sprite.texture=point_frames[clampi(int((float(point_frames.size())/POINT_FPS-point_remaining)*POINT_FPS),0,point_frames.size()-1)] if point_remaining>0 else idle_frames[int(animation_time*IDLE_FPS)%4]
  marker.texture=marker_frames[int(animation_time*5)%5]
 func _exit_tree() -> void:
  for a in assistants:
@@ -93,5 +95,5 @@ func point_at(point:Vector2)->void:
  var direction=["right","down_right","down","down_left","left","up_left","up","up_right"][sector]
  point_direction=direction
  point_frames=preload("res://scripts/building_frames.gd").pointing(direction)
- point_remaining=0.3
+ point_remaining=float(point_frames.size())/POINT_FPS
  sprite.texture=point_frames[0]
