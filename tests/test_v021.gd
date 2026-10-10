@@ -65,4 +65,6 @@ func animation_checks(main,slot):
   building._process(0.2);check(building.sprite.texture==building.frames[0],"Economy idle holds at3FPS")
   building._process(0.14);check(building.sprite.texture==building.frames[1],"Economy idle advances at3FPS")
   building.show_income(5);building._process(0.1);check(building.sprite.texture==building.frames[8],"Income active first frame visible")
+  if branch != "scholarship":
+   building._process(0.1);check(building.active_time>0 and building.sprite.texture==building.frames[8],"Single active frame keeps readable hold")
   building._process(0.3);check(building.active_time==0,"Income active returns to idle")

@@ -6,6 +6,7 @@ const NAMES := {"study":"Study Hall","library":"Library","scholarship":"Scholars
 const SPECIALIZATION_COSTS := {"library":120,"scholarship":150}
 const IDLE_FPS := 3.0
 const ACTIVE_FPS := 6.0
+const ACTIVE_MIN_HOLD := 0.3
 var level := 1
 const SCHOLARSHIP_RADIUS := 260.0
 var tower_type := "economy"
@@ -86,7 +87,7 @@ func set_range_visible(value: bool) -> void:
 	show_range = value and branch == "scholarship"
 	queue_redraw()
 func show_income(amount: int) -> void:
-	active_time = float(frames.size()-8)/ACTIVE_FPS
+	active_time = maxf(ACTIVE_MIN_HOLD,float(frames.size()-8)/ACTIVE_FPS)
 	sprite.texture = frames[8]
 	var popup := Label.new()
 	popup.text = "+%d KP" % amount
@@ -106,7 +107,7 @@ func show_income(amount: int) -> void:
 func _process(delta: float) -> void:
 	visual_time += delta
 	active_time = maxf(0,active_time-delta)
-	sprite.texture = frames[8+clampi(int((float(frames.size()-8)/ACTIVE_FPS-active_time)*ACTIVE_FPS),0,frames.size()-9)] if active_time > 0 else frames[int(visual_time*IDLE_FPS) % 8]
+	sprite.texture = frames[8+clampi(int((maxf(ACTIVE_MIN_HOLD,float(frames.size()-8)/ACTIVE_FPS)-active_time)*ACTIVE_FPS),0,frames.size()-9)] if active_time > 0 else frames[int(visual_time*IDLE_FPS) % 8]
 func _draw() -> void:
 	if show_range:
 		draw_circle(Vector2.ZERO,SCHOLARSHIP_RADIUS,Color(0.40,0.78,0.52,0.09))
