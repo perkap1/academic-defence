@@ -29,9 +29,9 @@ func run() -> void:
  check(tower.cooldown==0.71 and tower.global_position==position_before and slot.tower==tower,"Preserve node, origin and cooldown")
  check(main.game.try_upgrade(slot),"Book upgrades to3")
  check(tower.level==3 and tower.knowledge_per_hit==30 and is_equal_approx(tower.fire_interval,0.65) and tower.teaching_range==312.0,"Book3 stats")
- check(main.game.gold==680 and tower.total_invested==320,"Charge150 once")
- check(not main.game.try_upgrade(slot) and main.game.gold==680,"Max rejects without charge")
- check(main.game.try_sell(slot) and main.game.gold==840,"Book3 refunds160")
+ check(main.game.gold==630 and tower.total_invested==370,"Charge200 once")
+ check(not main.game.try_upgrade(slot) and main.game.gold==630,"Max rejects without charge")
+ check(main.game.try_sell(slot) and main.game.gold==815,"Book3 refunds185")
  check(not main.game.try_upgrade(slot),"Reject sold slot")
  main.build(slot,"blackboard")
  tower=slot.tower
@@ -42,7 +42,7 @@ func run() -> void:
  check(tower.teaching_range==225 and tower.fire_interval==1.3,"Board range and attack interval preserved")
  main.game.gold=0
  check(not main.game.try_upgrade(slot),"Max no purchase")
- check(main.game.try_sell(slot) and main.game.gold==195,"Board3 refunds195")
+ check(main.game.try_sell(slot) and main.game.gold==220,"Board3 refunds220")
  main.game.gold=100
  main.build(slot,"book")
  check(not main.game.try_upgrade(slot) and main.game.gold==30 and slot.tower.level==1,"Reject unaffordable without mutation")
@@ -53,7 +53,7 @@ func run() -> void:
  check(main.upgrade(slot),"Selected tower upgrade action")
  check(main.ui.tower_title.text.contains("Advanced Book") and main.ui.sell_button.text.contains("85"),"Live banner and invested refund")
  main.game.gold=0;main.game.changed.emit()
- check(main.ui.upgrade_button.disabled and main.ui.upgrade_button.tooltip_text.contains("150"),"Cost visible while disabled")
+ check(main.ui.upgrade_button.disabled and main.ui.upgrade_button.tooltip_text.contains("200"),"Cost visible while disabled")
  main.clear_selection()
  check(not main.ui.tower_panel.visible and not slot.tower.show_range,"Deselect clears banner/range")
  check(not main.upgrade(slot),"Stale selection cannot buy")

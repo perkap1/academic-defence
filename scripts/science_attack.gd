@@ -10,6 +10,7 @@ var flight_duration:=0.0
 var impacted:=false
 var ground_position:=Vector2.ZERO
 var map
+var source_stats
 var hit_knowledge:=0
 var hit_radius:=0.0
 var hit_duration:=0.0
@@ -55,7 +56,11 @@ func impact()->void:
 				student.drop_frames=Presentation.science_orb_frames()
 				student.slow_indicator.texture=student.drop_frames[0]
 				student.slow_indicator.scale=Vector2.ONE*0.06
-				student.teach(hit_knowledge)
+				if source_stats:
+					source_stats.add("hits")
+					source_stats.add("slows")
+					source_stats.teach(student,hit_knowledge)
+				else: student.teach(hit_knowledge)
 	landed.emit()
 func advance(delta:float)->void:
 	if is_queued_for_deletion():return

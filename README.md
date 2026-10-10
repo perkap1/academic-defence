@@ -39,9 +39,9 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.019 — playable prototype.** Four maps (7, 12, 15 and 17 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; Map 5 remains locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
+**v0.020 — playable prototype.** Four maps (7, 12, 15 and 17 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; Map 5 remains locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.019.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.020.md` for the latest checks and `VERIFISERING.md` for earlier verification.
 
 ## Automatic publishing
 
@@ -64,9 +64,9 @@ Play the latest published version using the GitHub Pages link above. Local test 
 
 ## Tower upgrades (v0.008)
 
-Book Tower upgrades cost 100 and 150 KP: level 2 teaches 25 Knowledge every 0.8 seconds at range 286; Scholar Tower teaches 30 every 0.65 seconds at range 312. Every fifth Scholar letter is Golden and teaches 60 Knowledge.
+Book Tower upgrades cost 100 and 200 KP: level 2 teaches 25 Knowledge every 0.8 seconds at range 286; Scholar Tower teaches 30 every 0.65 seconds at range 312. Every fifth Scholar letter is Golden and teaches 60 Knowledge.
 
-Science upgrades cost 120 and 170 KP: level 2 teaches 19 Knowledge, with AoE radius 126 and 30% slow for 2.5 seconds. Master Blackboard teaches 22, with radius 147 and 40% slow for 2.5 seconds. Attack interval and tower range remain 1.3 seconds and 225. Slow refreshes without stacking; the strongest active slow remains until expiry.
+Science upgrades cost 120 and 220 KP: level 2 teaches 19 Knowledge, with AoE radius 126 and 30% slow for 2.5 seconds. Master Blackboard teaches 22, with radius 147 and 40% slow for 2.5 seconds. Attack interval and tower range remain 1.3 seconds and 225. Slow refreshes without stacking; the strongest active slow remains until expiry.
 
 Clicking ground or selecting another spot closes the compact tower banner and range circle. Upgrade price is always shown; insufficient funds and maximum level disable purchase.
 
@@ -91,10 +91,10 @@ Teaching Assistant Post uses the same fixed bottom banner as Book and Blackboard
 
 Study Hall costs 100 KP and pays 15 KP after each completed wave. Select it to choose one exclusive specialization for 140 KP:
 
-- **Library:** 45 KP per wave.
-- **Scholarship Office:** 10 KP per wave, plus 5 KP when a student graduates within its 260 radius, capped at 50 bonus KP per wave. Overlapping Offices award each student only once; the cap resets when the next wave starts. Select an Office to see its radius.
+- **Library:** 30 KP per wave.
+- **Scholarship Office:** no base income; 5 KP when a student graduates within its 260 radius, capped at 40 bonus KP per wave. Overlapping Offices award each student only once; the cap resets when the next wave starts. Select an Office to see its radius.
 
-All four use the common bottom banner, four calm idle frames and a short active frame with an income popup. Selling refunds 50% of the total investment: 50 KP for Study Hall, 110 KP for a specialization. Existing combat and maps are unchanged.
+All three use the common bottom banner and supplied idle/active animations with income popups. Selling refunds 50% of the total investment: 50 KP for Study Hall, 120 KP for a specialization. Existing combat and maps are unchanged.
 
 Verified 3,310 headless checks and 92 graphical checks, including real UI purchases on both maps, all student variants, income caps, wave deduplication and sale cleanup.
 
@@ -132,8 +132,15 @@ Blocked slots, numbered by the map's build-position list (starting at 1):
 | 3 | 1 school/books, 6 stone/rubble, 10 nature/logs, 13 school/trash, 14 stone/rocks |
 | 4 | 1 school/trash, 5 nature/logs, 7 stone/rocks (between routes), 12 nature/planks, 14 stone/rubble |
 
-Book upgrades: 100/150 KP. Science upgrades: 120/170 KP. Study Hall specialization: 140 KP. Base building prices and all stats/incomes/waves remain unchanged. Selling refunds half actual building investment; clearing is excluded. Teaching Assistant Post still has no upgrades.
+Book upgrades: 100/200 KP. Science upgrades: 120/220 KP. Study Hall specialization: 140 KP. Base building prices and all stats/incomes/waves remain unchanged. Selling refunds half actual building investment; clearing is excluded. Teaching Assistant Post still has no upgrades.
 
 ### v0.019
 
 Best 0-3 star ratings are saved per map, with backwards-compatible progress and sequential Victory stars. Science Tower now lobs existing chemical sprites along a 0.7-second parabola toward a fixed predicted path/lane position. AoE Knowledge and slow happen once at landing. Science slow turns only the Knowledge fill purple; expiry and Snack Break restore its normal color. Prices, stats, waves, clearing costs and unlock rules are unchanged.
+
+
+## v0.020 - Economy and individual building statistics
+
+Study Hall pays 15 KP/wave; Library pays 30. Scholarship Office has no base payout, pays 5 immediately per graduate in radius, capped at 40/wave. The nearest eligible Office receives each student's single bonus. Book upgrades cost 100/200 KP; Science costs 120/220; specialization stays 140. Refunds remain 50% of building investment, excluding clearing.
+
+Select any building and choose Stats for lifetime and current-level/specialization counters. Upgrades preserve totals and reset only the current stage. Counters use actual impacts, shield losses, graduation, assistant contact/teaching time and income events. Snack Monster's delivered teaching points count before its later recovery; immune hits and overkill do not. In-flight impacts are recorded when they happen, including after an upgrade; they retain their launch-time combat values. Records belong to the sold building, never to a replacement on the same slot. Stats reset on a new run and are not added to progression saves.

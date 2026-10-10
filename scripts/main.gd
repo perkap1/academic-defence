@@ -86,7 +86,7 @@ func specialize(slot, branch: String) -> bool:
 	if get_tree().paused or not is_instance_valid(slot) or slot != selected_tower_slot or slot.get_parent() != map.slots: return false
 	if not game.try_specialize(slot,branch): return false
 	slot.tower.set_range_visible(true)
-	ui.show_message("%s klar · passiv inntekt etter bølgen." % slot.tower.get_display_name(),false)
+	ui.show_message("%s klar · %s" % [slot.tower.get_display_name(),"+5 KP per uteksaminert elev i radius, maks 40/bølge." if branch=="scholarship" else "+30 KP etter hver bølge."],false)
 	return true
 
 func sell(slot) -> bool:

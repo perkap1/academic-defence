@@ -19,7 +19,6 @@ func buildings() -> Array:
 func begin_wave(wave_id: int) -> void:
 	if wave_id == current_wave: return
 	current_wave = wave_id
-	rewarded_students.clear()
 	for building in buildings(): building.wave_bonus = 0
 func complete_wave(wave_id: int) -> int:
 	if game.finished or wave_id <= 0 or paid_waves.has(wave_id): return 0
@@ -28,7 +27,10 @@ func complete_wave(wave_id: int) -> int:
 	for building in buildings():
 		var income: int = building.get_income()
 		total += income
-		building.show_income(income)
+		if income > 0:
+			building.stats.add("kp",income)
+			building.stats.add("waves")
+			building.show_income(income)
 	game.gold += total
 	if total > 0: game.changed.emit()
 	return total
@@ -40,7 +42,7 @@ func student_graduated(student) -> void:
 	var chosen
 	var distance := INF
 	for building in buildings():
-		if building.branch != "scholarship" or building.wave_bonus >= 50: continue
+		if building.branch != "scholarship" or building.wave_bonus >= 40: continue
 		var candidate_distance: float = building.global_position.distance_to(student.global_position)
 		if candidate_distance <= building.SCHOLARSHIP_RADIUS and candidate_distance < distance:
 			chosen = building
@@ -48,5 +50,8 @@ func student_graduated(student) -> void:
 	if not is_instance_valid(chosen): return
 	chosen.wave_bonus += 5
 	game.gold += 5
+	chosen.stats.add("kp",5)
+	chosen.stats.add("rewarded")
+	if chosen.wave_bonus == 5: chosen.stats.add("waves")
 	chosen.show_income(5)
 	game.changed.emit()

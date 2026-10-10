@@ -1,5 +1,6 @@
 extends Node2D
 
+var source_stats
 var target
 var knowledge := 20
 var speed := 640.0
@@ -52,7 +53,9 @@ func _process(delta: float) -> void:
 	var distance := global_position.distance_to(destination)
 	if distance <= speed * delta + 8:
 		spent = true
-		target.teach(knowledge)
+		if source_stats:
+			if source_stats.teach(target,knowledge): source_stats.add("hits")
+		else: target.teach(knowledge)
 		queue_free()
 	else:
 		global_position = global_position.move_toward(destination, speed * delta)

@@ -46,6 +46,13 @@ var banner_sprite: TextureRect
 var banner_sell: Button
 var invested_label: Label
 var tower_slot
+var stats_mode := false
+var banner_background: NinePatchRect
+var stats_panel: Control
+var stats_button: Button
+var stats_rows := []
+var stats_heading: Label
+var stats_stage_heading: Label
 var level_label: Label
 var clear_menu: Control
 var clear_button: Button
@@ -122,7 +129,7 @@ func create_tower_panel(root: Control) -> void:
 	tower_banner.size = Vector2(1624,168)
 	tower_banner.visible = false
 	root.add_child(tower_banner)
-	Artwork.panel(tower_banner,Vector2.ZERO,tower_banner.size,true)
+	banner_background = Artwork.panel(tower_banner,Vector2.ZERO,tower_banner.size,true)
 	banner_sprite = TextureRect.new()
 	banner_sprite.position = Vector2(35,5)
 	banner_sprite.size = Vector2(120,153)
@@ -131,7 +138,7 @@ func create_tower_panel(root: Control) -> void:
 	banner_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	banner_sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	tower_banner.add_child(banner_sprite)
-	banner_title = Artwork.label(tower_banner,"",Vector2(175,18),Vector2(880,32),26)
+	banner_title = Artwork.label(tower_banner,"",Vector2(175,18),Vector2(690,32),26)
 	banner_description = Artwork.label(tower_banner,"",Vector2(175,61),Vector2(500,68),20)
 	banner_extra = Artwork.label(tower_banner,"",Vector2(690,55),Vector2(405,84),20,Color("c0edca"))
 	banner_extra.add_theme_constant_override("line_spacing",-6)
@@ -157,11 +164,31 @@ func create_tower_panel(root: Control) -> void:
 		var choice: String = choices[i]
 		var button := Artwork.plain_button(specialization_panel,names[i]+"\n%d KP" % preload("res://scripts/economy_building.gd").SPECIALIZATION_COST,Vector2(30+i*215,0),Vector2(200,84))
 		button.add_theme_font_size_override("font_size",17)
-		button.tooltip_text = ["+45 KP etter hver bølge","+10 KP/bølge · +5 per fullført student innen radius, maks +50","+15 KP første bølge, deretter +10 til maks +65"][i]
+		button.tooltip_text = ["+30 KP etter hver bølge","Ingen grunninntekt · +5 per fullført student innen radius, maks 40 KP/bølge"][i]
 		button.pressed.connect(func():
 			if is_instance_valid(tower_slot): specialize_requested.emit(tower_slot,choice))
 		specialization_buttons.append(button)
 	specialization_panel.visible = false
+	stats_button = Artwork.plain_button(tower_banner,"Stats",Vector2(925,16),Vector2(160,35))
+	stats_button.add_theme_font_size_override("font_size",18)
+	stats_button.pressed.connect(func():
+		stats_mode = not stats_mode
+		if is_instance_valid(tower_slot): refresh_tower_banner(tower_slot.tower.game))
+	stats_panel = Control.new()
+	stats_panel.position = Vector2(175,53)
+	stats_panel.size = Vector2(910,125)
+	stats_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tower_banner.add_child(stats_panel)
+	stats_heading = Artwork.label(stats_panel,"",Vector2.ZERO,Vector2(385,20),17,Color("ffe58a"))
+	Artwork.label(stats_panel,"TOTALT",Vector2(395,0),Vector2(220,20),17,Color("ffe58a"))
+	stats_stage_heading = Artwork.label(stats_panel,"",Vector2(635,0),Vector2(270,20),17,Color("ffe58a"))
+	for i in range(5):
+		var cells := []
+		for column in range(3):
+			var cell = Artwork.label(stats_panel,"",Vector2([0,395,635][column],22+i*20),Vector2([385,220,270][column],19),17)
+			cells.append(cell)
+		stats_rows.append(cells)
+	stats_panel.hide()
 	tower_panel = tower_banner
 	tower_title = banner_title
 	tower_description = banner_description
@@ -173,6 +200,7 @@ func request_sell() -> void:
 func open_tower_panel(slot) -> void:
 	close_tower_panel()
 	tower_slot = slot
+	stats_mode = false
 	tower_panel = tower_banner
 	tower_title = banner_title
 	tower_description = banner_description
@@ -181,8 +209,41 @@ func open_tower_panel(slot) -> void:
 	tower_panel.visible = true
 
 func refresh_tower_banner(game) -> void:
+	refresh_tower_properties(game)
+	refresh_statistics()
+
+func refresh_statistics() -> void:
 	if not is_instance_valid(tower_slot) or not is_instance_valid(tower_slot.tower): return
 	var tower = tower_slot.tower
+	tower_banner.size.y = 224 if stats_mode else 168
+	tower_banner.position.y = 1115-tower_banner.size.y
+	banner_background.size = tower_banner.size
+	stats_panel.visible = stats_mode
+	stats_button.text = "Info" if stats_mode else "Stats"
+	if not stats_mode: return
+	banner_description.hide()
+	banner_extra.hide()
+	specialization_panel.hide()
+	var branch: String = tower.branch if tower.tower_type=="economy" else ""
+	var rows: Array = tower.stats.rows(tower.tower_type,branch)
+	stats_heading.text = "STATISTIKK"
+	stats_stage_heading.text = "NÅ · %s" % tower.stats.stage_name
+	if branch=="scholarship": rows.append(["wave","Inntekt denne wave (KP)"])
+	for i in range(5):
+		for cell in stats_rows[i]: cell.visible = i<rows.size()
+		if i>=rows.size(): continue
+		var key: String = rows[i][0]
+		stats_rows[i][0].text = rows[i][1]
+		stats_rows[i][1].text = "%.1f" % tower.stats.total.get(key,0) if key=="time" else str(int(tower.stats.total.get(key,0)))
+		stats_rows[i][2].text = "%.1f" % tower.stats.current().get(key,0) if key=="time" else str(int(tower.stats.current().get(key,0)))
+		if key=="wave":
+			stats_rows[i][1].text = "-"
+			stats_rows[i][2].text = "%d / 40" % tower.wave_bonus
+
+func refresh_tower_properties(game) -> void:
+	if not is_instance_valid(tower_slot) or not is_instance_valid(tower_slot.tower): return
+	var tower = tower_slot.tower
+	banner_description.show()
 	specialization_panel.visible = false
 	upgrade_button.visible = true
 	banner_extra.visible = true
@@ -204,8 +265,8 @@ func refresh_tower_banner(game) -> void:
 				specialization_panel.visible = true
 				for button in specialization_buttons: button.disabled = game.finished or game.gold < tower.SPECIALIZATION_COST
 			"scholarship":
-				banner_description.text = "Base income: +10 KP / wave\nBonus: +5 per student i radius"
-				banner_extra.text = "Wave bonus: %d / 50 KP\nRadius: %d" % [tower.wave_bonus,tower.SCHOLARSHIP_RADIUS]
+				banner_description.text = "Base income: 0 KP / wave\nBonus: +5 per student i radius"
+				banner_extra.text = "Wave bonus: %d / 40 KP\nRadius: %d" % [tower.wave_bonus,tower.SCHOLARSHIP_RADIUS]
 		return
 	if tower.tower_type == "assistant":
 		banner_title.text = "Teaching Assistant Post"
@@ -376,6 +437,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not clear_menu.get_global_rect().has_point(event.position): close_build_menu()
 
 func _process(delta: float) -> void:
+	if tower_banner.visible: refresh_statistics()
 	if message_time > 0:
 		message_time -= delta
 		if message_time <= 0:

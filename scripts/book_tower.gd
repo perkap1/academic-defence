@@ -1,4 +1,5 @@
 extends Node2D
+var stats = preload("res://scripts/building_stats.gd").new()
 
 const Presentation=preload("res://scripts/tower_presentation.gd")
 const ProjectileScene = preload("res://scenes/projectile.tscn")
@@ -34,7 +35,7 @@ func configure(level, manager) -> void:
 
 func get_upgrade_cost() -> int:
 	if level >= 3: return 0
-	return [100,150][level-1] if tower_type == "book" else [120,170][level-1]
+	return [100,200][level-1] if tower_type == "book" else [120,220][level-1]
 
 func get_display_name() -> String:
 	return ["Book Tower","Advanced Book Tower","Scholar Tower"][level-1] if tower_type == "book" else ["Science Tower","Advanced Science Tower","Master Science Tower"][level-1]
@@ -47,6 +48,7 @@ func upgrade_level() -> bool:
 	if cost == 0: return false
 	total_invested += cost
 	level += 1
+	stats.upgrade("Level %d" % level)
 	if tower_type == "book":
 		knowledge_per_hit = [20,25,30][level-1]
 		fire_interval = [1.0,0.8,0.65][level-1]
@@ -98,6 +100,8 @@ func _process(delta: float) -> void:
 		if level == 3: level3_shots += 1
 		var golden := level == 3 and level3_shots % 5 == 0
 		projectile.configure(nearest, knowledge_per_hit * (2 if golden else 1), golden)
+		projectile.source_stats = stats
+		stats.add("shots")
 		cooldown = fire_interval
 		animation_time = 0.4
 		update_sprite(0)

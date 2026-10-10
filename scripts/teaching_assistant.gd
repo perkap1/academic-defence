@@ -88,6 +88,7 @@ func _process(delta:float) -> void:
   var meeting:Vector2=target.global_position+Vector2(side*UnitLayout.MEETING_GAP,0)
   if move_to(meeting,delta):
    target.assistant_hold=true
+   post.stats.add("stopped")
    state="teach"
    elapsed=0.0
    knowledge_accumulator=0.0
@@ -100,11 +101,12 @@ func _process(delta:float) -> void:
   teaching_effect.global_position=(global_position+target.global_position)*0.5+Vector2(0,-67*UnitLayout.SCALE)
   teaching_effect.texture=effect_frames[int(animation_time*7)%5]
   var teaching_time:float=minf(delta,3.0-elapsed)
+  post.stats.add("time",teaching_time)
   elapsed+=teaching_time
   knowledge_accumulator+=teaching_time*5.0
   var amount:int=int(floor(knowledge_accumulator+0.00001))
   if amount>0:
    knowledge_accumulator-=amount
-   target.teach(amount)
+   post.stats.teach(target,amount)
   if state!="teach": return
   if not valid_target() or elapsed>=3.0: return_home()

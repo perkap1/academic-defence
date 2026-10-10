@@ -57,6 +57,8 @@ func _process(delta: float) -> void:
 	var center: Vector2 = nearest.predict_position(ScienceAttack.FLIGHT_TIME)
 	var swipe = create_attack_effect()
 	swipe.configure_impact(map,knowledge_per_hit,area_radius,slow_duration,slow_strength)
+	swipe.source_stats = stats
+	stats.add("shots")
 	map.effects.add_child(swipe)
 	swipe.global_position = center
 	swipe.launch_from(global_position+Vector2(0,-65))

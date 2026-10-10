@@ -36,10 +36,10 @@ func run() -> void:
 		check(main.game.gold == 4775 and building.get_sell_refund() == 120, "Specialization cost and refund")
 		check(not main.specialize(slot, "research") and main.game.gold == 4775, "Exclusive branch cannot charge twice")
 		main.economy.complete_wave(2)
-		check(main.game.gold == 4820, "Library pays 45")
-		check(main.sell(slot) and main.game.gold == 4940, "Sell returns half total investment")
+		check(main.game.gold == 4805, "Library pays 30")
+		check(main.sell(slot) and main.game.gold == 4925, "Sell returns half total investment")
 		main.economy.complete_wave(3)
-		check(main.game.gold == 4940, "Sold building has no income")
+		check(main.game.gold == 4925, "Sold building has no income")
 		main.build(slot, "economy")
 		main.select_slot(slot)
 		main.game.gold = 119
@@ -72,14 +72,14 @@ func run() -> void:
 			main.economy.student_graduated(student)
 			main.economy.student_graduated(student)
 			check(main.game.gold - before == 5, "Overlapping offices award student once")
-		check(offices[0].wave_bonus == 50 and offices[1].wave_bonus == 10, "Office cap 50; eligible second office handles overflow")
+		check(offices[0].wave_bonus == 40 and offices[1].wave_bonus == 20, "Office cap 40; eligible second office handles overflow")
 		students[0].global_position += Vector2(1000, 0)
 		main.economy.begin_wave(21)
 		var before: int = main.game.gold
 		main.economy.student_graduated(students[0])
 		check(main.game.gold == before and offices[0].wave_bonus == 0, "New wave resets cap; outside radius earns nothing")
 		main.economy.complete_wave(21)
-		check(main.game.gold == before + 20, "Two Offices base income 10 each")
+		check(main.game.gold == before, "Two Offices have no base income")
 		# Exercise production graduation hooks for Normal and both PE variants.
 		main.waves.wave = 0
 		main.waves.active = false
@@ -102,9 +102,9 @@ func run() -> void:
 		main.waves.wave = 30
 		main.waves.remaining = 0
 		main.waves.resolve_student(null)
-		check(main.game.gold == before + 65, "Real wave completion gives 45 plus two Office incomes")
+		check(main.game.gold == before + 45, "Real wave completion gives 45 with no Office base income")
 		main.waves.resolve_student(null)
-		check(main.game.gold == before + 65, "Wave event cannot repeat payout")
+		check(main.game.gold == before + 45, "Wave event cannot repeat payout")
 		main.select_slot(main.map.slots.get_child(0))
 		main.sell(main.map.slots.get_child(0))
 		main.sell(main.map.slots.get_child(1))

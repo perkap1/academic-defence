@@ -1,6 +1,8 @@
 extends Node2D
+var stats = preload("res://scripts/building_stats.gd").new()
 const Assistant = preload("res://scripts/teaching_assistant.gd")
 var tower_type := "assistant"
+func _init() -> void: stats.stage_name = "Post"
 var teaching_range := 260.0
 var work_radius := 110.0
 var show_range := false

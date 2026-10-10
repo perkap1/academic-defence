@@ -1,4 +1,5 @@
 extends Node2D
+var stats = preload("res://scripts/building_stats.gd").new()
 const Artwork = preload("res://scripts/economy_artwork.gd")
 const BRANCHES := ["library","scholarship"]
 const NAMES := {"study":"Study Hall","library":"Library","scholarship":"Scholarship Office"}
@@ -6,6 +7,7 @@ const SPECIALIZATION_COST := 140
 const SCHOLARSHIP_RADIUS := 260.0
 var tower_type := "economy"
 var branch := "study"
+func _init() -> void: stats.stage_name = "Study Hall"
 var total_invested := 100
 var wave_bonus := 0
 var show_range := false
@@ -46,6 +48,7 @@ func apply_artwork() -> void:
 func specialize(choice: String) -> bool:
 	if branch != "study" or choice not in BRANCHES: return false
 	branch = choice
+	stats.upgrade(NAMES[choice])
 	total_invested += SPECIALIZATION_COST
 	visual_time = 0.0
 	active_time = 0.0
@@ -56,8 +59,8 @@ func get_display_name() -> String: return NAMES[branch]
 func get_sell_refund() -> int: return int(total_invested / 2)
 func get_income() -> int:
 	match branch:
-		"library": return 45
-		"scholarship": return 10
+		"library": return 30
+		"scholarship": return 0
 	return 15
 func get_next_income() -> int:
 	return get_income()
