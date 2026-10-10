@@ -562,6 +562,8 @@ func update_state(game, waves) -> void:
 		activity_label.text = "%d på vei · %d venter · %d lært opp" % [waves.students.size(),waves.remaining,game.graduated]
 	else:
 		activity_label.text = "Bygg tårn, og start neste bølge når du er klar."
+	var reward_wave: int = waves.wave if waves.active or game.finished else mini(waves.wave+1,total)
+	activity_label.text += " · %sSTUDENT REWARDS: %d%%" % ["" if waves.active or game.finished else "NEXT ",game.get_student_reward_percent(maxi(1,reward_wave))]
 	if tower_banner.visible:
 		refresh_tower_banner(game)
 	if build_menu.visible:

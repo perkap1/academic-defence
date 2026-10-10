@@ -24,6 +24,7 @@ var done := false
 var animation_time := 0.0
 var direction := "side"
 var frames := {}
+var base_reward := 10
 var student_type := "normal"
 var variant := "boy"
 @onready var sprite: Sprite2D = $Sprite

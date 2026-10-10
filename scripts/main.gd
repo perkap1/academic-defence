@@ -125,8 +125,8 @@ func build(slot, tower_type: String = "book") -> void:
 
 func student_resolved(student, graduated: bool) -> void:
 	if graduated: economy.student_graduated(student)
-	map.show_completion(student, graduated)
-	game.resolve_student(graduated)
+	var paid: int = game.resolve_student(graduated,student.base_reward,waves.wave)
+	map.show_completion(student, graduated,paid)
 	waves.resolve_student(student)
 
 func on_wave_completed(last_wave: bool) -> void:

@@ -39,9 +39,9 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.021 — playable prototype.** Four maps (7, 12, 15 and 17 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; Map 5 remains locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
+**v0.022 — playable prototype.** Four maps (7, 12, 15 and 17 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; Map 5 remains locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.021.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.022.md` for the latest checks and `VERIFISERING.md` for earlier verification.
 
 ## Automatic publishing
 
@@ -155,3 +155,12 @@ The green arrow opens a confirmation for economic upgrades. Max level blocks rep
 Lifetime statistics survive each upgrade; current-stage statistics reset. Upgrading an Office mid-wave does not count the same wave twice in lifetime statistics. Stats show the Library income rate and current Office earnings/cap. Book L2-to-L3 costs 220 KP and Science L2-to-L3 costs 250 KP. Other combat values are unchanged.
 
 Economy idle and Assistant Desk idle run at 3 FPS. Office stamping and all eight Assistant pointing directions run at 6 FPS, returning to idle afterward. These visual clocks do not delay income, dispatch or combat. FPS constants live in economy_building.gd and assistant_post.gd.
+
+
+## v0.022 - Declining student rewards
+
+Regular graduation rewards use the current wave number: waves1-3 pay100%,4-6 pay90%,7-8 pay80%,9-10 pay70%,11-12 pay60%,13-14 pay50%,15-16 pay40%,17-18 pay30%,19 onward pay20%. The table is independent of map length. All four existing enemy types retain their current10KP base reward; the student property supports different base rewards without changing them in this update.
+
+Payouts are whole KP rounded to nearest, with integer hundredth rounding remainder carried between student rewards for the run. Thus ten1KP base graduates at90% earn9KP in total, avoiding repeated-rounding loss or gain. Fractional carry is not applied to passive income, Scholarship bonuses or the existing45KP wave completion reward.
+
+Graduation popups show actual paid KP. During waves the status line shows STUDENT REWARDS; intermissions show NEXT STUDENT REWARDS for the upcoming wave. Economy building incomes, prices, tower stats, routes and waves remain unchanged.

@@ -56,9 +56,10 @@ func nearest_road_point(point: Vector2) -> Vector2:
 			distance = point.distance_squared_to(candidate)
 	return nearest
 
-func show_completion(student, graduated: bool) -> void:
+func show_completion(student, graduated: bool, paid: int = 10) -> void:
 	if graduated:
 		var effect = GraduationEffect.new()
+		effect.reward = paid
 		effect.position = student.position
 		effects.add_child(effect)
 		return

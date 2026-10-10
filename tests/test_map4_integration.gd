@@ -1,9 +1,13 @@
 extends "res://tests/test_integration.gd"
 func run() -> void:
+	seed(2204) # Reproducible visual variants.
+	var layout=load("res://scripts/unit_layout.gd")
+	layout.lane_rng.seed=2204
+	layout.initialized=true # Lane placement uses its own RNG.
 	var main = load("res://scenes/main_map4.tscn").instantiate()
 	root.add_child(main)
 	main.process_mode = Node.PROCESS_MODE_DISABLED
-	var order := [5,7,6,8,1,10,2,11,3,12,0,9,4,13]
+	var order := [5,9,7,1,10,6,8,2,11,3,12,0,4,13]
 	for wave in range(17):
 		for index in order:
 			var slot = main.map.slots.get_child(index)

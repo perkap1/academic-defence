@@ -85,11 +85,21 @@ func try_sell(slot) -> bool:
 	changed.emit()
 	return true
 
-func resolve_student(was_graduated: bool) -> void:
+# Carry rounding error in integer hundredths; rounding never loses small rewards.
+var student_reward_remainder := 0
+static func get_student_reward_percent(wave_number: int) -> int:
+	if wave_number <= 3: return 100
+	if wave_number <= 6: return 90
+	return maxi(20,80-10*int((wave_number-7)/2))
+func resolve_student(was_graduated: bool, base_reward: int = 10, wave_number: int = 1) -> int:
 	if finished:
-		return
+		return 0
+	var paid := 0
 	if was_graduated:
-		gold += 10
+		var exact := maxi(0,base_reward)*get_student_reward_percent(wave_number)+student_reward_remainder
+		paid = maxi(0,int(floor(float(exact+50)/100.0)))
+		student_reward_remainder = exact-paid*100
+		gold += paid
 		graduated += 1
 	else:
 		lives = maxi(0, lives - 1)
@@ -97,6 +107,7 @@ func resolve_student(was_graduated: bool) -> void:
 	changed.emit()
 	if lives == 0:
 		finish(false)
+	return paid
 
 func reward_wave() -> void:
 	if not finished:
