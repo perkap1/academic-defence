@@ -111,13 +111,14 @@ func _process(delta: float) -> void:
 		if map.level_id==5 and wave==22 and spawn_index in [28,56,84]:countdown+=4.0
 		state_changed.emit()
 
-func get_spawn_kind(index:int)->String:
-	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").kind(wave,index)
-	if map.level_id==3 and wave>=13:
-		var source_wave:=wave
+func get_spawn_kind(index:int, wave_id:int=-1)->String:
+	var selected_wave:int=wave if wave_id<0 else wave_id
+	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").kind(selected_wave,index)
+	if map.level_id==3 and selected_wave>=13:
+		var source_wave:=selected_wave
 		var local_index:=index
-		if wave==15:
-			var route:=get_spawn_route(index)
+		if selected_wave==15:
+			var route:=get_spawn_route(index,selected_wave)
 			# Interleave each route's own mix until its exact quota is exhausted.
 			source_wave=14 if route==0 else 13
 			var lower_before:int=int(index*counts[12]/float(counts[14]))
@@ -126,32 +127,32 @@ func get_spawn_kind(index:int)->String:
 		var bag:Array=[]
 		for j in range(4):
 			for k in range(mix[j]):bag.append(["pe","bookworm","snack","pilot"][j])
-		# Coprime permutation spreads types across the wave and both entry streams.
+		# Coprime permutation spreads types across the selected_wave and both entry streams.
 		return bag[(local_index*11)%bag.size()]
 	if map.level_id>=3:
-		var planes:int=pilot_counts[wave-1]
-		var total:int=counts[wave-1]
+		var planes:int=pilot_counts[selected_wave-1]
+		var total:int=counts[selected_wave-1]
 		if int((index+1)*planes/float(total))>int(index*planes/float(total)):return "pilot"
 		index-=int(index*planes/float(total))
-	if map.level_id==4 and wave==17:
+	if map.level_id==4 and selected_wave==17:
 		var finale:Array=[]
 		for mix in [[2,6,4,2],[3,8,6,4],[5,10,8,6]]:
 			for kind in range(4):
 				for i in range(mix[kind]):finale.append(["snack","bookworm","pe","normal"][kind])
-		var planes:int=pilot_counts[wave-1]
+		var planes:int=pilot_counts[selected_wave-1]
 		# Pilot distribution above has already removed these indices.
 		for n in range(planes):finale.remove_at(finale.rfind("normal"))
 		return finale[index]
-	var total:int=counts[wave-1]-pilot_counts[wave-1]
-	var snacks:int=snack_counts[wave-1]
+	var total:int=counts[selected_wave-1]-pilot_counts[selected_wave-1]
+	var snacks:int=snack_counts[selected_wave-1]
 	if int((index+1)*snacks/float(total))>int(index*snacks/float(total)):return "snack"
 	var original_index:int=index-int(index*snacks/float(total))
 	var original_total:int=total-snacks
-	var special:int=pe_counts[wave-1]+bookworm_counts[wave-1]
+	var special:int=pe_counts[selected_wave-1]+bookworm_counts[selected_wave-1]
 	var before:int=int(original_index*special/float(original_total))
 	var after:int=int((original_index+1)*special/float(original_total))
 	if after==before:return "normal"
-	var books:int=bookworm_counts[wave-1]
+	var books:int=bookworm_counts[selected_wave-1]
 	return "bookworm" if int(after*books/float(special))>int(before*books/float(special)) else "pe"
 
 func resolve_student(student) -> void:
@@ -168,15 +169,16 @@ func stop() -> void:
 	remaining = 0
 	state_changed.emit()
 
-func get_spawn_route(index:int)->int:
-	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").route(wave,index)
+func get_spawn_route(index:int, wave_id:int=-1)->int:
+	var selected_wave:int=wave if wave_id<0 else wave_id
+	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").route(selected_wave,index)
 	if map.level_id==3:
-		if wave==13:return 1
-		if wave==14:return 0
-		if wave==15:return 1 if int((index+1)*counts[12]/float(counts[14]))>int(index*counts[12]/float(counts[14])) else 0
+		if selected_wave==13:return 1
+		if selected_wave==14:return 0
+		if selected_wave==15:return 1 if int((index+1)*counts[12]/float(counts[14]))>int(index*counts[12]/float(counts[14])) else 0
 	if map.level_id==4:
-		if wave in [3,9,15]:return 0
-		if wave in [6,12]:return 1
+		if selected_wave in [3,9,15]:return 0
+		if selected_wave in [6,12]:return 1
 	return index%map.get_routes().size()
 func get_route_notice()->String:
 	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").notice(wave)
@@ -188,3 +190,14 @@ func get_route_notice()->String:
 	if wave in [3,9,15]:return "UPPER PATH ONLY!"
 	if wave in [6,12]:return "LOWER PATH ONLY!"
 	return "BOTH PATHS!"
+
+func get_next_wave_preview() -> Dictionary:
+	var next_wave:=wave+1
+	if active or game==null or game.finished or next_wave>counts.size():return {}
+	var preview:Dictionary={}
+	for index in range(counts[next_wave-1]):
+		var entry:=get_spawn_route(index,next_wave)
+		var kind:=get_spawn_kind(index,next_wave)
+		if not preview.has(entry):preview[entry]={}
+		preview[entry][kind]=int(preview[entry].get(kind,0))+1
+	return preview

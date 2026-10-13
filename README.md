@@ -4,7 +4,7 @@
 
 # Academic Defence
 
-Latest version: **0.025** — The Final Exam.
+Latest version: **0.026** — Next-wave entrance previews.
 
 A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: ground students graduate at 100 Knowledge (Paper Plane Pilots require 150). This repository contains the existing project developed in this chat.
 
@@ -43,7 +43,7 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 **v0.025 — playable prototype.** Five maps (7, 12, 15, 17 and 22 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; The Final Exam unlocks after Map 4. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.025.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.026.md` for the latest checks and `VERIFISERING.md` for earlier verification.
 
 ## Automatic publishing
 
@@ -182,3 +182,9 @@ Graduation popups show actual paid KP. During waves the status line shows STUDEN
 - 22 authored waves introduce entries gradually, then mix all existing enemy types and four-entry pressure. Final wave has 108 enemies in four groups; no boss.
 - Map 5 unlocks after Map 4. Victory, best stars and saves include the fifth level.
 - From wave 4, Normal/PE/Bookworm base reward is 5 KP on every map, followed by the unchanged wave percentage and remainder-preserving rounding. Snack/Pilot and passive building income stay unchanged.
+
+## v0.026 — Next-wave entrance previews
+
+Golden pixel warning icons appear beside entrances used by the next wave, including wave1. Hover for exact per-type and total counts; touch to pin the panel, then touch again or elsewhere to close it. Panels include existing enemy sprites and remain within the play area. Icons do not overlap build-slot hit areas or move assistant rally points.
+
+Counts use the actual spawn-kind and route-selection functions with an explicit wave argument, without changing the active wave or consuming random numbers. The complete wave is counted, including later groups. Icons disappear when the wave starts, on game completion and after the last wave. All five maps are supported. Existing wave mixes, enemy stats, economy, pacing and route balances are unchanged.

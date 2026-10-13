@@ -9,10 +9,14 @@ var economy = preload("res://scripts/economy_controller.gd").new()
 @onready var game = $GameManager
 @onready var waves = $WaveManager
 @onready var ui = $UI
+var wave_preview
 var selected_tower_slot
 
 func _ready() -> void:
 	waves.configure(map, game, student_resolved)
+	wave_preview=preload("res://scripts/wave_preview.gd").new()
+	wave_preview.name="WavePreview"
+	ui.get_node("HUD").add_child(wave_preview)
 	economy.configure(map,game,waves)
 	waves.wave_started.connect(economy.begin_wave)
 	if map.level_id in [3,4,5]:waves.wave_started.connect(func(_id):ui.show_route_notice(waves.get_route_notice()))
@@ -65,6 +69,7 @@ func clear_selection() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if is_instance_valid(wave_preview) and wave_preview.has_icon_at(event.position):return
 		if not ui.tower_panel.visible or not ui.tower_panel.get_global_rect().has_point(event.position):
 			if is_instance_valid(selected_tower_slot) and selected_tower_slot.tower.tower_type=="assistant" and not game.finished and not get_tree().paused:
 				var clicked_slot := false
@@ -155,6 +160,7 @@ func on_ended(won: bool) -> void:
 	ui.show_result(won, game, waves.wave, waves.counts.size())
 
 func update_ui() -> void:
+	if is_instance_valid(wave_preview):wave_preview.refresh(map,waves)
 	ui.update_state(game, waves)
 	for slot in map.slots.get_children():
 		slot.affordable = game.gold >= game.TOWER_COST and not game.finished
