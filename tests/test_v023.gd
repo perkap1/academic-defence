@@ -5,6 +5,10 @@ func run():
  base.slow_indicator.free();base.free()
  if not ResourceLoader.exists("res://scenes/paper_plane_pilot.tscn"):
   check(false,"Paper Plane Pilot scene exists");finish();return
+ var art=load("res://scripts/pilot_frames.gd").create()
+ for i in range(9):
+  check(art.front[i].resource_path=="res://assets/enemies_v023/1_%d.png"%i,"Down movement uses front-facing pose")
+  check(art.back[i].resource_path=="res://assets/enemies_v023/2_%d.png"%i,"Up movement uses rear-facing pose")
  var main=load("res://scenes/main_map3.tscn").instantiate();root.add_child(main);main.process_mode=Node.PROCESS_MODE_DISABLED
  var pilot=load("res://scenes/paper_plane_pilot.tscn").instantiate();main.map.route.add_child(pilot)
  check(pilot.base_speed==102.0,"120 percent speed")

@@ -4,7 +4,7 @@ extends RefCounted
 static func create() -> Dictionary:
  var result={}
  for row in range(3):
-  var direction=["side","back","front"][row]
+  var direction=["side","front","back"][row]
   result[direction]=[]
   for i in range(9):result[direction].append(load("res://assets/enemies_v023/%d_%d.png"%[row,i]))
  return result
