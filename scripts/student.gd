@@ -40,6 +40,12 @@ func configure(kind: String, sex: String = "boy") -> void:
 	slow_sources.clear()
 	update_bar_status()
 
+func can_receive_attack(_kind: String) -> bool:
+	return is_targetable()
+
+func receive_attack(amount: int, kind: String) -> void:
+	if can_receive_attack(kind): teach(amount)
+
 func is_targetable()->bool:
 	return not done
 

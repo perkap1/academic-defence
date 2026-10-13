@@ -16,11 +16,11 @@ func upgrade(name: String) -> void:
  upgrade_events.append({"from":stages.size(),"to":name,"at_msec":Time.get_ticks_msec()})
  stages.append({})
  changed.emit()
-func teach(student, amount: int) -> bool:
- if not is_instance_valid(student) or not student.is_targetable() or amount<=0: return false
+func teach(student, amount: int, attack_kind: String = "ground") -> bool:
+ if not is_instance_valid(student) or not student.is_targetable() or amount<=0 or not student.can_receive_attack(attack_kind): return false
  var before: float = student.teaching_points if student.student_type=="snack" else student.knowledge
  var books: int = student.books if student.student_type=="bookworm" else 0
- student.teach(amount)
+ student.receive_attack(amount,attack_kind)
  var after: float = student.teaching_points if student.student_type=="snack" else student.knowledge
  add("knowledge",maxf(0,after-before))
  if student.student_type=="bookworm":add("shields",books-student.books)

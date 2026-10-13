@@ -51,7 +51,7 @@ func impact()->void:
 	impacted=true
 	if is_instance_valid(map):
 		for student in map.get_students():
-			if is_instance_valid(student) and student.is_targetable() and student.global_position.distance_to(global_position)<=hit_radius:
+			if is_instance_valid(student) and student.can_receive_attack("blackboard") and student.global_position.distance_to(global_position)<=hit_radius:
 				student.apply_slow(hit_duration,hit_strength,"science")
 				student.drop_frames=Presentation.science_orb_frames()
 				student.slow_indicator.texture=student.drop_frames[0]

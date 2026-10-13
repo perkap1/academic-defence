@@ -5,6 +5,8 @@ signal wave_completed(last_wave: bool)
 signal wave_started(wave_id: int)
 signal bookworm_introduced
 
+const PilotScene=preload("res://scenes/paper_plane_pilot.tscn")
+var pilot_counts:=[]
 const SnackScene=preload("res://scenes/snack_monster.tscn")
 var snack_counts:=[0,0,0,0,0,0,0]
 const StudentScene = preload("res://scenes/student.tscn")
@@ -52,6 +54,18 @@ func configure(level, manager, resolved_callback: Callable) -> void:
 
 	for i in range(counts.size()): counts[i]+=snack_counts[i]
 
+	# Replace ordinary students, keeping the early wave totals unchanged.
+	pilot_counts.resize(counts.size());pilot_counts.fill(0)
+	if level.level_id>=3:
+		var first_air_index:=4 if level.level_id==3 else 6
+		for i in range(first_air_index,counts.size()):pilot_counts[i]=1+int((i-first_air_index)/2)
+	if level.level_id==3:
+		# Finale mixes: PE / shield / snack / air. No normal students.
+		pe_counts[12]=12;bookworm_counts[12]=15;snack_counts[12]=5;pilot_counts[12]=5
+		pe_counts[13]=13;bookworm_counts[13]=16;snack_counts[13]=6;pilot_counts[13]=5
+		counts[14]=counts[12]+counts[13]
+		pe_counts[14]=25;bookworm_counts[14]=31;snack_counts[14]=11;pilot_counts[14]=10
+
 func start_wave() -> bool:
 	if active or game.finished or wave >= counts.size():
 		return false
@@ -70,7 +84,7 @@ func _process(delta: float) -> void:
 	countdown -= delta
 	while remaining > 0 and countdown <= 0:
 		var kind: String = get_spawn_kind(spawn_index)
-		var student = SnackScene.instantiate() if kind=="snack" else (BookwormScene.instantiate() if kind == "bookworm" else StudentScene.instantiate())
+		var student = PilotScene.instantiate() if kind=="pilot" else (SnackScene.instantiate() if kind=="snack" else (BookwormScene.instantiate() if kind == "bookworm" else StudentScene.instantiate()))
 		# Visual variants are independent of the evenly distributed wave mix.
 		student.configure(kind, "boy" if randi() % 2 == 0 else "girl")
 		var paths: Array = map.get_routes()
@@ -85,16 +99,40 @@ func _process(delta: float) -> void:
 		remaining -= 1
 		countdown += intervals[wave - 1]
 		if map.level_id==4 and wave==17 and spawn_index in [14,35]:countdown+=3.0
+		if map.level_id==3 and wave==15 and spawn_index in [24,50]:countdown+=3.0
 		state_changed.emit()
 
 func get_spawn_kind(index:int)->String:
+	if map.level_id==3 and wave>=13:
+		var source_wave:=wave
+		var local_index:=index
+		if wave==15:
+			var route:=get_spawn_route(index)
+			# Interleave each route's own mix until its exact quota is exhausted.
+			source_wave=14 if route==0 else 13
+			var lower_before:int=int(index*counts[12]/float(counts[14]))
+			local_index=lower_before if route==1 else index-lower_before
+		var mix=[pe_counts[source_wave-1],bookworm_counts[source_wave-1],snack_counts[source_wave-1],pilot_counts[source_wave-1]]
+		var bag:Array=[]
+		for j in range(4):
+			for k in range(mix[j]):bag.append(["pe","bookworm","snack","pilot"][j])
+		# Coprime permutation spreads types across the wave and both entry streams.
+		return bag[(local_index*11)%bag.size()]
+	if map.level_id>=3:
+		var planes:int=pilot_counts[wave-1]
+		var total:int=counts[wave-1]
+		if int((index+1)*planes/float(total))>int(index*planes/float(total)):return "pilot"
+		index-=int(index*planes/float(total))
 	if map.level_id==4 and wave==17:
 		var finale:Array=[]
 		for mix in [[2,6,4,2],[3,8,6,4],[5,10,8,6]]:
 			for kind in range(4):
 				for i in range(mix[kind]):finale.append(["snack","bookworm","pe","normal"][kind])
+		var planes:int=pilot_counts[wave-1]
+		# Pilot distribution above has already removed these indices.
+		for n in range(planes):finale.remove_at(finale.rfind("normal"))
 		return finale[index]
-	var total:int=counts[wave-1]
+	var total:int=counts[wave-1]-pilot_counts[wave-1]
 	var snacks:int=snack_counts[wave-1]
 	if int((index+1)*snacks/float(total))>int(index*snacks/float(total)):return "snack"
 	var original_index:int=index-int(index*snacks/float(total))
@@ -121,11 +159,20 @@ func stop() -> void:
 	state_changed.emit()
 
 func get_spawn_route(index:int)->int:
+	if map.level_id==3:
+		if wave==13:return 1
+		if wave==14:return 0
+		if wave==15:return 1 if int((index+1)*counts[12]/float(counts[14]))>int(index*counts[12]/float(counts[14])) else 0
 	if map.level_id==4:
 		if wave in [3,9,15]:return 0
 		if wave in [6,12]:return 1
 	return index%map.get_routes().size()
 func get_route_notice()->String:
+	if map.level_id==3:
+		if wave==13:return "LOWER PATH ONLY!"
+		if wave==14:return "UPPER PATH ONLY!"
+		if wave==15:return "FINAL WAVE - BOTH PATHS!"
+		return "BOTH PATHS!"
 	if wave in [3,9,15]:return "UPPER PATH ONLY!"
 	if wave in [6,12]:return "LOWER PATH ONLY!"
 	return "BOTH PATHS!"

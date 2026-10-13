@@ -52,7 +52,7 @@ func run()->void:
   check(waves.counts.size()==(12 if id==2 else 15),"Wave total unchanged")
   for w in range(waves.counts.size()):
    waves.wave=w+1
-   var tally={"normal":0,"pe":0,"bookworm":0,"snack":0}
+   var tally={"normal":0,"pe":0,"bookworm":0,"snack":0,"pilot":0}
    for i in range(waves.counts[w]): tally[waves.get_spawn_kind(i)]+=1
    check(tally.snack==waves.snack_counts[w],"Exact snack count wave %d map %d"%[w+1,id])
    check(tally.pe==waves.pe_counts[w] and tally.bookworm==waves.bookworm_counts[w],"Other types preserved")

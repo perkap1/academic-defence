@@ -49,13 +49,13 @@ func _process(delta: float) -> void:
 		spent = true
 		queue_free()
 		return
-	var destination: Vector2 = target.global_position + Vector2(0, -40)
+	var destination: Vector2 = target.global_position + Vector2(0, -75 if target.student_type=="pilot" else -40)
 	var distance := global_position.distance_to(destination)
 	if distance <= speed * delta + 8:
 		spent = true
 		if source_stats:
-			if source_stats.teach(target,knowledge): source_stats.add("hits")
-		else: target.teach(knowledge)
+			if source_stats.teach(target,knowledge,"book"): source_stats.add("hits")
+		else: target.receive_attack(knowledge,"book")
 		queue_free()
 	else:
 		global_position = global_position.move_toward(destination, speed * delta)

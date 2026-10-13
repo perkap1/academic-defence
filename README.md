@@ -4,7 +4,9 @@
 
 # Academic Defence
 
-A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: students graduate at 100 Knowledge. This repository contains the existing project developed in this chat.
+Latest version: **0.023** — The Paper Plane Pilot and Map 3 finale.
+
+A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: ground students graduate at 100 Knowledge (Paper Plane Pilots require 150). This repository contains the existing project developed in this chat.
 
 ## Controls
 
@@ -164,3 +166,11 @@ Regular graduation rewards use the current wave number: waves1-3 pay100%,4-6 pay
 Payouts are whole KP rounded to nearest, with integer hundredth rounding remainder carried between student rewards for the run. Thus ten1KP base graduates at90% earn9KP in total, avoiding repeated-rounding loss or gain. Fractional carry is not applied to passive income, Scholarship bonuses or the existing45KP wave completion reward.
 
 Graduation popups show actual paid KP. During waves the status line shows STUDENT REWARDS; intermissions show NEXT STUDENT REWARDS for the upcoming wave. Economy building incomes, prices, tower stats, routes and waves remain unchanged.
+
+## v0.023 — Paper Plane Pilot
+
+- Pilots fly along existing routes at 102 speed and require 150 Knowledge. Only Book Tower can target or teach them; Science and assistants ignore them.
+- The supplied artwork provides 4 flight, 2 hit and 3 defeat frames per direction, with right mirrored from left. A fixed canvas, elevated sprite and ground shadow keep flight separate from route position.
+- Pilots first appear in Map 3 wave 5 and Map 4 wave 7. Maps 1 and 2 are unchanged.
+- Map 3 wave 13: 37 enemies from Lower Path. Wave 14: 40 from Upper Path. Final wave: 77 total, exactly 37 lower and 40 upper, interleaved with short pauses between groups.
+- Graduation rewards, Book Tower statistics, Reputation, stars and saving retain the existing rules.
