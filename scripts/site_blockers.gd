@@ -5,6 +5,7 @@ const LAYOUTS := {
 	1: {0:"school_books",3:"nature_planks",8:"stone_rocks"},
 	2: {0:"school_trash",4:"nature_logs",7:"stone_rubble"},
 	3: {0:"school_books",5:"stone_rubble",9:"nature_logs",12:"school_trash",13:"stone_rocks"},
+	5: {0:"school_books",5:"school_trash",10:"stone_rocks",7:"stone_rubble",8:"nature_planks",11:"nature_logs",15:"school_books",17:"stone_rubble",19:"school_trash",20:"nature_logs"},
 	4: {0:"school_trash",4:"nature_logs",6:"stone_rocks",11:"nature_planks",13:"stone_rubble"}
 }
 static func cost(variant: String) -> int:

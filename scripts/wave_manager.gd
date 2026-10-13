@@ -30,6 +30,14 @@ func configure(level, manager, resolved_callback: Callable) -> void:
 	map = level
 	game = manager
 	on_student_resolved = resolved_callback
+	if level.level_id==5:
+		var exam=preload("res://scripts/final_exam_waves.gd")
+		counts.clear();pe_counts.clear();bookworm_counts.clear();snack_counts.clear();pilot_counts.clear()
+		for mix in exam.MIXES:
+			counts.append(mix.reduce(func(a,b):return a+b,0))
+			pe_counts.append(mix[1]);bookworm_counts.append(mix[2]);snack_counts.append(mix[3]);pilot_counts.append(mix[4])
+		intervals=exam.INTERVALS.duplicate()
+		return
 	if level.level_id == 2:
 		snack_counts=[0,0,0,0,1,1,1,1,2,2,3,3]
 		counts = [6,8,10,13,15,17,19,21,23,26,28,32]
@@ -100,9 +108,11 @@ func _process(delta: float) -> void:
 		countdown += intervals[wave - 1]
 		if map.level_id==4 and wave==17 and spawn_index in [14,35]:countdown+=3.0
 		if map.level_id==3 and wave==15 and spawn_index in [24,50]:countdown+=3.0
+		if map.level_id==5 and wave==22 and spawn_index in [28,56,84]:countdown+=4.0
 		state_changed.emit()
 
 func get_spawn_kind(index:int)->String:
+	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").kind(wave,index)
 	if map.level_id==3 and wave>=13:
 		var source_wave:=wave
 		var local_index:=index
@@ -159,6 +169,7 @@ func stop() -> void:
 	state_changed.emit()
 
 func get_spawn_route(index:int)->int:
+	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").route(wave,index)
 	if map.level_id==3:
 		if wave==13:return 1
 		if wave==14:return 0
@@ -168,6 +179,7 @@ func get_spawn_route(index:int)->int:
 		if wave in [6,12]:return 1
 	return index%map.get_routes().size()
 func get_route_notice()->String:
+	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").notice(wave)
 	if map.level_id==3:
 		if wave==13:return "LOWER PATH ONLY!"
 		if wave==14:return "UPPER PATH ONLY!"

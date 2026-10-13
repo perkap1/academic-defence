@@ -15,7 +15,7 @@ func _ready() -> void:
 	waves.configure(map, game, student_resolved)
 	economy.configure(map,game,waves)
 	waves.wave_started.connect(economy.begin_wave)
-	if map.level_id in [3,4]:waves.wave_started.connect(func(_id):ui.show_route_notice(waves.get_route_notice()))
+	if map.level_id in [3,4,5]:waves.wave_started.connect(func(_id):ui.show_route_notice(waves.get_route_notice()))
 	for slot in map.slots.get_children():
 		slot.build_requested.connect(select_slot)
 	game.changed.connect(update_ui)
@@ -125,7 +125,8 @@ func build(slot, tower_type: String = "book") -> void:
 
 func student_resolved(student, graduated: bool) -> void:
 	if graduated: economy.student_graduated(student)
-	var paid: int = game.resolve_student(graduated,student.base_reward,waves.wave)
+	var base_reward: int = 5 if student.student_type in ["normal","pe","bookworm"] and waves.wave >= 4 else student.base_reward
+	var paid: int = game.resolve_student(graduated,base_reward,waves.wave)
 	map.show_completion(student, graduated,paid)
 	waves.resolve_student(student)
 

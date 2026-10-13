@@ -14,7 +14,7 @@ func get_stars(level_id: int) -> int:
 	return clampi(int(best_stars.get(level_id,1 if level_id in completed_levels else 0)),0,3)
 
 func complete_level(level_id: int, stars: int = 1) -> void:
-	if level_id < 1 or level_id > 4 or stars <= 0: return
+	if level_id < 1 or level_id > 5 or stars <= 0: return
 	var previous := get_stars(level_id)
 	if level_id not in completed_levels: completed_levels.append(level_id)
 	best_stars[level_id] = maxi(previous,clampi(stars,1,3))
@@ -39,7 +39,7 @@ func load_progress() -> void:
 	completed_levels.clear()
 	best_stars.clear()
 	for level in config.get_value("progress","completed_levels",[]):
-		if level is int and level >= 1 and level <= 4: completed_levels.append(level)
+		if level is int and level >= 1 and level <= 5: completed_levels.append(level)
 	for level in completed_levels:
 		best_stars[level] = clampi(int(config.get_value("stars",str(level),1)),1,3)
 	bookworm_seen = bool(config.get_value("progress","bookworm_seen",false))

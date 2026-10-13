@@ -7,11 +7,11 @@ func run() -> void:
 	var main = load("res://scenes/main_map4.tscn").instantiate()
 	root.add_child(main)
 	main.process_mode = Node.PROCESS_MODE_DISABLED
-	var order := [5,9,7,1,10,6,8,2,11,3,12,0,4,13]
+	var order := [7,8,5,9,1,10,6,2,11,3,12,0,4,13]
 	for wave in range(17):
 		for index in order:
 			var slot = main.map.slots.get_child(index)
-			var kind := "blackboard" if index in [6,8] else "book"
+			var kind := "blackboard" if index in [6] else "book"
 			var cost := 100 if kind == "blackboard" else 70
 			if not slot.occupied and main.game.gold >= cost + slot.get_clear_cost():
 				if slot.is_blocked(): main.game.try_clear_site(slot)

@@ -29,9 +29,10 @@ func run():
    if kind=="snack":
     student.teach(200);student._process(2.0);student.teach(300)
    else:student.teach(100)
-   check(main.game.gold==before+6,"Every enemy earns6 at wave11 on "+scene)
+   var expected:int=3 if kind in ["normal","pe","bookworm"] else 6
+   check(main.game.gold==before+expected,"Type-specific base follows wave11 percentage on "+scene)
    var effect=main.map.effects.get_child(main.map.effects.get_child_count()-1)
-   check(effect.get_node("Reward").text=="+6 KP","Popup shows actual paid amount")
+   check(effect.get_node("Reward").text=="+%d KP"%expected,"Popup shows actual paid amount")
   main.update_ui();check(main.ui.activity_label.text.contains("60%"),"HUD shows current percentage")
   var slot=main.map.slots.get_child(0);main.build(slot,"economy");main.select_slot(slot);main.economy.complete_wave(1)
   check(slot.tower.stats.total.kp==15,"Study remains15 at late wave")

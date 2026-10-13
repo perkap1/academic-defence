@@ -27,4 +27,4 @@ static func width_factor(curve:Curve2D,distance:float)->float:
 static func lane_position(curve:Curve2D,distance:float,lane:float)->Vector2:
  var direction=tangent(curve,distance)
  var normal=Vector2(-direction.y,direction.x)
- return curve.sample_baked(distance)+normal*clampf(lane,-MAX_LANE,MAX_LANE)*width_factor(curve,distance)
+ return curve.sample_baked(distance)+normal*clampf(lane,-float(curve.get_meta("max_lane",MAX_LANE)),float(curve.get_meta("max_lane",MAX_LANE)))*width_factor(curve,distance)

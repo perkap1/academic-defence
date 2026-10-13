@@ -4,7 +4,7 @@
 
 # Academic Defence
 
-Latest version: **0.023** — The Paper Plane Pilot and Map 3 finale.
+Latest version: **0.025** — The Final Exam.
 
 A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: ground students graduate at 100 Knowledge (Paper Plane Pilots require 150). This repository contains the existing project developed in this chat.
 
@@ -41,9 +41,9 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 ## Current status
 
-**v0.022 — playable prototype.** Four maps (7, 12, 15 and 17 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; Map 5 remains locked. Level progress is saved locally in Godot and in the browser's storage for the Web version.
+**v0.025 — playable prototype.** Five maps (7, 12, 15, 17 and 22 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; The Final Exam unlocks after Map 4. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.022.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.025.md` for the latest checks and `VERIFISERING.md` for earlier verification.
 
 ## Automatic publishing
 
@@ -114,7 +114,7 @@ Projectiles use one supplied book frame, centered and spun in Godot at 12 radian
 
 ## v0.016 - The Snack Monster
 
-Snack Monster appears from wave 5 on Map 2 and wave 4 on Map 3. He moves at 70% of normal speed, needs four times the teaching and takes one immune snack break lasting two active seconds at 50% Knowledge. Afterwards Knowledge becomes 25%. Snack enemies are added to the existing wave mix. Autumn Campus unlocks after Map 3; Map 5 remains locked.
+Snack Monster appears from wave 5 on Map 2 and wave 4 on Map 3. He moves at 70% of normal speed, needs four times the teaching and takes one immune snack break lasting two active seconds at 50% Knowledge. Afterwards Knowledge becomes 25%. Snack enemies are added to the existing wave mix. Autumn Campus unlocks after Map 3; The Final Exam unlocks after Map 4.
 
 ## Autumn Campus (v0.017)
 
@@ -174,3 +174,11 @@ Graduation popups show actual paid KP. During waves the status line shows STUDEN
 - Pilots first appear in Map 3 wave 5 and Map 4 wave 7. Maps 1 and 2 are unchanged.
 - Map 3 wave 13: 37 enemies from Lower Path. Wave 14: 40 from Upper Path. Final wave: 77 total, exactly 37 lower and 40 upper, interleaved with short pauses between groups.
 - Graduation rewards, Book Tower statistics, Reputation, stars and saving retain the existing rules.
+
+## v0.025 — The Final Exam
+
+- The supplied 1672x941 winter map is used unchanged. Its 21 stone platforms have 21 build slots: 11 open and 10 blocked (4 school piles at 30 KP, 3 wood piles at 50 KP, 3 stone piles at 70 KP).
+- Four entrance paths: upper-left A, middle-left B, top C and bottom D. A/B/C share the final section into the school; D stays separate and ends at the lower bridge. Winter paths use up to 16 pixels of lane variation to stay inside narrow snowy road edges.
+- 22 authored waves introduce entries gradually, then mix all existing enemy types and four-entry pressure. Final wave has 108 enemies in four groups; no boss.
+- Map 5 unlocks after Map 4. Victory, best stars and saves include the fifth level.
+- From wave 4, Normal/PE/Bookworm base reward is 5 KP on every map, followed by the unchanged wave percentage and remainder-preserving rounding. Snack/Pilot and passive building income stay unchanged.
