@@ -25,11 +25,15 @@ var spawn_index := 0
 var game
 var map
 var on_student_resolved: Callable
+var planned_waves:Dictionary={}
+var variant_rng:=RandomNumberGenerator.new()
+func _init()->void:variant_rng.randomize()
 
 func configure(level, manager, resolved_callback: Callable) -> void:
 	map = level
 	game = manager
 	on_student_resolved = resolved_callback
+	planned_waves.clear()
 	if level.level_id==5:
 		var exam=preload("res://scripts/final_exam_waves.gd")
 		counts.clear();pe_counts.clear();bookworm_counts.clear();snack_counts.clear();pilot_counts.clear()
@@ -77,8 +81,9 @@ func configure(level, manager, resolved_callback: Callable) -> void:
 func start_wave() -> bool:
 	if active or game.finished or wave >= counts.size():
 		return false
+	_plan_for_wave(wave+1)
 	wave += 1
-	remaining = counts[wave - 1]
+	remaining = planned_waves[wave].size()
 	countdown = 0.0
 	spawn_index = 0
 	active = true
@@ -91,12 +96,13 @@ func _process(delta: float) -> void:
 		return
 	countdown -= delta
 	while remaining > 0 and countdown <= 0:
-		var kind: String = get_spawn_kind(spawn_index)
+		var record:Dictionary=_plan_for_wave(wave)[spawn_index]
+		var kind: String = record.kind
 		var student = PilotScene.instantiate() if kind=="pilot" else (SnackScene.instantiate() if kind=="snack" else (BookwormScene.instantiate() if kind == "bookworm" else StudentScene.instantiate()))
 		# Visual variants are independent of the evenly distributed wave mix.
-		student.configure(kind, "boy" if randi() % 2 == 0 else "girl")
+		student.configure(kind,record.variant)
 		var paths: Array = map.get_routes()
-		var path: Path2D = paths[get_spawn_route(spawn_index)]
+		var path: Path2D = paths[record.route]
 		spawn_index += 1
 		student.resolved.connect(on_student_resolved)
 		path.add_child(student)
@@ -191,13 +197,27 @@ func get_route_notice()->String:
 	if wave in [6,12]:return "LOWER PATH ONLY!"
 	return "BOTH PATHS!"
 
+func _plan_for_wave(wave_id:int)->Array:
+	if not planned_waves.has(wave_id):
+		var plan:Array=[]
+		for index in range(counts[wave_id-1]):
+			var kind:=get_spawn_kind(index,wave_id)
+			var variant:="girl" if kind=="pilot" else "boy"
+			if kind=="pe":variant="boy" if variant_rng.randi_range(0,1)==0 else "girl"
+			plan.append({"kind":kind,"variant":variant,"route":get_spawn_route(index,wave_id)})
+		planned_waves[wave_id]=plan
+	return planned_waves[wave_id]
+func get_spawn_plan(wave_id:int)->Array:
+	# UI and callers get a copy; the actual stream cannot be edited accidentally.
+	return _plan_for_wave(wave_id).duplicate(true)
 func get_next_wave_preview() -> Dictionary:
 	var next_wave:=wave+1
 	if active or game==null or game.finished or next_wave>counts.size():return {}
 	var preview:Dictionary={}
-	for index in range(counts[next_wave-1]):
-		var entry:=get_spawn_route(index,next_wave)
-		var kind:=get_spawn_kind(index,next_wave)
+	for record in _plan_for_wave(next_wave):
+		var entry:int=record.route
+		var kind:String=record.kind
+		if kind=="pe":kind="pe_"+record.variant
 		if not preview.has(entry):preview[entry]={}
 		preview[entry][kind]=int(preview[entry].get(kind,0))+1
 	return preview

@@ -20,12 +20,13 @@ func run():
   touch=InputEventScreenTouch.new();touch.index=0;touch.pressed=pressed;touch.position=root.get_final_transform()*click.position
   Input.parse_input_event(touch);await process_frame
  check(not main.wave_preview.panel.visible,"Native second tap closes preview")
- for position in [Vector2(300,400),click.position]:
+ for position in [Vector2(1600,1050),click.position]:
   var motion=InputEventMouseMotion.new();motion.position=root.get_final_transform()*position;motion.global_position=motion.position
   Input.parse_input_event(motion);await process_frame
  check(main.wave_preview.panel.visible and not main.wave_preview.pinned,"Native mouse hover opens preview")
- var motion=InputEventMouseMotion.new();motion.position=root.get_final_transform()*Vector2(300,400);motion.global_position=motion.position
+ var motion=InputEventMouseMotion.new();motion.position=root.get_final_transform()*Vector2(1600,1050);motion.global_position=motion.position
  Input.parse_input_event(motion);await process_frame
+ main.wave_preview._process(0.2)
  check(not main.wave_preview.panel.visible,"Native mouse leave hides preview")
  main.wave_preview.hide_panel()
  for scene in ["main","main_map2","main_map3","main_map4","main_map5"]:
@@ -39,8 +40,9 @@ func run():
    check(level.waves.wave==old_wave,"Preview does not mutate current wave")
    level.waves.wave=next_wave
    var expected={}
-   for index in range(level.waves.counts[next_wave-1]):
-    var route:int=level.waves.get_spawn_route(index);var kind:String=level.waves.get_spawn_kind(index)
+   for record in level.waves.get_spawn_plan(next_wave):
+    var route:int=record.route;var kind:String=record.kind
+    if kind=="pe":kind="pe_"+record.variant
     if not expected.has(route):expected[route]={}
     expected[route][kind]=expected[route].get(kind,0)+1
    check(preview==expected,"Exact planned composition by entry %s wave%d"%[scene,next_wave])
@@ -55,6 +57,7 @@ func run():
     var icon_rect:Rect2=level.wave_preview.icons[route].get_global_rect()
     for slot in level.map.slots.get_children():check(not icon_rect.grow(65).has_point(slot.global_position),"Icon does not intercept build slot hit area")
     level.wave_preview.icons[route].mouse_exited.emit()
+    level.wave_preview._process(0.2)
     check(not level.wave_preview.panel.visible,"Mouse leave closes hover")
     level.wave_preview.touch_input=true;level.wave_preview.icons[route].pressed.emit()
     check(level.wave_preview.panel.visible and level.wave_preview.pinned,"Touch press pins information")
