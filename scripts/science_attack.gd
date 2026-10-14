@@ -35,8 +35,13 @@ func launch_from(point:Vector2)->void:
 	duration=0.45+flight_duration
 	orb.position=launch_offset+Vector2(0,-65)
 	orb.visible=true
+	update_flight_direction(0.0)
 	sprite.visible=false
 	queue_redraw()
+func update_flight_direction(t:float)->void:
+	# Artwork points right; orient its round head along the arc's tangent.
+	var tangent:Vector2=-launch_offset+Vector2(0,65-4*ARC_HEIGHT+8*ARC_HEIGHT*t)
+	if not tangent.is_zero_approx():orb.rotation=tangent.angle()
 func _ready()->void:
 	super._ready()
 	orb.texture=orb_frames[0]
@@ -72,6 +77,7 @@ func advance(delta:float)->void:
 		set_process(false);queue_free();return
 	if elapsed<flight_duration:
 		var t:=elapsed/flight_duration
+		update_flight_direction(t)
 		ground_position=launch_offset.lerp(Vector2.ZERO,t)
 		orb.position=ground_position+Vector2(0,-65*(1-t)-4*ARC_HEIGHT*t*(1-t))
 		orb.texture=orb_frames[mini(3,int(t*4))]
