@@ -34,7 +34,7 @@ func run():
  var icon=main.wave_preview.icons.values()[0]
  for frame in range(4):
   icon.hover_preview=false;icon.elapsed=frame*0.25
-  check(icon.get_visual_frame()==frame,"Four idle frames at calm four FPS")
+  check(icon.get_visual_frame()==0,"Idle stays on first frame over time")
  icon.hover_preview=true
  check(icon.get_visual_frame()==4,"Dedicated golden hover pose")
  await process_frame

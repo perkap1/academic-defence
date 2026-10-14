@@ -11,7 +11,7 @@ class EntranceIcon extends TextureButton:
   texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
   for i in range(5):frames.append(load("res://assets/wave_ui/warning_%d.png"%i))
   texture_normal=frames[0];texture_hover=frames[4];texture_pressed=frames[4]
- func get_visual_frame()->int:return 4 if is_hovered() or hover_preview else int(elapsed*4)%4
+ func get_visual_frame()->int:return 4 if is_hovered() or hover_preview else 0
  func _process(delta:float)->void:
   elapsed+=delta
   texture_normal=frames[get_visual_frame()]
