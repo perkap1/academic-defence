@@ -19,7 +19,7 @@ func _ready() -> void:
 	ui.get_node("HUD").add_child(wave_preview)
 	economy.configure(map,game,waves)
 	waves.wave_started.connect(economy.begin_wave)
-	if map.level_id in [3,4,5]:waves.wave_started.connect(func(_id):ui.show_route_notice(waves.get_route_notice()))
+	if map.level_id in [2,3,4,5]:waves.wave_started.connect(func(_id):ui.show_route_notice(waves.get_route_notice()))
 	for slot in map.slots.get_children():
 		slot.build_requested.connect(select_slot)
 	game.changed.connect(update_ui)

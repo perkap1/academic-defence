@@ -114,7 +114,7 @@ func _ready() -> void:
 	bookworm_tutorial.hide()
 
 func configure_map(level_id: int) -> void:
-	if level_id in [3,4,5]: instruction_panel.position = Vector2(860,202)
+	if level_id in [2,3,4,5]: instruction_panel.position = Vector2(860,202)
 
 func show_bookworm_tutorial() -> void:
 	bookworm_tutorial.show()

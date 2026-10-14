@@ -19,6 +19,9 @@ z_index = -1
 [node name="Route" type="Path2D" parent="."]
 y_sort_enabled = true
 
+[node name="TopPath" type="Path2D" parent="."]
+y_sort_enabled = true
+
 [node name="Towers" type="Node2D" parent="."]
 y_sort_enabled = true
 

@@ -112,6 +112,7 @@ func _process(delta: float) -> void:
 		students.append(student)
 		remaining -= 1
 		countdown += intervals[wave - 1]
+		if map.level_id==2 and wave==12 and spawn_index in [12,24]:countdown+=3.0
 		if map.level_id==4 and wave==17 and spawn_index in [14,35]:countdown+=3.0
 		if map.level_id==3 and wave==15 and spawn_index in [24,50]:countdown+=3.0
 		if map.level_id==5 and wave==22 and spawn_index in [28,56,84]:countdown+=4.0
@@ -178,6 +179,9 @@ func stop() -> void:
 func get_spawn_route(index:int, wave_id:int=-1)->int:
 	var selected_wave:int=wave if wave_id<0 else wave_id
 	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").route(selected_wave,index)
+	if map.level_id==2:
+		if selected_wave in [3,6,9]:return 1
+		if selected_wave in [1,5]:return 0
 	if map.level_id==3:
 		if selected_wave==13:return 1
 		if selected_wave==14:return 0
@@ -187,6 +191,10 @@ func get_spawn_route(index:int, wave_id:int=-1)->int:
 		if selected_wave in [6,12]:return 1
 	return index%map.get_routes().size()
 func get_route_notice()->String:
+	if map.level_id==2:
+		if wave in [3,6,9]:return "TOP PATH ONLY!"
+		if wave in [1,5]:return "LEFT PATH ONLY!"
+		return "FINAL WAVE - BOTH PATHS!" if wave==12 else "BOTH PATHS!"
 	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").notice(wave)
 	if map.level_id==3:
 		if wave==13:return "LOWER PATH ONLY!"
