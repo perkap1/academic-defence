@@ -17,7 +17,7 @@ func run() -> void:
 	# Unit fixture: isolate tower/combat behavior from paid site clearing.
 	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
-	check(main.map.slots.get_child_count() == 14,"Fourteen user-confirmed slots")
+	check(main.map.slots.get_child_count() == 16,"Sixteen visible slots in replacement map")
 	check(main.map.get_routes().size() == 2,"Two entrances")
 	check(main.waves.counts == [8,12,14,15,18,21,23,26,27,30,33,35,37,40,77],"15 exact wave totals")
 	for wave in range(15):

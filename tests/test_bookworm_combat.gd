@@ -12,9 +12,9 @@ func run() -> void:
 	# Unit fixture: isolate tower/combat behavior from paid site clearing.
 	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
-	var a = spawn(main,main.map.route,Vector2(950,466)+main.map.global_position)
+	var a = spawn(main,main.map.route,Vector2(914,375)+main.map.global_position)
 	var b = spawn(main,main.map.lower_route,a.global_position)
-	check(a.global_position.distance_to(b.global_position)<1,"Routes share common world position")
+	check(a.global_position.distance_to(b.global_position)<1,"Routes cross at the bridge/tunnel world position")
 	main.game.gold = 1000
 	var slot = main.map.slots.get_child(4)
 	main.build(slot,"blackboard")
@@ -37,7 +37,7 @@ func run() -> void:
 	b.free()
 	main.sell(slot)
 	main.build(slot,"book")
-	b=spawn(main,main.map.lower_route,Vector2(950,466)+main.map.global_position)
+	b=spawn(main,main.map.lower_route,Vector2(914,375)+main.map.global_position)
 	slot.tower._process(0.1)
 	check(main.map.projectiles.get_child_count()>=1,"Book Tower finds lower-route student")
 	main.sell(slot)

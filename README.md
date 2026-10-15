@@ -4,7 +4,7 @@
 
 # Academic Defence
 
-Latest version: **0.028** — Map 2 Left/Top entrances with exact wave warnings.
+Latest version: **0.029** — Replacement Map 3 with two left entrances and a tunnel route.
 
 A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: ground students graduate at 100 Knowledge (Paper Plane Pilots require 150). This repository contains the existing project developed in this chat.
 

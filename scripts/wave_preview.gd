@@ -71,6 +71,7 @@ func entrance_position(path:Path2D)->Vector2:
  distance=minf(distance+80,path.curve.get_baked_length())
  return path.to_global(path.curve.sample_baked(distance)).round()
 func entry_name(entry:int)->String:
+ if level_map.level_id==3:return "UPPER LEFT PATH" if entry==0 else "LOWER LEFT PATH"
  if level_map.level_id==2:return "LEFT PATH" if entry==0 else "TOP PATH"
  if level_map.level_id==5:return ["A: UPPER LEFT","B: LOWER LEFT","C: TOP","D: BOTTOM"][entry]
  if level_map.get_routes().size()==2:return "UPPER PATH" if entry==0 else "LOWER PATH"

@@ -1,13 +1,15 @@
 extends "res://tests/test_integration.gd"
 func run() -> void:
+	seed(2903)
+	var layout=load("res://scripts/unit_layout.gd");layout.initialized=true;layout.lane_rng.seed=2903
 	var main = load("res://scenes/main_map3.tscn").instantiate()
 	root.add_child(main)
 	main.process_mode = Node.PROCESS_MODE_DISABLED
-	var order := [4,7,12,13,5,8,2,9,3,6,1,10,0,11]
+	var order := [2,10,11,1,15,12,4,3,9,7,8,6,0,5,14,13]
 	for wave in range(15):
 		for index in order:
 			var slot = main.map.slots.get_child(index)
-			var kind := "blackboard" if index in [7,8,3,6] else "book"
+			var kind := "blackboard" if index in [11,1] else "book"
 			var cost := 100 if kind == "blackboard" else 70
 			if not slot.occupied and main.game.gold >= cost + slot.get_clear_cost():
 				if slot.is_blocked(): main.game.try_clear_site(slot)
