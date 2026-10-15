@@ -18,7 +18,7 @@ func update_shield_art() -> void:
 	var frame: int = animation_frame()
 	sprite.texture = frames[direction][frame]
 func teach(amount: int) -> void:
-	if done or amount <= 0: return
+	if not is_targetable() or amount <= 0: return
 	if books > 0:
 		books -= 1
 		var effect := HitReaction.new()

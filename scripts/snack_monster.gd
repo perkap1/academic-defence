@@ -18,7 +18,7 @@ func _ready()->void:
  sprite.texture=frames[direction][2]
  bar.position=Vector2(-40,-122)
 func is_eating()->bool: return eating_remaining>0
-func is_targetable()->bool: return not done and not is_eating()
+func is_targetable()->bool: return super.is_targetable() and not is_eating()
 func teach(amount:int)->void:
  if not is_targetable() or amount<=0:return
  teaching_points=mini(400,teaching_points+amount)

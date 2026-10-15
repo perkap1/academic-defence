@@ -1,10 +1,6 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=3 format=3]
 [ext_resource type="Script" path="res://scripts/map3.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/map3.png" id="2"]
-[sub_resource type="AtlasTexture" id="TunnelRoof"]
-atlas = ExtResource("2")
-region = Rect2(805,335,265,160)
-
 [node name="Map3" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1")
@@ -19,11 +15,6 @@ y_sort_enabled = true
 [node name="LowerPath" type="Path2D" parent="."]
 z_index = -2
 y_sort_enabled = true
-[node name="TunnelForeground" type="Sprite2D" parent="."]
-z_index = -1
-position = Vector2(805,335)
-texture = SubResource("TunnelRoof")
-centered = false
 [node name="Towers" type="Node2D" parent="."]
 y_sort_enabled = true
 [node name="Projectiles" type="Node2D" parent="."]

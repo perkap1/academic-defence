@@ -12,5 +12,5 @@ func run():
  check(paths[1].curve.get_point_position(paths[1].curve.point_count-1).y<0,"Lower exits top")
  for point in [Vector2(930,490),Vector2(914,375),Vector2(844,100)]:
   check(paths[1].curve.get_closest_point(point).distance_to(point)<20,"Lower follows tunnel and top road")
- check(main.map.has_node("TunnelForeground"),"Tunnel arch occludes lower units")
+ check(main.map.has_method("is_under_bridge"),"Tunnel has explicit cover region")
  main.free();print("MAP3 REPLACEMENT: %d checks, %d failures"%[checks,failures]);quit(1 if failures else 0)

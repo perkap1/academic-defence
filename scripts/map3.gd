@@ -12,3 +12,8 @@ func _ready() -> void:
  lower_route.curve = create_route_curve(LOWER)
  lower_route.set_meta("entrance","lower_left")
 func get_routes() -> Array: return [route,lower_route]
+
+func is_under_bridge(unit)->bool:
+ if unit.student_type=="pilot" or unit.get_parent()!=lower_route:return false
+ # Solid bridge/tunnel footprint; the approach shadow is outside this zone.
+ return Rect2(850,335,150,115).has_point(to_local(unit.global_position))

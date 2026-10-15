@@ -47,7 +47,13 @@ func receive_attack(amount: int, kind: String) -> void:
 	if can_receive_attack(kind): teach(amount)
 
 func is_targetable()->bool:
-	return not done
+	return not done and not is_under_bridge()
+
+func is_under_bridge()->bool:
+	var path=get_parent()
+	if not path is Path2D:return false
+	var level=path.get_parent()
+	return level.has_method("is_under_bridge") and level.is_under_bridge(self)
 
 func apply_slow(duration: float = 2.0, strength: float = 0.30, source: String = "other") -> void:
 	if done or duration <= 0:
@@ -83,7 +89,7 @@ func show_wet_hit() -> void:
 	add_child(splash)
 
 func reserve_teacher(candidate) -> bool:
-	if done or is_instance_valid(teacher): return false
+	if not is_targetable() or is_instance_valid(teacher): return false
 	teacher=candidate
 	return true
 
@@ -101,6 +107,7 @@ func face_teacher(point:Vector2) -> void:
 func update_lane_position()->void:
 	if get_parent() is Path2D:
 		position=UnitLayout.lane_position(get_parent().curve,progress,lane_offset)
+		if not done:visible=not is_under_bridge()
 
 func _ready() -> void:
 	UnitLayout.apply_scale(self)
@@ -191,7 +198,7 @@ func _process(delta: float) -> void:
 		complete(false)
 
 func teach(amount: int) -> void:
-	if done:
+	if not is_targetable():
 		return
 	knowledge = clampi(knowledge + amount, 0, MAX_KNOWLEDGE)
 	bar.value = knowledge
