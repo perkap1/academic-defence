@@ -4,7 +4,7 @@
 
 # Academic Defence
 
-Latest version: **0.030.1** — Larger Class Clown from Map 3 wave 3; 25% healing in a 180px radius.
+Latest version: **0.030.2** — Centered Clown Knowledge bar and self-healing confetti pulses.
 
 A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: ground students graduate at 100 Knowledge (Paper Plane Pilots require 150). This repository contains the existing project developed in this chat.
 

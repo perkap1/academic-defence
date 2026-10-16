@@ -19,6 +19,7 @@ func run():
    var art=clown.frames[facing][frame]
    var used:Rect2i=art.get_image().get_used_rect()
    check(absf(used.end.y+art.margin.position.y-285)<0.01,"All live poses share exact wheel-ground origin")
+ check(clown.bar.size.x==56 and clown.bar.position.y==-106,"Centered narrower health bar above the enlarged clown")
  var pupils=[]
  for kind in ["normal","pe","bookworm","snack","pilot","clown"]:
   var unit=spawn(main,kind)
@@ -35,7 +36,7 @@ func run():
  var progress_before:float=clown.progress;clown._process(0.29)
  check(clown.progress==progress_before and pupils[0].knowledge==60,"Stops and waits for confetti cast release")
  clown._process(0.02)
- check(clown.pulses_fired==1 and clown.knowledge==50,"One pulse never heals self")
+ check(clown.pulses_fired==1 and clown.knowledge==20,"One pulse heals self by25percent without retriggering")
  for i in range(pupils.size()):
   var unit=pupils[i];var kind:String=unit.student_type
   var expected:float=22.5 if kind=="pilot" else (15 if kind=="snack" else (30 if kind=="clown" else 35))

@@ -21,6 +21,7 @@ func _ready()->void:
  frames=ClownFrames.create();sprite.scale=Vector2.ONE*0.36;sprite.offset=Vector2(-140,-285)
  sprite.texture=frames[direction][animation_frame()];bar.max_value=120
  sync_art()
+ bar.position=Vector2(-40,-106);bar.size.x=56
  update_lane_position()
 func get_heal_capacity()->float:return 120.0
 func animation_frame()->int:
@@ -49,7 +50,7 @@ func heal_pulse()->void:
  level.effects.add_child(effect);effect.global_position=global_position+Vector2(0,-30)
  effect.sprite.centered=false;effect.sprite.offset=Vector2(-300,-300);effect.sprite.scale=Vector2.ONE*(heal_radius*2/500.0)
  for unit in level.get_students():
-  if unit!=self and is_instance_valid(unit) and not unit.done and unit.global_position.distance_to(global_position)<=heal_radius:
+  if is_instance_valid(unit) and not unit.done and unit.global_position.distance_to(global_position)<=heal_radius:
    unit.receive_confetti_heal(heal_percent)
 func _process(delta:float)->void:
  if defeated:
