@@ -3,7 +3,7 @@ func run():
  for map_id in range(1,6):
   var main=load("res://scenes/%s.tscn"%("main" if map_id==1 else "main_map%d"%map_id)).instantiate();root.add_child(main);main.process_mode=Node.PROCESS_MODE_DISABLED
   for w in range(1,main.waves.counts.size()+1):
-   var expected=([1,1,2,2,3][w-13] if w>=13 else 0) if map_id==4 else ((1+int((w-8)/4) if w<20 else 4) if map_id==5 and w>=8 else 0)
+   var expected=(0 if w<3 else (1 if w<9 else (2 if w<15 else 3))) if map_id==3 else (([1,1,2,2,3][w-13] if w>=13 else 0) if map_id==4 else ((1+int((w-8)/4) if w<20 else 4) if map_id==5 and w>=8 else 0))
    var plan=main.waves.get_spawn_plan(w);var amount=0
    for index in range(plan.size()):
     var record=plan[index]

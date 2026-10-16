@@ -3,8 +3,8 @@ func run():
  var main=load("res://scenes/main_map3.tscn").instantiate();root.add_child(main);main.process_mode=Node.PROCESS_MODE_DISABLED
  check(main.map.has_method("bridge_visibility"),"Bridge exposes gradual visible body fraction")
  if not main.map.has_method("bridge_visibility"):main.free();print("BRIDGE TRANSITION: missing progressive clipping");quit(1);return
- for kind in ["normal","pe","bookworm","snack","pilot"]:
-  var scene="paper_plane_pilot" if kind=="pilot" else ("bookworm" if kind=="bookworm" else ("snack_monster" if kind=="snack" else "student"))
+ for kind in ["normal","pe","bookworm","snack","pilot","clown"]:
+  var scene="class_clown" if kind=="clown" else ("paper_plane_pilot" if kind=="pilot" else ("bookworm" if kind=="bookworm" else ("snack_monster" if kind=="snack" else "student")))
   var unit=load("res://scenes/%s.tscn"%scene).instantiate();unit.configure(kind);main.map.lower_route.add_child(unit);unit.lane_offset=0
   var fractions=[];var entry_partial=false;var exit_partial=false;var hidden=false
   for y in range(560,279,-2):

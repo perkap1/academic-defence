@@ -122,6 +122,7 @@ func _process(delta: float) -> void:
 		state_changed.emit()
 
 func get_clown_count(wave_id:int)->int:
+	if map.level_id==3:return 0 if wave_id<3 else (1 if wave_id<9 else (2 if wave_id<15 else 3))
 	if map.level_id==4:return [1,1,2,2,3][wave_id-13] if wave_id>=13 else 0
 	if map.level_id==5 and wave_id>=8:return mini(4,1+int((wave_id-8)/4))
 	return 0
@@ -133,6 +134,10 @@ func get_spawn_kind(index:int, wave_id:int=-1)->String:
 			var normal_indices=[]
 			for n in range(counts[selected_wave-1]):
 				if original_spawn_kind(n,selected_wave)=="normal":normal_indices.append(n)
+			# Map3's final three waves contain no Normals; substitute a few shield students there.
+			if normal_indices.is_empty() and map.level_id==3:
+				for n in range(counts[selected_wave-1]):
+					if original_spawn_kind(n,selected_wave)=="bookworm":normal_indices.append(n)
 			var selected=[]
 			for n in range(mini(amount,normal_indices.size())):selected.append(normal_indices[int((n+0.5)*normal_indices.size()/amount)])
 			clown_slots[selected_wave]=selected

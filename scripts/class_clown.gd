@@ -2,9 +2,9 @@ extends "res://scripts/student.gd"
 const ClownFrames=preload("res://scripts/class_clown_frames.gd")
 const CAST_DURATION:=0.75
 const PULSE_TIME:=0.30
-@export var heal_radius:=140.0
+@export var heal_radius:=180.0
 @export var heal_interval:=4.0
-@export var heal_percent:=0.15
+@export var heal_percent:=0.25
 var heal_clock:=0.0
 var casting:=false
 var cast_elapsed:=0.0
@@ -20,6 +20,7 @@ func _ready()->void:
  configure();super._ready()
  frames=ClownFrames.create();sprite.scale=Vector2.ONE*0.36;sprite.offset=Vector2(-140,-285)
  sprite.texture=frames[direction][animation_frame()];bar.max_value=120
+ sync_art()
  update_lane_position()
 func get_heal_capacity()->float:return 120.0
 func animation_frame()->int:
@@ -36,7 +37,7 @@ func sync_art()->void:
  var frame:=animation_frame()
  sprite.texture=frames[direction][frame]
  # Source rows have different drawing scales; normalize each animation around its fixed wheel pivot.
- sprite.scale=Vector2.ONE*(0.30 if frame<2 else (0.28 if frame>=11 else 0.36))
+ sprite.scale=Vector2.ONE*1.25*(0.30 if frame<2 else (0.28 if frame>=11 else 0.36))
  sprite.offset=Vector2(-200,-310) if defeated else Vector2(-140,-285)
 func begin_cast()->void:
  casting=true;cast_elapsed=0;pulse_fired=false;heal_clock=0;sync_art()

@@ -7,7 +7,13 @@ func run():
  if not FileAccess.file_exists("res://scenes/class_clown.tscn"):quit(1);return
  var main=load("res://scenes/main_map4.tscn").instantiate();root.add_child(main);main.process_mode=Node.PROCESS_MODE_DISABLED
  var clown=spawn(main,"clown");clown.teach(50)
+ check(clown.heal_radius==180 and clown.heal_percent==0.25,"Larger180pixel radius and25percent healing")
  check(clown.get_heal_capacity()==120 and clown.base_speed==85 and clown.base_reward==10,"Approved resistance speed reward")
+ var reference=spawn(main,"normal")
+ var normal_height:float=reference.sprite.texture.get_image().get_used_rect().size.y*reference.sprite.scale.y*reference.scale.y
+ var clown_height:float=clown.sprite.texture.get_image().get_used_rect().size.y*clown.sprite.scale.y*clown.scale.y
+ check(clown_height>=normal_height*0.9 and clown_height<=normal_height*1.2,"Clown body matches normal student size at spawn")
+ reference.free()
  for facing in ["front","side","back"]:
   for frame in range(13):
    var art=clown.frames[facing][frame]
@@ -22,6 +28,7 @@ func run():
   else:unit.teach(60)
   pupils.append(unit)
  var distant=spawn(main,"normal",500);distant.teach(50)
+ var extended=spawn(main,"normal",160);extended.teach(60)
  clown.heal_clock=3.99;clown._process(0.01)
  check(clown.casting and clown.pulses_fired==0,"Cast starts after four active seconds")
  check(clown.predict_position(0.2).distance_to(clown.global_position)<0.01,"Science aim respects stationary cast")
@@ -31,21 +38,26 @@ func run():
  check(clown.pulses_fired==1 and clown.knowledge==50,"One pulse never heals self")
  for i in range(pupils.size()):
   var unit=pupils[i];var kind:String=unit.student_type
-  var expected:float=37.5 if kind=="pilot" else (25 if kind=="snack" else (42 if kind=="clown" else 45))
-  check(absf(unit.knowledge-expected)<0.001,"15 percent of own maximum: %s"%kind)
+  var expected:float=22.5 if kind=="pilot" else (15 if kind=="snack" else (30 if kind=="clown" else 35))
+  check(absf(unit.knowledge-expected)<0.001,"25 percent of own maximum: %s"%kind)
  check(pupils[2].books==0,"Book shield never regrows")
  check(distant.knowledge==50,"Outside radius unchanged")
+ check(clown.global_position.distance_to(extended.global_position)>140 and extended.knowledge==35,"Expanded radius reaches students outside original140radius")
+ var indicator_found=false
+ for effect in main.map.effects.get_children():
+  if effect is Label and effect.text=="+25%":indicator_found=true
+ check(indicator_found,"Healing indicator displays actual25percent")
  check(pupils[4].can_receive_attack("book") and not pupils[4].can_receive_attack("blackboard"),"Pilot retains attack restrictions")
  clown._process(0.44);check(not clown.casting and clown.progress==progress_before,"Cast ends without path reset")
  clown._process(0.1);check(clown.progress>progress_before,"Movement resumes same route")
  var other=pupils[5];check(other.pulses_fired==0 and not other.casting,"Healing another clown cannot trigger chains")
  pupils[0].receive_confetti_heal(1);check(pupils[0].knowledge==0,"Cannot heal beyond full health")
  pupils[0].done=true;check(not pupils[0].receive_confetti_heal(0.15),"Cannot resurrect completed student")
- var snack=pupils[3];snack.teach(100)
+ var snack=pupils[3];snack.teach(140)
  check(snack.is_eating() and snack.snack_break_used,"Snack Break still activates once")
- var eating_before:float=snack.eating_remaining;snack.receive_confetti_heal(0.15)
+ var eating_before:float=snack.eating_remaining;snack.receive_confetti_heal(0.25)
  check(snack.eating_remaining==eating_before and snack.snack_break_used,"Confetti never resets Snack Break")
- snack._process(2);check(snack.teaching_points==40 and snack.knowledge==10,"Own 75 percent heal and confetti benefit coexist")
+ snack._process(2);check(snack.teaching_points==0 and snack.knowledge==0,"Own 75 percent heal and confetti benefit coexist")
  clown._process(7.5);check(clown.pulses_fired==3,"Long active steps preserve four-second cast cadence without duplicate pulses")
  main.waves.wave=10
  var gold_before:int=main.game.gold
@@ -55,7 +67,7 @@ func run():
  check(main.game.gold==gold_before+7,"Exactly one10KP reward with existing70percent taper")
  for facing in ["front","side","back"]:check(clown.frames[facing].size()==18,"Two idle four move five cast two hit five comic defeat frames")
  for unit in pupils:unit.free()
- distant.free();clown.free()
+ distant.free();extended.free();clown.free()
  var clock_clown=spawn(main,"clown");clock_clown.heal_clock=0
  main.process_mode=Node.PROCESS_MODE_INHERIT;main.waves.set_process(false)
  paused=true

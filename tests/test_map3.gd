@@ -26,9 +26,9 @@ func run() -> void:
 		main.waves.students.clear()
 		check(main.waves.start_wave(),"Wave %d starts" % (wave+1))
 		main.waves._process(100)
-		var counts := {"normal":0,"pe":0,"bookworm":0,"snack":0,"pilot":0}
+		var counts := {"normal":0,"pe":0,"bookworm":0,"snack":0,"pilot":0,"clown":0}
 		for student in main.waves.students: counts[student.student_type] += 1
-		check(counts.bookworm == [0,0,0,2,3,3,5,5,7,6,8,8,15,16,31][wave],"Exact Bookworms per wave")
+		check(counts.bookworm == [0,0,0,2,3,3,5,5,7,6,8,8,13,14,28][wave],"Exact Bookworms per wave")
 		check(counts.pe == [0,2,4,4,4,5,6,7,8,8,10,10,12,13,25][wave],"Exact PE per wave")
 		var routes: Array = main.map.get_routes()
 		if wave<12:check(absi(routes[0].get_child_count()-routes[1].get_child_count())<=1,"Both entrances used evenly")

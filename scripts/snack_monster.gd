@@ -26,7 +26,7 @@ func receive_confetti_heal(percent:float)->bool:
  var restored:=minf(teaching_points,get_heal_capacity()*percent)
  teaching_points=maxi(0,teaching_points-int(restored))
  if is_eating():confetti_during_break+=restored
- knowledge=teaching_points/4.0;bar.value=knowledge;show_confetti_heal()
+ knowledge=teaching_points/4.0;bar.value=knowledge;show_confetti_heal(percent)
  return true
 func teach(amount:int)->void:
  if not is_targetable() or amount<=0:return

@@ -206,13 +206,13 @@ func receive_confetti_heal(percent:float)->bool:
 	if done or knowledge<=0 or percent<=0:return false
 	knowledge=maxf(0,knowledge-get_heal_capacity()*percent)
 	bar.value=knowledge
-	show_confetti_heal()
+	show_confetti_heal(percent)
 	return true
 
-func show_confetti_heal()->void:
+func show_confetti_heal(percent:float)->void:
 	var level=get_parent().get_parent()
 	if not level.has_node("Effects"):return
-	var label=Label.new();label.text="+15%";label.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	var label=Label.new();label.text="+%d%%"%roundi(percent*100);label.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	label.add_theme_font_size_override("font_size",16);label.add_theme_color_override("font_color",Color("8de477"))
 	level.effects.add_child(label);label.global_position=global_position+Vector2(-20,-105)
 	var tween=label.create_tween().set_parallel(true)
