@@ -13,7 +13,7 @@ func run() -> void:
 	for site in main.map.slots.get_children(): site.set_blocker("")
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	var a = spawn(main,main.map.route,Vector2(914,375)+main.map.global_position)
-	var b = spawn(main,main.map.lower_route,Vector2(930,456)+main.map.global_position)
+	var b = spawn(main,main.map.lower_route,Vector2(930,470)+main.map.global_position)
 	check(a.global_position.distance_to(b.global_position)<105,"Both exposed routes within one AoE")
 	main.game.gold = 1000
 	var slot = main.map.slots.get_child(11)
@@ -37,7 +37,7 @@ func run() -> void:
 	b.free()
 	main.sell(slot)
 	main.build(slot,"book")
-	b=spawn(main,main.map.lower_route,Vector2(930,456)+main.map.global_position)
+	b=spawn(main,main.map.lower_route,Vector2(930,470)+main.map.global_position)
 	slot.tower._process(0.1)
 	check(main.map.projectiles.get_child_count()>=1,"Book Tower finds lower-route student")
 	main.sell(slot)

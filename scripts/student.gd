@@ -107,7 +107,9 @@ func face_teacher(point:Vector2) -> void:
 func update_lane_position()->void:
 	if get_parent() is Path2D:
 		position=UnitLayout.lane_position(get_parent().curve,progress,lane_offset)
-		if not done:visible=not is_under_bridge()
+		if not done:
+			var level=get_parent().get_parent()
+			if level.has_method("update_bridge_visual"):level.update_bridge_visual(self)
 
 func _ready() -> void:
 	UnitLayout.apply_scale(self)
@@ -194,6 +196,7 @@ func _process(delta: float) -> void:
 	sprite.flip_h = side_flipped(tangent.x)
 	var frame := animation_frame()
 	sprite.texture = frames[direction][frame]
+	update_lane_position()
 	if progress >= length:
 		complete(false)
 
