@@ -1,7 +1,7 @@
 extends Control
 const Artwork=preload("res://scripts/ui_skin.gd")
-const KINDS=["normal","pe_boy","pe_girl","bookworm","snack","pilot"]
-const NAMES={"normal":"Normal Student","pe_boy":"PE Student Boy","pe_girl":"PE Student Girl","bookworm":"Bookworm","snack":"Snack Monster","pilot":"Paper Plane Pilot"}
+const KINDS=["normal","pe_boy","pe_girl","bookworm","snack","pilot","clown"]
+const NAMES={"normal":"Normal Student","pe_boy":"PE Student Boy","pe_girl":"PE Student Girl","bookworm":"Bookworm","snack":"Snack Monster","pilot":"Paper Plane Pilot","clown":"Class Clown"}
 class EntranceIcon extends TextureButton:
  var elapsed:=0.0
  var hover_preview:=false
@@ -77,7 +77,7 @@ func entry_name(entry:int)->String:
  if level_map.get_routes().size()==2:return "UPPER PATH" if entry==0 else "LOWER PATH"
  return "ENTRANCE"
 func enemy_texture(kind:String)->Texture2D:
- if not textures.has(kind):textures[kind]=load("res://assets/wave_ui/mini_%s.png"%kind)
+ if not textures.has(kind):textures[kind]=preload("res://scripts/class_clown_frames.gd").icon() if kind=="clown" else load("res://assets/wave_ui/mini_%s.png"%kind)
  return textures[kind]
 func show_entry(entry:int,keep_open:bool=false)->void:
  if not icons.has(entry) or wave_manager.active or wave_manager.game.finished:return

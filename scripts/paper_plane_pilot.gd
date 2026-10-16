@@ -18,11 +18,12 @@ func _ready()->void:
  bar.max_value=150
  bar.position.y=-165
  z_index=3
+func get_heal_capacity()->float:return 150.0
 func can_receive_attack(kind:String)->bool:
  return not done and kind=="book"
 func receive_attack(amount:int,kind:String)->void:
  if not can_receive_attack(kind) or amount<=0:return
- knowledge=mini(150,knowledge+amount)
+ knowledge=minf(150,knowledge+amount)
  bar.value=knowledge
  hit_time=0.24
  if knowledge==150:complete(true)

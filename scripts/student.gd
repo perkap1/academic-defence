@@ -19,7 +19,7 @@ var drop_frames := []
 var drop_time := 0.0
 var teacher
 var assistant_hold := false
-var knowledge := 0
+var knowledge:float = 0.0
 var done := false
 var animation_time := 0.0
 var direction := "side"
@@ -200,10 +200,30 @@ func _process(delta: float) -> void:
 	if progress >= length:
 		complete(false)
 
+func get_heal_capacity()->float:return 100.0
+
+func receive_confetti_heal(percent:float)->bool:
+	if done or knowledge<=0 or percent<=0:return false
+	knowledge=maxf(0,knowledge-get_heal_capacity()*percent)
+	bar.value=knowledge
+	show_confetti_heal()
+	return true
+
+func show_confetti_heal()->void:
+	var level=get_parent().get_parent()
+	if not level.has_node("Effects"):return
+	var label=Label.new();label.text="+15%";label.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	label.add_theme_font_size_override("font_size",16);label.add_theme_color_override("font_color",Color("8de477"))
+	level.effects.add_child(label);label.global_position=global_position+Vector2(-20,-105)
+	var tween=label.create_tween().set_parallel(true)
+	tween.tween_property(label,"position:y",label.position.y-25,0.65)
+	tween.tween_property(label,"modulate:a",0.0,0.65)
+	tween.chain().tween_callback(label.queue_free)
+
 func teach(amount: int) -> void:
 	if not is_targetable():
 		return
-	knowledge = clampi(knowledge + amount, 0, MAX_KNOWLEDGE)
+	knowledge = clampf(knowledge + amount, 0, MAX_KNOWLEDGE)
 	bar.value = knowledge
 	sprite.modulate = Color(1.3, 1.3, 0.8)
 	create_tween().tween_property(sprite, "modulate", Color.WHITE, 0.18)

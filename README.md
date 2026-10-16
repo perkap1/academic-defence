@@ -4,7 +4,7 @@
 
 # Academic Defence
 
-Latest version: **0.029.2** — Progressive bridge occlusion; partly visible students remain targetable.
+Latest version: **0.030** — Class Clown support enemy with confetti healing.
 
 A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: ground students graduate at 100 Knowledge (Paper Plane Pilots require 150). This repository contains the existing project developed in this chat.
 

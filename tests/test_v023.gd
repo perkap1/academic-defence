@@ -41,7 +41,7 @@ func run():
   check(level.waves.counts.size()==(7 if scene=="main" else (12 if scene=="main_map2" else (15 if scene=="main_map3" else 17))),"Wave length preserved "+scene)
   for w in range(level.waves.counts.size()):
    level.waves.wave=w+1
-   var tally={"normal":0,"pe":0,"bookworm":0,"snack":0,"pilot":0}
+   var tally={"normal":0,"pe":0,"bookworm":0,"snack":0,"pilot":0,"clown":0}
    for i in range(level.waves.counts[w]):tally[level.waves.get_spawn_kind(i)]+=1
    check(tally.pilot==level.waves.pilot_counts[w],"Exact air count")
    check(tally.snack==level.waves.snack_counts[w] and tally.bookworm==level.waves.bookworm_counts[w] and tally.pe==level.waves.pe_counts[w],"Preserve all wave mixes")

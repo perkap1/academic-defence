@@ -5,6 +5,8 @@ signal wave_completed(last_wave: bool)
 signal wave_started(wave_id: int)
 signal bookworm_introduced
 
+const ClownScene=preload("res://scenes/class_clown.tscn")
+var clown_slots:Dictionary={}
 const PilotScene=preload("res://scenes/paper_plane_pilot.tscn")
 var pilot_counts:=[]
 const SnackScene=preload("res://scenes/snack_monster.tscn")
@@ -34,6 +36,7 @@ func configure(level, manager, resolved_callback: Callable) -> void:
 	game = manager
 	on_student_resolved = resolved_callback
 	planned_waves.clear()
+	clown_slots.clear()
 	if level.level_id==5:
 		var exam=preload("res://scripts/final_exam_waves.gd")
 		counts.clear();pe_counts.clear();bookworm_counts.clear();snack_counts.clear();pilot_counts.clear()
@@ -98,7 +101,7 @@ func _process(delta: float) -> void:
 	while remaining > 0 and countdown <= 0:
 		var record:Dictionary=_plan_for_wave(wave)[spawn_index]
 		var kind: String = record.kind
-		var student = PilotScene.instantiate() if kind=="pilot" else (SnackScene.instantiate() if kind=="snack" else (BookwormScene.instantiate() if kind == "bookworm" else StudentScene.instantiate()))
+		var student = ClownScene.instantiate() if kind=="clown" else (PilotScene.instantiate() if kind=="pilot" else (SnackScene.instantiate() if kind=="snack" else (BookwormScene.instantiate() if kind == "bookworm" else StudentScene.instantiate())))
 		# Visual variants are independent of the evenly distributed wave mix.
 		student.configure(kind,record.variant)
 		var paths: Array = map.get_routes()
@@ -118,7 +121,24 @@ func _process(delta: float) -> void:
 		if map.level_id==5 and wave==22 and spawn_index in [28,56,84]:countdown+=4.0
 		state_changed.emit()
 
+func get_clown_count(wave_id:int)->int:
+	if map.level_id==4:return [1,1,2,2,3][wave_id-13] if wave_id>=13 else 0
+	if map.level_id==5 and wave_id>=8:return mini(4,1+int((wave_id-8)/4))
+	return 0
 func get_spawn_kind(index:int, wave_id:int=-1)->String:
+	var selected_wave:int=wave if wave_id<0 else wave_id
+	var amount:=get_clown_count(selected_wave)
+	if amount>0:
+		if not clown_slots.has(selected_wave):
+			var normal_indices=[]
+			for n in range(counts[selected_wave-1]):
+				if original_spawn_kind(n,selected_wave)=="normal":normal_indices.append(n)
+			var selected=[]
+			for n in range(mini(amount,normal_indices.size())):selected.append(normal_indices[int((n+0.5)*normal_indices.size()/amount)])
+			clown_slots[selected_wave]=selected
+		if index in clown_slots[selected_wave]:return "clown"
+	return original_spawn_kind(index,selected_wave)
+func original_spawn_kind(index:int, wave_id:int=-1)->String:
 	var selected_wave:int=wave if wave_id<0 else wave_id
 	if map.level_id==5:return preload("res://scripts/final_exam_waves.gd").kind(selected_wave,index)
 	if map.level_id==3 and selected_wave>=13:

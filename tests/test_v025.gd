@@ -29,7 +29,7 @@ func run():
     check(color.r>color.g and color.g>color.b and color.r>(0.35 if point.x<75 else 0.54),"Road or wooden bridge lane%s at %s color%s"%[lane,point,color])
  for wave in range(22):
   main.waves.wave=wave+1
-  var tally={"normal":0,"pe":0,"bookworm":0,"snack":0,"pilot":0};var entrances={}
+  var tally={"normal":0,"pe":0,"bookworm":0,"snack":0,"pilot":0,"clown":0};var entrances={}
   for i in range(main.waves.counts[wave]):
    var kind=main.waves.get_spawn_kind(i);tally[kind]+=1
    entrances[main.waves.get_spawn_route(i)]=true

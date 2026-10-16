@@ -4,6 +4,7 @@ var snack_break_used:=false
 var eating_remaining:=0.0
 var teaching_points:=0
 var heal_remaining:=0.0
+var confetti_during_break:=0.0
 func configure(_kind:String="snack",_sex:String="boy")->void:
  super.configure("normal","boy")
  student_type="snack"
@@ -19,6 +20,14 @@ func _ready()->void:
  bar.position=Vector2(-40,-122)
 func is_eating()->bool: return eating_remaining>0
 func is_targetable()->bool: return super.is_targetable() and not is_eating()
+func get_heal_capacity()->float:return 400.0
+func receive_confetti_heal(percent:float)->bool:
+ if done or teaching_points<=0 or percent<=0:return false
+ var restored:=minf(teaching_points,get_heal_capacity()*percent)
+ teaching_points=maxi(0,teaching_points-int(restored))
+ if is_eating():confetti_during_break+=restored
+ knowledge=teaching_points/4.0;bar.value=knowledge;show_confetti_heal()
+ return true
 func teach(amount:int)->void:
  if not is_targetable() or amount<=0:return
  teaching_points=mini(400,teaching_points+amount)
@@ -64,9 +73,10 @@ func _process(delta:float)->void:
   sprite.texture=frames[direction][6+int(animation_time*4)%4]
   if eating_remaining>0.000001:return
   eating_remaining=0
-  teaching_points=100
-  knowledge=25
-  bar.value=25
+  teaching_points=maxi(0,100-int(confetti_during_break))
+  confetti_during_break=0
+  knowledge=teaching_points/4.0
+  bar.value=knowledge
   heal_remaining=0.5
   animation_time=0
   sprite.texture=frames[direction][2]
