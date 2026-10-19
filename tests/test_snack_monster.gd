@@ -53,9 +53,13 @@ func run()->void:
   for w in range(waves.counts.size()):
    waves.wave=w+1
    var tally={"normal":0,"pe":0,"bookworm":0,"snack":0,"pilot":0}
-   for i in range(waves.counts[w]): tally[waves.get_spawn_kind(i)]+=1
+   var replaced_bookworms=0
+   for i in range(waves.counts[w]):
+    var kind=waves.get_spawn_kind(i)
+    tally[kind]=tally.get(kind,0)+1
+    if kind=="clown" and waves.original_spawn_kind(i)=="bookworm":replaced_bookworms+=1
    check(tally.snack==waves.snack_counts[w],"Exact snack count wave %d map %d"%[w+1,id])
-   check(tally.pe==waves.pe_counts[w] and tally.bookworm==waves.bookworm_counts[w],"Other types preserved")
+   check(tally.pe==waves.pe_counts[w] and tally.bookworm==waves.bookworm_counts[w]-replaced_bookworms,"Other types preserved except approved clown substitutions")
   level.free()
  main.free()
  print("SNACK: %d checks, %d failures"%[checks,failures])
