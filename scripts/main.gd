@@ -4,6 +4,7 @@ const TowerScene = preload("res://scenes/book_tower.tscn")
 const AssistantScene = preload("res://scenes/assistant_post.tscn")
 const BlackboardScene = preload("res://scenes/blackboard_tower.tscn")
 const EconomyScene = preload("res://scenes/economy_building.tscn")
+const PETeacherScene=preload("res://scenes/pe_teacher.tscn")
 var economy = preload("res://scripts/economy_controller.gd").new()
 @onready var map = $Map1
 @onready var game = $GameManager
@@ -113,11 +114,15 @@ func clear_site(slot) -> bool:
 func build(slot, tower_type: String = "book") -> void:
 	if get_tree().paused or slot.occupied or slot.is_blocked():
 		return
+	if tower_type=="pe_teacher" and not preload("res://scripts/pe_road_access.gd").can_build(map,slot):
+		ui.show_message("Must be built next to a road",true)
+		return
 	if not game.try_build(slot, tower_type):
 		if not game.finished:
 			ui.show_message("Du har ikke nok kunnskapspoeng til dette tårnet.", true)
 		return
 	var scene = EconomyScene if tower_type=="economy" else (AssistantScene if tower_type=="assistant" else (BlackboardScene if tower_type=="blackboard" else TowerScene))
+	if tower_type=="pe_teacher":scene=PETeacherScene
 	var tower = scene.instantiate()
 	map.towers.add_child(tower)
 	tower.position = slot.position
@@ -126,7 +131,7 @@ func build(slot, tower_type: String = "book") -> void:
 	slot.refresh_visuals()
 	tower.set_range_visible(false)
 	ui.close_build_menu()
-	ui.show_message("Study Hall bygget · +15 KP etter hver bølge." if tower_type=="economy" else "%s bygget. Klar for undervisning!" % ("Teaching Assistant Post" if tower_type=="assistant" else ("Science Tower" if tower_type == "blackboard" else "Book Tower")), false)
+	ui.show_message("Study Hall bygget · +15 KP etter hver bølge." if tower_type=="economy" else "%s bygget. Klar for undervisning!" % ("Teaching Assistant Post" if tower_type=="assistant" else tower.get_display_name()), false)
 
 func student_resolved(student, graduated: bool) -> void:
 	if graduated: economy.student_graduated(student)

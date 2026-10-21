@@ -4,14 +4,18 @@ signal changed
 signal ended(won: bool)
 
 const TOWER_COST := 70
-const TOWER_COSTS := {"book": 70, "blackboard": 100, "assistant": 120, "economy": 100}
+const TOWER_COSTS := {"book": 70, "blackboard": 100, "assistant": 120, "economy": 100, "pe_teacher":preload("res://scripts/pe_teacher.gd").BUILD_COST}
 var gold := 200
+var test_mode := false
 var lives := 10
 var starting_reputation := 10
 const TWO_STAR_RATIO := 0.70
 
 func _ready() -> void:
 	starting_reputation = lives
+	var preferences=get_node_or_null("/root/Progression")
+	test_mode=preferences!=null and preferences.test_mode
+	if test_mode:gold=2000
 
 func get_star_rating() -> int:
 	if not won or starting_reputation <= 0: return 0
@@ -26,6 +30,7 @@ func try_build(slot, tower_type: String = "book") -> bool:
 	if not TOWER_COSTS.has(tower_type):
 		return false
 	var cost: int = TOWER_COSTS[tower_type]
+	if tower_type=="pe_teacher" and not preload("res://scripts/pe_road_access.gd").can_build(get_parent().map,slot):return false
 	if finished or slot.occupied or slot.is_blocked() or gold < cost:
 		return false
 	gold -= cost
@@ -46,7 +51,7 @@ func try_clear_site(slot) -> bool:
 func try_upgrade(slot) -> bool:
 	if finished or get_tree().paused or not is_instance_valid(slot) or not slot.occupied or not is_instance_valid(slot.tower): return false
 	var tower = slot.tower
-	if tower.game != self or tower.is_queued_for_deletion() or tower.tower_type not in ["book","blackboard","economy"]: return false
+	if tower.game != self or tower.is_queued_for_deletion() or tower.tower_type not in ["book","blackboard","economy","pe_teacher"]: return false
 	var cost: int = tower.get_upgrade_cost()
 	if cost <= 0 or gold < cost: return false
 	if not tower.upgrade_level(): return false
@@ -71,7 +76,7 @@ func try_sell(slot) -> bool:
 	if tower.game != self or not TOWER_COSTS.has(tower.tower_type) or tower.is_queued_for_deletion():
 		return false
 	var refund: int = int(TOWER_COSTS[tower.tower_type] / 2)
-	if tower.tower_type in ["book","blackboard","economy"]:
+	if tower.tower_type in ["book","blackboard","economy","pe_teacher"]:
 		refund = tower.get_sell_refund()
 	# Clear ownership before emitting changed; repeated input cannot refund twice.
 	slot.tower = null

@@ -38,13 +38,16 @@ func bridge_visibility(unit)->float:
  var hidden_height:=maxf(0,minf(body.end.y,BRIDGE_COVER.end.y)-maxf(body.position.y,BRIDGE_COVER.position.y))
  return clampf((body.size.y-hidden_height)/body.size.y,0.0,1.0)
 func is_under_bridge(unit)->bool:return bridge_visibility(unit)<=0.0
-func update_bridge_visual(unit)->void:
- if unit.student_type=="pilot" or unit.get_parent()!=lower_route:return
+func get_bridge_clip_material()->ShaderMaterial:
  if bridge_material==null:
   bridge_material=ShaderMaterial.new()
   bridge_material.shader=preload("res://scripts/bridge_clip.gdshader")
   bridge_material.set_shader_parameter("cover_min",to_global(BRIDGE_COVER.position))
   bridge_material.set_shader_parameter("cover_max",to_global(BRIDGE_COVER.end))
+ return bridge_material
+func update_bridge_visual(unit)->void:
+ if unit.student_type=="pilot" or unit.get_parent()!=lower_route:return
+ get_bridge_clip_material()
  unit.material=bridge_material
  unit.sprite.material=bridge_material
  unit.bar.material=bridge_material

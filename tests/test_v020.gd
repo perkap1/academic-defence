@@ -42,7 +42,7 @@ func run():
   for hit in range(3):tower.stats.teach(student,60)
   check(tower.stats.total.get("shields",0)==3 and tower.stats.total.get("knowledge",0)==0,"Golden strength still removes one shield per hit, zero Knowledge")
   tower.stats.teach(student,60);tower.stats.teach(student,60);tower.stats.teach(student,60)
-  check(tower.stats.total.get("knowledge",0)==100 and tower.stats.total.get("graduated",0)==1,"Clamped actual Knowledge and graduation once")
+  check(tower.stats.total.get("knowledge",0)==90 and tower.stats.total.get("graduated",0)==1,"Clamped actual Bookworm Knowledge and graduation once")
   student=load("res://scenes/snack_monster.tscn").instantiate();main.map.route.add_child(student)
   before=int(tower.stats.total.get("knowledge",0));tower.stats.teach(student,200);tower.stats.teach(student,300)
   check(tower.stats.total.get("knowledge",0)==before+200,"Immune Snack does not count and delivered points retained")

@@ -39,7 +39,7 @@ func run():
  check(clown.pulses_fired==1 and clown.knowledge==20,"One pulse heals self by25percent without retriggering")
  for i in range(pupils.size()):
   var unit=pupils[i];var kind:String=unit.student_type
-  var expected:float=22.5 if kind=="pilot" else (15 if kind=="snack" else (30 if kind=="clown" else 35))
+  var expected:float=22.5 if kind=="pilot" else (15 if kind=="snack" else (30 if kind=="clown" else (37.5 if kind in ["pe","bookworm"] else 35)))
   check(absf(unit.knowledge-expected)<0.001,"25 percent of own maximum: %s"%kind)
  check(pupils[2].books==0,"Book shield never regrows")
  check(distant.knowledge==50,"Outside radius unchanged")

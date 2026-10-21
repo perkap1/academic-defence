@@ -3,6 +3,7 @@ extends Node2D
 const Artwork = preload("res://scripts/ui_skin.gd")
 const LEVEL_POSITIONS := [Vector2(223,655),Vector2(490,568),Vector2(829,459),Vector2(1163,364),Vector2(1447,274)]
 var level_buttons := []
+var test_mode_button:Button
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -17,6 +18,17 @@ func _ready() -> void:
 	Artwork.label(header,"Verdenskart · velg en bane",Vector2(49,101),Vector2(900,32),23,Color("c4debf"))
 	Artwork.image(header,"icon_reputation",Vector2(1420,54),Vector2(87,87))
 	Artwork.label(header,"v" + ProjectSettings.get_setting("application/config/version"),Vector2(1520,78),Vector2(108,30),22)
+	test_mode_button=Artwork.plain_button(header,"",Vector2(994,53),Vector2(370,62))
+	test_mode_button.name="TestModeToggle"
+	test_mode_button.toggle_mode=true
+	test_mode_button.focus_mode=Control.FOCUS_NONE
+	test_mode_button.add_theme_font_size_override("font_size",22)
+	test_mode_button.button_pressed=get_node("/root/Progression").test_mode
+	test_mode_button.toggled.connect(func(enabled:bool):
+		get_node("/root/Progression").set_test_mode(enabled)
+		refresh_test_mode())
+	Artwork.label(header,"Gjelder nye runder på alle baner",Vector2(997,124),Vector2(370,24),17,Color("c4debf"))
+	refresh_test_mode()
 	var note := Artwork.panel(root,Vector2(24,202),Vector2(778,116),true)
 	Artwork.label(note,"Velg bane \u00b7 Bokruinene er tilgjengelig fra start",Vector2(46,34),Vector2(690,28),20)
 	Artwork.label(note,"Skogsstien: 7 · Elvesvingene: 12 · Bokruinene: 15 bølger",Vector2(46,62),Vector2(690,23),17,Color("bbd8bf"))
@@ -52,6 +64,12 @@ func _ready() -> void:
 			root.add_child(stars)
 			stars.configure(get_node("/root/Progression").get_stars(i+1),false,60.0)
 	queue_redraw()
+
+func refresh_test_mode()->void:
+	var enabled:bool=get_node("/root/Progression").test_mode
+	test_mode_button.text="TESTMODUS: PÅ · 2000 KP" if enabled else "TESTMODUS: AV · 200 KP"
+	test_mode_button.tooltip_text="Trykk for vanlig start med 200 KP" if enabled else "Trykk for å starte med 2000 KP"
+	test_mode_button.self_modulate=Color("ffe58c") if enabled else Color.WHITE
 
 func _draw() -> void:
 	for i in range(5):

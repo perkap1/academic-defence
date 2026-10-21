@@ -2,6 +2,7 @@ extends Node
 var completed_levels: Array[int] = []
 var best_stars: Dictionary = {}
 var bookworm_seen := false
+var test_mode := false
 var save_path := "user://academic_defence_progress.cfg"
 var persist_enabled := true
 
@@ -24,11 +25,16 @@ func mark_bookworm_seen() -> void:
 	bookworm_seen = true
 	save_progress()
 
+func set_test_mode(enabled:bool)->void:
+	test_mode=enabled
+	save_progress()
+
 func save_progress() -> void:
 	if not persist_enabled: return
 	var config := ConfigFile.new()
 	config.set_value("progress","completed_levels",completed_levels)
 	config.set_value("progress","bookworm_seen",bookworm_seen)
+	config.set_value("settings","test_mode",test_mode)
 	for level in completed_levels: config.set_value("stars",str(level),get_stars(level))
 	var error := config.save(save_path)
 	if error != OK: push_warning("Could not save level progress: %s" % error)
@@ -43,3 +49,4 @@ func load_progress() -> void:
 	for level in completed_levels:
 		best_stars[level] = clampi(int(config.get_value("stars",str(level),1)),1,3)
 	bookworm_seen = bool(config.get_value("progress","bookworm_seen",false))
+	test_mode = bool(config.get_value("settings","test_mode",false))

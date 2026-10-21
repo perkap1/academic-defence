@@ -6,25 +6,31 @@ var stage_name := "Level 1"
 var upgrade_events: Array[Dictionary] = []
 signal changed
 func current() -> Dictionary: return stages.back()
-func add(key: String, value: float = 1.0) -> void:
+func add(key: String, value: float = 1.0, stage_index: int = -1) -> void:
  if value <= 0: return
  total[key] = float(total.get(key,0))+value
- current()[key] = float(current().get(key,0))+value
+ var stage:Dictionary=current() if stage_index<0 else stages[stage_index]
+ stage[key] = float(stage.get(key,0))+value
+ changed.emit()
+func record_max(key:String,value:float,stage_index:int=-1)->void:
+ var stage:Dictionary=current() if stage_index<0 else stages[stage_index]
+ total[key]=maxf(float(total.get(key,0)),value)
+ stage[key]=maxf(float(stage.get(key,0)),value)
  changed.emit()
 func upgrade(name: String) -> void:
  stage_name=name
  upgrade_events.append({"from":stages.size(),"to":name,"at_msec":Time.get_ticks_msec()})
  stages.append({})
  changed.emit()
-func teach(student, amount: int, attack_kind: String = "ground") -> bool:
- if not is_instance_valid(student) or not student.is_targetable() or amount<=0 or not student.can_receive_attack(attack_kind): return false
+func teach(student, amount: int, attack_kind: String = "ground", stage_index:int = -1) -> bool:
+ if not is_instance_valid(student) or amount<=0 or not student.can_receive_attack(attack_kind): return false
  var before: float = student.teaching_points if student.student_type=="snack" else student.knowledge
  var books: int = student.books if student.student_type=="bookworm" else 0
  student.receive_attack(amount,attack_kind)
  var after: float = student.teaching_points if student.student_type=="snack" else student.knowledge
- add("knowledge",maxf(0,after-before))
- if student.student_type=="bookworm":add("shields",books-student.books)
- if student.done and after>before:add("graduated")
+ add("knowledge",maxf(0,after-before),stage_index)
+ if student.student_type=="bookworm":add("shields",books-student.books,stage_index)
+ if student.done and after>before:add("graduated",1,stage_index)
  return true
 func rows(kind: String, branch: String = "") -> Array:
  if kind=="economy":
@@ -32,6 +38,7 @@ func rows(kind: String, branch: String = "") -> Array:
   return [["kp","KP generert"],["waves","Waves med inntekt"]]
  if kind=="assistant":return [["knowledge","Kunnskap gitt"],["graduated","Elever uteksaminert"],["stopped","Elever stoppet"],["time","Undervisningstid (s)"]]
  if kind=="blackboard":return [["knowledge","Kunnskap gitt"],["graduated","Elever uteksaminert"],["hits","Elever truffet"],["slows","Slow påført"],["shots","Prosjektiler kastet"]]
+ if kind=="pe_teacher":return [["knowledge","Kunnskap gitt"],["graduated","Elever uteksaminert"],["shots","Baller kastet"],["hits","Elever truffet"],["max_hits","Flest elever med én ball"]]
  return [["knowledge","Kunnskap gitt"],["graduated","Elever uteksaminert"],["shots","Bøker kastet"],["hits","Treffsikre kast"],["shields","Bokskjold fjernet"]]
 
 func record_income_wave(wave_id: int) -> void:

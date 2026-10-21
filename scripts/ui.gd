@@ -29,6 +29,7 @@ var book_button: TextureButton
 var assistant_button: TextureButton
 var blackboard_button: TextureButton
 var study_button: TextureButton
+var pe_button:TextureButton
 var specialization_panel: Control
 var specialization_buttons := []
 var pause_overlay: Control
@@ -56,6 +57,7 @@ var stats_rows := []
 var stats_heading: Label
 var stats_stage_heading: Label
 var level_label: Label
+var test_mode_label:Label
 var clear_menu: Control
 var clear_button: Button
 var clear_price: Label
@@ -78,6 +80,8 @@ func _ready() -> void:
 	Artwork.panel(header, Vector2.ZERO, header.size)
 	Artwork.label(header,"ACADEMIC DEFENCE",Vector2(46,54),Vector2(365,42),28)
 	level_label = Artwork.label(header,"Skogsstien · v" + ProjectSettings.get_setting("application/config/version"),Vector2(47,96),Vector2(350,28),18,Color("bfd6b9"))
+	test_mode_label=Artwork.label(header,"TESTMODUS · 2000 KP ved start",Vector2(47,130),Vector2(350,24),16,Color("ffe58c"))
+	test_mode_label.hide()
 	Artwork.image(header,"icon_resources",Vector2(433,62),Vector2(65,65))
 	gold_label = Artwork.label(header,"",Vector2(505,78),Vector2(155,35),26)
 	Artwork.image(header,"icon_reputation",Vector2(670,56),Vector2(76,76))
@@ -329,6 +333,8 @@ func refresh_tower_properties(game) -> void:
 	banner_description.text = "Level %d · Knowledge per attack: %d\nAttack speed: %.2f/s (%.2f sec)" % [tower.level,tower.knowledge_per_hit,1.0/tower.fire_interval,tower.fire_interval]
 	if tower.tower_type == "blackboard":
 		banner_extra.text = "Range: %d\nSlow: %d %% · %.1f sec\nAoE radius: %d" % [tower.teaching_range,roundi(tower.slow_strength*100),tower.slow_duration,tower.area_radius]
+	elif tower.tower_type=="pe_teacher":
+		banner_extra.text="Range: %d\nRoll distance: %d\nMedicine ball: %d%%"%[tower.teaching_range,tower.roll_distance,roundi(tower.ball_size*100)]
 	else:
 		banner_extra.text = "Range: %d\n" % tower.teaching_range + ("Single target" if tower.level < 3 else "Every 5th book: Golden\n2× Knowledge · 60 per hit")
 	banner_sell.text = "SELL · +%d KP" % tower.get_sell_refund()
@@ -409,6 +415,24 @@ func create_build_menu(root: Control) -> void:
 	blackboard_button.tooltip_text = "Science Tower · 100 KP · gruppe, +15 kunnskap og 30 % slow"
 	book_button.pressed.connect(func(): choose_tower("book"))
 	blackboard_button.pressed.connect(func(): choose_tower("blackboard"))
+	pe_button=TextureButton.new()
+	var pe_frames:Array=preload("res://scripts/pe_teacher_frames.gd").create()
+	pe_button.texture_normal=pe_frames[0];pe_button.texture_hover=pe_frames[1];pe_button.texture_pressed=pe_frames[1];pe_button.texture_disabled=pe_frames[0]
+	pe_button.ignore_texture_size=true;pe_button.stretch_mode=TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	pe_button.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST;pe_button.focus_mode=Control.FOCUS_NONE
+	pe_button.position=Vector2(165,285);pe_button.size=Vector2(138,138)
+	build_menu.add_child(pe_button)
+	pe_button.pressed.connect(func():choose_tower("pe_teacher"))
+	var pe_name=Artwork.label(pe_button,"PE Teacher",Vector2(-8,112),Vector2(154,22),17)
+	pe_name.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	var pe_cost=Artwork.label(pe_button,"%d KP"%preload("res://scripts/pe_teacher.gd").BUILD_COST,Vector2(0,133),Vector2(138,24),18)
+	pe_cost.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	# Five choices on one ring; keep the existing cancel button at its centre.
+	assistant_button.position=Vector2(145,-40);assistant_cost.position=Vector2(145,119)
+	book_button.position=Vector2(0,90);book_cost.position=Vector2(5,265)
+	blackboard_button.position=Vector2(280,90);board_cost.position=Vector2(285,265)
+	study_button.position=Vector2(20,285);study_name.position=Vector2(-5,418)
+	pe_button.position=Vector2(280,285)
 
 func radial_button(kind: String, pos: Vector2, dimensions: Vector2) -> TextureButton:
 	var item := TextureButton.new()
@@ -548,8 +572,13 @@ func update_build_buttons(game) -> void:
 	blackboard_button.modulate=Color(0.45,0.45,0.45) if blackboard_button.disabled else Color.WHITE
 	study_button.disabled = game.finished or game.gold < 100
 	study_button.self_modulate = Color("777777") if study_button.disabled else Color.WHITE
+	var near_road:=is_instance_valid(selected_slot) and preload("res://scripts/pe_road_access.gd").can_build(get_parent().map,selected_slot)
+	pe_button.disabled=not near_road or game.finished or game.gold<game.TOWER_COSTS.pe_teacher
+	pe_button.self_modulate=Color("777777") if pe_button.disabled else Color.WHITE
+	pe_button.tooltip_text="Must be built next to a road" if not near_road else "PE Teacher · %d KP · Rolling medicine ball · %d Knowledge"%[game.TOWER_COSTS.pe_teacher,preload("res://scripts/pe_teacher.gd").KNOWLEDGE[0]]
 
 func update_state(game, waves) -> void:
+	test_mode_label.visible=game.test_mode
 	gold_label.text = "KP  %d" % game.gold
 	life_label.text = "%d / %d" % [game.lives,game.starting_reputation]
 	var total: int = waves.counts.size()
@@ -610,6 +639,12 @@ func show_route_notice(text:String)->void:
 func request_upgrade() -> void:
 	if not is_instance_valid(tower_slot) or not is_instance_valid(tower_slot.tower): return
 	var tower = tower_slot.tower
+	if tower.tower_type=="pe_teacher":
+		if tower.get_upgrade_cost()<=0:return
+		upgrade_confirmation_slot=tower_slot
+		var next:int=tower.level
+		upgrade_confirmation.dialog_text="PE Teacher · Level %d\n%d KP\nKnowledge: %d · Roll: %d · Ball: %d%%"%[next+1,tower.get_upgrade_cost(),tower.KNOWLEDGE[next],tower.ROLL_DISTANCES[next],roundi(tower.BALL_SIZES[next]*100)]
+		upgrade_confirmation.popup_centered(Vector2i(500,190));return
 	if tower.tower_type != "economy":
 		upgrade_requested.emit(tower_slot)
 		return

@@ -19,7 +19,8 @@ func _ready()->void:
  sprite.texture=frames[direction][2]
  bar.position=Vector2(-40,-122)
 func is_eating()->bool: return eating_remaining>0
-func is_targetable()->bool: return super.is_targetable() and not is_eating()
+func can_receive_ground_attack(ignore_tunnel:bool=false)->bool:
+ return super.can_receive_ground_attack(ignore_tunnel) and not is_eating()
 func get_heal_capacity()->float:return 400.0
 func receive_confetti_heal(percent:float)->bool:
  if done or teaching_points<=0 or percent<=0:return false

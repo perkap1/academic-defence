@@ -26,6 +26,7 @@ var direction := "side"
 var frames := {}
 var base_reward := 10
 var student_type := "normal"
+var receiving_tunnel_ball := false
 var variant := "boy"
 @onready var sprite: Sprite2D = $Sprite
 @onready var bar: ProgressBar = $KnowledgeBar
@@ -40,14 +41,23 @@ func configure(kind: String, sex: String = "boy") -> void:
 	slow_sources.clear()
 	update_bar_status()
 
-func can_receive_attack(_kind: String) -> bool:
-	return is_targetable()
+func can_receive_attack(kind: String) -> bool:
+	return can_receive_ground_attack(kind=="medicine_ball")
+
+func can_receive_ground_attack(ignore_tunnel:bool=false)->bool:
+	return not done and (ignore_tunnel or not is_under_bridge())
 
 func receive_attack(amount: int, kind: String) -> void:
-	if can_receive_attack(kind): teach(amount)
+	if not can_receive_attack(kind):return
+	# Scoped to this one hit: existing teach overrides still apply shields,
+	# Snack resistance and graduation without exposing the unit to other towers.
+	var previous:=receiving_tunnel_ball
+	receiving_tunnel_ball=kind=="medicine_ball"
+	teach(amount)
+	receiving_tunnel_ball=previous
 
 func is_targetable()->bool:
-	return not done and not is_under_bridge()
+	return can_receive_ground_attack(receiving_tunnel_ball)
 
 func is_under_bridge()->bool:
 	var path=get_parent()
@@ -142,6 +152,7 @@ func _ready() -> void:
 	bar_fill = fill
 	bar.add_theme_stylebox_override("background", background)
 	bar.add_theme_stylebox_override("fill", fill)
+	bar.max_value=get_max_knowledge()
 	bar.value = knowledge
 	for i in range(3):
 		drop_frames.append(load("res://assets/effects/slow_drop_%d.png" % i))
@@ -200,7 +211,10 @@ func _process(delta: float) -> void:
 	if progress >= length:
 		complete(false)
 
-func get_heal_capacity()->float:return 100.0
+func get_max_knowledge()->float:
+	return 90.0 if student_type in ["pe","bookworm"] else float(MAX_KNOWLEDGE)
+
+func get_heal_capacity()->float:return get_max_knowledge()
 
 func receive_confetti_heal(percent:float)->bool:
 	if done or knowledge<=0 or percent<=0:return false
@@ -223,11 +237,12 @@ func show_confetti_heal(percent:float)->void:
 func teach(amount: int) -> void:
 	if not is_targetable():
 		return
-	knowledge = clampf(knowledge + amount, 0, MAX_KNOWLEDGE)
+	var limit:=get_max_knowledge()
+	knowledge = clampf(knowledge + amount, 0, limit)
 	bar.value = knowledge
 	sprite.modulate = Color(1.3, 1.3, 0.8)
 	create_tween().tween_property(sprite, "modulate", Color.WHITE, 0.18)
-	if knowledge == MAX_KNOWLEDGE:
+	if knowledge == limit:
 		complete(true)
 
 func complete(graduated: bool) -> void:

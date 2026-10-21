@@ -1,0 +1,41 @@
+extends "res://tests/test_pe_teacher.gd"
+func run():
+ var main=load("res://scenes/main_map3.tscn").instantiate();root.add_child(main);main.process_mode=Node.PROCESS_MODE_DISABLED
+ var tower=load("res://scenes/pe_teacher.tscn").instantiate();main.map.towers.add_child(tower);tower.configure(main.map,main.game)
+ var path=main.map.lower_route;var at=path.curve.get_closest_offset(Vector2(920,440))
+ for kind in ["normal","pe","bookworm","snack","clown"]:
+  var unit=pupil(main,kind,path,at)
+  check(not unit.visible and not unit.is_targetable(),"Ground student is fully covered in tunnel")
+  for attack in ["book","blackboard","ground","pe_teacher"]:
+   check(not unit.can_receive_attack(attack),"Only the rolling medicine ball may bypass tunnel cover")
+  var ball=tower.launch_ball(path,at);ball.advance(ball.FLIGHT_TIME)
+  if kind=="bookworm":check(unit.books==2 and unit.knowledge==0,"Tunnel hit removes one book shield")
+  elif kind=="snack":check(unit.teaching_points==50,"Tunnel hit respects Snack resistance")
+  else:check(unit.knowledge==50,"Medicine ball teaches hidden students")
+  ball.hit_segment(at,at)
+  check(tower.stats.total.get("hits",0)==["normal","pe","bookworm","snack","clown"].find(kind)+1,"One hit per ball recorded in tunnel")
+  var before:float=unit.knowledge;unit.teach(20)
+  check(unit.knowledge==before and not unit.is_targetable(),"Tunnel bypass ends immediately after the medicine hit")
+  ball.free();unit.free()
+ var eating=pupil(main,"snack",path,path.curve.get_closest_offset(Vector2(930,500)));eating.teach(200)
+ eating.progress=at;eating.update_lane_position()
+ var ball=tower.launch_ball(path,at);ball.advance(ball.FLIGHT_TIME)
+ check(eating.is_eating() and eating.teaching_points==200,"Snack Break immunity remains active inside tunnel")
+ eating.free();ball.free()
+ var pilot=pupil(main,"pilot",path,at);ball=tower.launch_ball(path,at);ball.advance(ball.FLIGHT_TIME)
+ check(pilot.visible and pilot.knowledge==0,"Pilot stays above bridge and immune to ball")
+ pilot.free();ball.free()
+ var graduating=pupil(main,"normal",path,at);graduating.knowledge=90;graduating.resolved.connect(main.student_resolved);main.waves.wave=1
+ var reward_before:int=main.game.gold
+ ball=tower.launch_ball(path,at);ball.advance(ball.FLIGHT_TIME);ball.hit_segment(at,at)
+ check(graduating.done and main.game.gold==reward_before+10 and tower.stats.total.get("graduated",0)==1,"Hidden graduation records one reward and one completion")
+ graduating.free();ball.free()
+ ball=tower.launch_ball(path,at)
+ check(ball.ball.material==null,"Airborne ball is not clipped as a ground projectile")
+ ball.advance(ball.FLIGHT_TIME)
+ check(ball.ball.material!=null and ball.dust.material==ball.ball.material and ball.material==ball.ball.material,"Rolling ball dust and shadow share tunnel clipping")
+ ball.free()
+ ball=tower.launch_ball(main.map.route,main.map.route.curve.get_closest_offset(Vector2(914,375)));ball.advance(ball.FLIGHT_TIME)
+ check(ball.ball.material==null,"Ball on upper bridge route stays visible above tunnel")
+ ball.free();main.free()
+ print("MEDICINE TUNNEL: %d checks, %d failures"%[checks,failures]);quit(1 if failures else 0)
