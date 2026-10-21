@@ -67,8 +67,8 @@ func _ready() -> void:
 
 func refresh_test_mode()->void:
 	var enabled:bool=get_node("/root/Progression").test_mode
-	test_mode_button.text="TESTMODUS: PÅ · 2000 KP" if enabled else "TESTMODUS: AV · 200 KP"
-	test_mode_button.tooltip_text="Trykk for vanlig start med 200 KP" if enabled else "Trykk for å starte med 2000 KP"
+	test_mode_button.text="TESTMODUS: PÅ · 2000 KP" if enabled else "TESTMODUS: AV · 300 KP"
+	test_mode_button.tooltip_text="Trykk for vanlig start med 300 KP" if enabled else "Trykk for å starte med 2000 KP"
 	test_mode_button.self_modulate=Color("ffe58c") if enabled else Color.WHITE
 
 func _draw() -> void:

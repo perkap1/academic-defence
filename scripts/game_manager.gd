@@ -3,9 +3,9 @@ extends Node
 signal changed
 signal ended(won: bool)
 
-const TOWER_COST := 70
-const TOWER_COSTS := {"book": 70, "blackboard": 100, "assistant": 120, "economy": 100, "pe_teacher":preload("res://scripts/pe_teacher.gd").BUILD_COST}
-var gold := 200
+const TOWER_COST := 90
+const TOWER_COSTS := {"book": 90, "blackboard": 120, "assistant": 120, "economy": 50, "pe_teacher":preload("res://scripts/pe_teacher.gd").BUILD_COST}
+var gold := 300
 var test_mode := false
 var lives := 10
 var starting_reputation := 10

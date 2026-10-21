@@ -23,13 +23,13 @@ func run():
  var before:int=main.game.gold;main.economy.complete_wave(3);check(main.game.gold==before,"Office does not pay at wave end")
  main.economy.begin_wave(4);check(building.wave_bonus==0,"Wave cap resets")
  main.sell(slot);main.build(slot,"book");var tower=slot.tower
- check(tower.get_upgrade_cost()==100,"Book level2 remains100")
+ check(tower.get_upgrade_cost()==110,"Book level2 costs110")
  var student=load("res://scenes/student.tscn").instantiate();main.map.route.add_child(student);student.assistant_hold=true;student.global_position=tower.global_position
  tower._process(0);var shot=main.map.projectiles.get_child(0);shot._process(1)
  check(tower.stats.total.get("shots",0)==1 and tower.stats.total.get("hits",0)==1 and tower.stats.total.get("knowledge",0)==20,"Actual projectile statistics")
  main.game.try_upgrade(slot);check(tower.stats.current().get("knowledge",0)==0 and tower.stats.total.get("knowledge",0)==20,"Upgrade resets current only")
- check(tower.get_upgrade_cost()==220,"Book level3 costs220")
- main.game.try_upgrade(slot);check(tower.get_sell_refund()==195,"Refund half actual390 investment")
+ check(tower.get_upgrade_cost()==250,"Book level3 costs250")
+ main.game.try_upgrade(slot);check(tower.get_sell_refund()==225,"Refund half actual450 investment")
  main.free()
  for scene in ["main_map2","main_map3","main_map4"]:
   main=load("res://scenes/%s.tscn"%scene).instantiate();root.add_child(main);main.process_mode=Node.PROCESS_MODE_DISABLED
@@ -49,7 +49,7 @@ func run():
   student._process(2);tower.stats.teach(student,300)
   check(tower.stats.total.get("knowledge",0)==before+500 and tower.stats.total.get("graduated",0)==2,"Snack healing never subtracts delivered Knowledge")
   main.sell(slot);main.build(slot,"blackboard");tower=slot.tower
-  main.game.try_upgrade(slot);check(tower.get_upgrade_cost()==250,"Science level3 price250")
+  main.game.try_upgrade(slot);check(tower.get_upgrade_cost()==280,"Science level3 price280")
   main.game.try_upgrade(slot)
   var targets=[]
   for kind in ["normal","normal","bookworm","snack"]:

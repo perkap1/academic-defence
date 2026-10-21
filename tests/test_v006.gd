@@ -13,6 +13,7 @@ func run() -> void:
  # Unit fixture: isolate tower/combat behavior from paid site clearing.
  for site in main.map.slots.get_children(): site.set_blocker("")
  main.process_mode=Node.PROCESS_MODE_DISABLED
+ main.game.gold=200 # Fixed assistant affordability fixture; normal start is tested separately.
  check(main.game.TOWER_COSTS.get("assistant",0)==120,"Assistant costs120")
  if not main.game.TOWER_COSTS.has("assistant"):
   print("V006: %d checks, %d failures" % [checks,failures])
@@ -114,6 +115,7 @@ func run() -> void:
    # Unit fixture: isolate tower/combat behavior from paid site clearing.
    for site in main.map.slots.get_children(): site.set_blocker("")
    main.process_mode=Node.PROCESS_MODE_DISABLED
+
    main.build(main.map.slots.get_child(2),"assistant")
    post=main.map.slots.get_child(2).tower
    for worker in post.assistants: worker._process(3)
@@ -140,6 +142,7 @@ func run() -> void:
    # Unit fixture: isolate tower/combat behavior from paid site clearing.
    for site in main.map.slots.get_children(): site.set_blocker("")
    main.process_mode=Node.PROCESS_MODE_DISABLED
+
    main.build(main.map.slots.get_child(2),"assistant")
    post=main.map.slots.get_child(2).tower
    for worker in post.assistants: worker._process(3)

@@ -8,7 +8,7 @@ func run():
   for index in order:
    var slot=main.map.slots.get_child(index)
    var kind="blackboard" if index in [10,13,19] else "book"
-   var cost=100 if kind=="blackboard" else 70
+   var cost:int=main.game.TOWER_COSTS[kind]
    if not slot.occupied and main.game.gold>=cost+slot.get_clear_cost():
     if slot.is_blocked():main.game.try_clear_site(slot)
     main.build(slot,kind)

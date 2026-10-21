@@ -15,7 +15,7 @@ var game
 var frames := []
 var base_sprite: Sprite2D
 var level := 1
-var total_invested := 70
+var total_invested := 90
 var visual_time := 0.0
 var level3_shots := 0
 @onready var sprite: Sprite2D = $Sprite
@@ -35,7 +35,7 @@ func configure(level, manager) -> void:
 
 func get_upgrade_cost() -> int:
 	if level >= 3: return 0
-	return [100,220][level-1] if tower_type == "book" else [120,250][level-1]
+	return [110,250][level-1] if tower_type == "book" else [150,280][level-1]
 
 func get_display_name() -> String:
 	return ["Book Tower","Advanced Book Tower","Scholar Tower"][level-1] if tower_type == "book" else ["Science Tower","Advanced Science Tower","Master Science Tower"][level-1]

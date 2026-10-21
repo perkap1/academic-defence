@@ -26,12 +26,12 @@ func run() -> void:
 				main.game.gold = 69
 				main.update_ui()
 				check(main.ui.book_button.disabled and main.ui.blackboard_button.disabled,"Unaffordable radial options disabled")
-				main.game.gold = 70
+				main.game.gold = 90
 				main.update_ui()
-				check(not main.ui.book_button.disabled and main.ui.blackboard_button.disabled,"70KP enables only Book")
-				main.game.gold = 100
+				check(not main.ui.book_button.disabled and main.ui.blackboard_button.disabled,"90KP enables only Book")
+				main.game.gold = 120
 				main.update_ui()
-				check(not main.ui.blackboard_button.disabled,"100KP enables Blackboard")
+				check(not main.ui.blackboard_button.disabled,"120KP enables Blackboard")
 				check(main.ui.build_menu.position == before,"Affordability state does not shift radial anchor")
 				main.ui.close_build_menu()
 		main.game.gold = 200

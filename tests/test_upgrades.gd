@@ -25,13 +25,13 @@ func run() -> void:
  tower.cooldown=0.71
  check(main.game.try_upgrade(slot),"Book upgrades to2")
  check(tower.level==2 and tower.knowledge_per_hit==25 and is_equal_approx(tower.fire_interval,0.8) and tower.teaching_range==286.0,"Book2 stats")
- check(main.game.gold==830 and tower.total_invested==170,"Charge100 once")
+ check(main.game.gold==800 and tower.total_invested==200,"Charge110 once")
  check(tower.cooldown==0.71 and tower.global_position==position_before and slot.tower==tower,"Preserve node, origin and cooldown")
  check(main.game.try_upgrade(slot),"Book upgrades to3")
  check(tower.level==3 and tower.knowledge_per_hit==30 and is_equal_approx(tower.fire_interval,0.65) and tower.teaching_range==312.0,"Book3 stats")
- check(main.game.gold==610 and tower.total_invested==390,"Charge220 once")
- check(not main.game.try_upgrade(slot) and main.game.gold==610,"Max rejects without charge")
- check(main.game.try_sell(slot) and main.game.gold==805,"Book3 refunds195")
+ check(main.game.gold==550 and tower.total_invested==450,"Charge250 once")
+ check(not main.game.try_upgrade(slot) and main.game.gold==550,"Max rejects without charge")
+ check(main.game.try_sell(slot) and main.game.gold==775,"Book3 refunds225")
  check(not main.game.try_upgrade(slot),"Reject sold slot")
  main.build(slot,"blackboard")
  tower=slot.tower
@@ -42,18 +42,18 @@ func run() -> void:
  check(tower.teaching_range==225 and tower.fire_interval==1.3,"Board range and attack interval preserved")
  main.game.gold=0
  check(not main.game.try_upgrade(slot),"Max no purchase")
- check(main.game.try_sell(slot) and main.game.gold==235,"Board3 refunds235")
+ check(main.game.try_sell(slot) and main.game.gold==275,"Board3 refunds275")
  main.game.gold=100
  main.build(slot,"book")
- check(not main.game.try_upgrade(slot) and main.game.gold==30 and slot.tower.level==1,"Reject unaffordable without mutation")
+ check(not main.game.try_upgrade(slot) and main.game.gold==10 and slot.tower.level==1,"Reject unaffordable without mutation")
  main.game.gold=1000
  main.select_slot(slot)
  check(main.ui.tower_panel.position.y>=940 and main.ui.tower_panel.size.y<=180,"Compact fixed bottom banner")
  check(main.ui.upgrade_button.visible and not main.ui.upgrade_button.disabled,"Upgrade available in banner")
  check(main.upgrade(slot),"Selected tower upgrade action")
- check(main.ui.tower_title.text.contains("Advanced Book") and main.ui.sell_button.text.contains("85"),"Live banner and invested refund")
+ check(main.ui.tower_title.text.contains("Advanced Book") and main.ui.sell_button.text.contains("100"),"Live banner and invested refund")
  main.game.gold=0;main.game.changed.emit()
- check(main.ui.upgrade_button.disabled and main.ui.upgrade_button.tooltip_text.contains("220"),"Cost visible while disabled")
+ check(main.ui.upgrade_button.disabled and main.ui.upgrade_button.tooltip_text.contains("250"),"Cost visible while disabled")
  main.clear_selection()
  check(not main.ui.tower_panel.visible and not slot.tower.show_range,"Deselect clears banner/range")
  check(not main.upgrade(slot),"Stale selection cannot buy")
@@ -120,7 +120,7 @@ func run() -> void:
  main.game.gold=1000
  main.build(slot,"book")
  paused=true
- check(not main.game.try_upgrade(slot) and slot.tower.level==1 and main.game.gold==930,"Paused cannot buy")
+ check(not main.game.try_upgrade(slot) and slot.tower.level==1 and main.game.gold==910,"Paused cannot buy")
  paused=false
  main.game.finished=true
  check(not main.game.try_upgrade(slot) and slot.tower.level==1,"Finished cannot buy")

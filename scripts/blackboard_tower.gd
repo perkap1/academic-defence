@@ -7,7 +7,7 @@ var slow_strength := 0.30
 
 func _ready() -> void:
 	tower_type = "blackboard"
-	total_invested = 100
+	total_invested = 120
 	teaching_range = 225.0
 	fire_interval = 1.3
 	knowledge_per_hit = 15

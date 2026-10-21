@@ -70,11 +70,11 @@ func run() -> void:
 	if main.has_method("sell"):
 		main.game.gold = 200
 		check(main.sell(slot), "Blackboard can be sold")
-		check(main.game.gold == 250 and not slot.occupied and slot.tower == null, "Blackboard refunds exactly 50 and frees slot")
-		check(not main.sell(slot) and main.game.gold == 250, "Repeated sale never pays twice")
+		check(main.game.gold == 260 and not slot.occupied and slot.tower == null, "Blackboard refunds exactly 60 and frees slot")
+		check(not main.sell(slot) and main.game.gold == 260, "Repeated sale never pays twice")
 		main.build(slot,"book")
-		check(main.game.gold == 180 and slot.occupied, "Same slot accepts rebuilt Book")
-		check(main.sell(slot) and main.game.gold == 215, "Book refunds exactly 35")
+		check(main.game.gold == 170 and slot.occupied, "Same slot accepts rebuilt Book")
+		check(main.sell(slot) and main.game.gold == 215, "Book refunds exactly 45")
 		var foreign = load("res://scenes/build_slot.tscn").instantiate()
 		root.add_child(foreign)
 		foreign.occupied = true
@@ -82,7 +82,7 @@ func run() -> void:
 		foreign.free()
 		main.build(slot,"book")
 		main.game.finished = true
-		check(not main.sell(slot) and main.game.gold == 145, "Finished game rejects sale")
+		check(not main.sell(slot) and main.game.gold == 125, "Finished game rejects sale")
 	main.free()
 	main = battle()
 	check(main.has_method("clear_selection"), "Exclusive tower selection implemented")

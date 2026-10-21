@@ -19,12 +19,12 @@ func run() -> void:
 		return
 	var game = load("res://scripts/game_manager.gd").new()
 	root.add_child(game)
-	check(game.gold == 200 and game.lives == 10, "Initial economy")
+	check(game.gold == 300 and game.lives == 10, "Initial economy")
 	var slot = load("res://scripts/build_slot.gd").new()
 	root.add_child(slot)
 	check(game.try_build(slot), "First tower can be built")
-	check(game.gold == 130 and slot.occupied, "Build spends exactly 70")
-	check(not game.try_build(slot) and game.gold == 130, "No duplicate spending")
+	check(game.gold == 210 and slot.occupied, "Build spends exactly 90")
+	check(not game.try_build(slot) and game.gold == 210, "No duplicate spending")
 	var poor_slot = load("res://scripts/build_slot.gd").new()
 	root.add_child(poor_slot)
 	game.gold = 69

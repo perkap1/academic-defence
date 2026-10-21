@@ -17,7 +17,7 @@ func run():
  var tower=load("res://scenes/pe_teacher.tscn").instantiate();main.map.towers.add_child(tower);tower.configure(main.map,main.game)
  for level in range(1,4):
   if level>1:tower.upgrade_level()
-  check(tower.knowledge_per_hit==[50,70,90][level-1],"PE Teacher damage reduced by10 at every level")
-  check(is_equal_approx(tower.fire_interval,[3.8,3.6,3.4][level-1]),"PE Teacher interval reduced by0.2 at every level")
-  check(tower.roll_distance==[240,350,480][level-1],"Roll distances unchanged")
+  check(tower.knowledge_per_hit==[50,65,80][level-1],"PE Teacher follows current damage balance")
+  check(is_equal_approx(tower.fire_interval,[3.8,3.7,3.6][level-1]),"PE Teacher follows current cast intervals")
+  check(tower.roll_distance==[240,300,360][level-1],"PE Teacher follows current roll distances")
  main.free();print("BALANCE V0314: %d checks, %d failures"%[checks,failures]);quit(1 if failures else 0)

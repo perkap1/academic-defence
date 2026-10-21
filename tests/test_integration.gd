@@ -45,7 +45,7 @@ func run() -> void:
 	check(main.waves.active and main.waves.wave == 1, "Wave waits for students still on route")
 	simulate(main, 60)
 	check(not main.waves.active and main.game.lives == 6, "All four first-wave students escape")
-	check(main.game.gold == 245, "Wave completion reward")
+	check(main.game.gold == 345, "Wave completion reward")
 	main.waves.start_wave()
 	simulate(main, 100)
 	check(main.game.finished and not main.game.won and main.game.lives == 0, "No-tower run loses")
@@ -54,16 +54,16 @@ func run() -> void:
 	main = packed.instantiate()
 	root.add_child(main)
 	main.process_mode = Node.PROCESS_MODE_DISABLED
-	check(main.game.gold == 200 and main.game.lives == 10 and main.waves.wave == 0, "Fresh round resets state")
+	check(main.game.gold == 300 and main.game.lives == 10 and main.waves.wave == 0, "Fresh round resets state")
 	check(main.map.towers.get_child_count() == 0, "Fresh round has no towers")
 	# A normal-budget strategy: two towers first, reinvest between waves.
 	var build_order := [4, 6, 2, 1, 7, 3, 0, 5, 8]
 	for wave in range(7):
 		for index in build_order:
 			var slot = main.map.slots.get_child(index)
-			if not slot.occupied and main.game.gold >= 70 + slot.get_clear_cost():
+			if not slot.occupied and main.game.gold >= 90 + slot.get_clear_cost():
 				if slot.is_blocked(): main.game.try_clear_site(slot)
-				main.build(slot, "blackboard" if wave >= 2 and index in [2,1,3] and main.game.gold >= 100 else "book")
+				main.build(slot, "blackboard" if wave >= 2 and index in [2,1,3] and main.game.gold >= 120 else "book")
 		check(main.waves.start_wave(), "Start wave %d in strategy run" % (wave + 1))
 		simulate(main, 110)
 		print("WAVE %d: lives=%d gold=%d graduates=%d" % [wave+1, main.game.lives, main.game.gold, main.game.graduated])

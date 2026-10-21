@@ -24,10 +24,10 @@ func run() -> void:
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	var slot = main.map.slots.get_child(1)
 	main.build(slot, "blackboard")
-	check(slot.occupied and main.game.gold == 100, "Blackboard costs 100")
+	check(slot.occupied and main.game.gold == 180, "Science costs 120")
 	check(slot.tower.tower_type == "blackboard", "Build selects Blackboard scene")
 	main.build(slot, "book")
-	check(main.game.gold == 100, "Cannot replace occupied slot")
+	check(main.game.gold == 180, "Cannot replace occupied slot")
 	main.game.gold = 99
 	main.build(main.map.slots.get_child(2), "blackboard")
 	check(not main.map.slots.get_child(2).occupied and main.game.gold == 99, "Blackboard rejects insufficient funds")
