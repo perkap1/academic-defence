@@ -103,7 +103,7 @@ func _ready() -> void:
 	reset_button.pressed.connect(func(): restart_requested.emit())
 	instruction_panel = Artwork.panel(root,Vector2(24,202),Vector2(790,116),true)
 	var instruction := instruction_panel
-	message_label = Artwork.label(instruction,"Book 90 · Science 120 · Assistant 120 · Study Hall 50 KP",Vector2(45,34),Vector2(708,27),19)
+	message_label = Artwork.label(instruction,"Book 90 · Science 120 · Assistant 120 · Study Hall 45 KP",Vector2(45,34),Vector2(708,27),19)
 	activity_label = Artwork.label(instruction,"Bygg først, og start bølgen når du er klar.",Vector2(45,61),Vector2(708,23),16,Color("b7d5c2"))
 	create_build_menu(root)
 	create_clear_menu(root)
@@ -403,10 +403,10 @@ func create_build_menu(root: Control) -> void:
 	study_button.size = Vector2(150,134)
 	study_button.focus_mode = Control.FOCUS_NONE
 	study_button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	study_button.tooltip_text = "Study Hall · 50 KP · +15 KP etter hver bølge"
+	study_button.tooltip_text = "Study Hall · 45 KP · +15 KP etter hver bølge"
 	build_menu.add_child(study_button)
 	study_button.pressed.connect(func(): choose_tower("economy"))
-	var study_name := Artwork.label(build_menu,"Study Hall · 50 KP",Vector2(120,413),Vector2(200,27),17)
+	var study_name := Artwork.label(build_menu,"Study Hall · 45 KP",Vector2(120,413),Vector2(200,27),17)
 	study_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var cancel := radial_button("cancel",Vector2(188,182),Vector2(64,70))
 	cancel.tooltip_text = "Avbryt"
@@ -508,7 +508,7 @@ func _process(delta: float) -> void:
 	if message_time > 0:
 		message_time -= delta
 		if message_time <= 0:
-			message_label.text = "Book 90 · Science 120 · Assistant 120 · Study Hall 50 KP"
+			message_label.text = "Book 90 · Science 120 · Assistant 120 · Study Hall 45 KP"
 			message_label.add_theme_color_override("font_color",Color("fff0c7"))
 
 func open_build_menu(slot, game) -> void:

@@ -6,7 +6,7 @@ func run():
  var slot=main.map.slots.get_child(0);main.build(slot,"economy");main.select_slot(slot)
  var before:int=main.game.gold
  main.specialize(slot,"library")
- check(main.game.gold==before-120,"Library specialization charges120")
+ check(main.game.gold==before-100,"Library specialization charges100")
  var building=slot.tower
  main.economy.complete_wave(1)
  before=main.game.gold;main.ui.upgrade_button.pressed.emit()
@@ -25,7 +25,7 @@ func run():
  check(main.game.gold==before-30,"Max repeated confirmation cannot charge twice")
  main.economy.complete_wave(2)
  check(building.stats.total.kp==65 and building.stats.current().kp==35,"Upgraded income counted once")
- check(not main.game.try_upgrade(slot) and building.get_sell_refund()==100,"Max Library rejects duplicate and refunds100")
+ check(not main.game.try_upgrade(slot) and building.get_sell_refund()==87,"Max Library rejects duplicate and refunds87")
  main.sell(slot);main.build(slot,"economy");main.select_slot(slot);before=main.game.gold
  main.specialize(slot,"scholarship");building=slot.tower
  check(main.game.gold==before-150,"Office specialization charges150")
@@ -38,7 +38,7 @@ func run():
  check(building.wave_bonus==50 and building.stats.total.kp==50 and building.stats.current().kp==10,"Expanded cap permits exactly two more graduates")
  check(building.stats.total.waves==1 and building.stats.current().waves==1,"Same wave counts once in lifetime and once in upgraded stage")
  check(building.stats.total.rewarded==10 and building.stats.current().rewarded==2,"No duplicate statistics through upgrade")
- check(building.get_income()==0 and building.get_sell_refund()==125,"Office no passive income and refund125")
+ check(building.get_income()==0 and building.get_sell_refund()==122,"Office no passive income and refund122")
  main.economy.begin_wave(4);check(building.wave_bonus==0,"Expanded Office resets wave cap")
  main.sell(slot);main.build(slot,"book");main.game.try_upgrade(slot);before=main.game.gold;main.game.try_upgrade(slot)
  check(main.game.gold==before-250 and slot.tower.get_sell_refund()==225,"Book L3 costs250 refund225")
