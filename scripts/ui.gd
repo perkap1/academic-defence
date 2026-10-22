@@ -572,10 +572,10 @@ func update_build_buttons(game) -> void:
 	blackboard_button.modulate=Color(0.45,0.45,0.45) if blackboard_button.disabled else Color.WHITE
 	study_button.disabled = game.finished or game.gold < game.TOWER_COSTS.economy
 	study_button.self_modulate = Color("777777") if study_button.disabled else Color.WHITE
-	var near_road:=is_instance_valid(selected_slot) and preload("res://scripts/pe_road_access.gd").can_build(get_parent().map,selected_slot)
-	pe_button.disabled=not near_road or game.finished or game.gold<game.TOWER_COSTS.pe_teacher
+	var valid_slot:=is_instance_valid(selected_slot) and preload("res://scripts/pe_road_access.gd").can_build(get_parent().map,selected_slot)
+	pe_button.disabled=not valid_slot or game.finished or game.gold<game.TOWER_COSTS.pe_teacher
 	pe_button.self_modulate=Color("777777") if pe_button.disabled else Color.WHITE
-	pe_button.tooltip_text="Must be built next to a road" if not near_road else "PE Teacher · %d KP · Rolling medicine ball · %d Knowledge"%[game.TOWER_COSTS.pe_teacher,preload("res://scripts/pe_teacher.gd").KNOWLEDGE[0]]
+	pe_button.tooltip_text="Velg en byggeplass" if not valid_slot else "PE Teacher · %d KP · Rolling medicine ball · %d Knowledge"%[game.TOWER_COSTS.pe_teacher,preload("res://scripts/pe_teacher.gd").KNOWLEDGE[0]]
 
 func update_state(game, waves) -> void:
 	test_mode_label.visible=game.test_mode

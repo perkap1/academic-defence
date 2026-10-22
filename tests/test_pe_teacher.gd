@@ -16,26 +16,31 @@ func run():
  for id in range(1,6):
   var main=load("res://scenes/%s.tscn"%("main" if id==1 else "main_map%d"%id)).instantiate()
   root.add_child(main);main.process_mode=Node.PROCESS_MODE_DISABLED;main.game.gold=10000
-  var valid_count=0;var invalid_count=0
   for slot in main.map.slots.get_children():
    slot.set_blocker("")
-   var allowed=access.can_build(main.map,slot)
    main.ui.open_build_menu(slot,main.game)
-   check(main.ui.pe_button.disabled==not allowed,"Menu matches road access map%d"%id)
-   if allowed:valid_count+=1
-   else:
-    invalid_count+=1
-    var before=main.game.gold
-    main.build(slot,"pe_teacher")
-    check(not slot.occupied and main.game.gold==before,"Invalid sites reject direct build without payment")
-  check(valid_count>0,"Roadside sites available on map%d"%id)
-  check(invalid_count>0,"Distant or obstructed sites rejected on map%d"%id)
-  var slot=null
+   check(access.can_build(main.map,slot) and not main.ui.pe_button.disabled,"Every build slot allows PE Teacher on map%d"%id)
+   check(not main.ui.pe_button.tooltip_text.contains("next to a road"),"Menu no longer requires a roadside slot")
+   var before:int=main.game.gold
+   main.build(slot,"pe_teacher")
+   check(slot.occupied and is_instance_valid(slot.tower) and main.game.gold==before-150,"Every slot builds and charges exactly150KP")
+   if slot.occupied:
+    check(slot.tower.global_position==slot.global_position,"PE Teacher stays anchored to every slot")
+    check(not main.game.try_build(slot,"pe_teacher") and main.game.gold==before-150,"Occupied slot cannot charge twice")
+    main.sell(slot)
+  var foreign=load("res://scenes/build_slot.tscn").instantiate();root.add_child(foreign)
+  check(not access.can_build(main.map,foreign) and not main.game.try_build(foreign,"pe_teacher"),"Foreign slots still rejected")
+  foreign.free()
+  var slot=main.map.slots.get_child(0)
   for site in main.map.slots.get_children():
    if access.can_build(main.map,site):slot=site;break
+  var budget:int=main.game.gold
+  main.game.gold=149;main.ui.open_build_menu(slot,main.game)
+  check(main.ui.pe_button.disabled and not main.game.try_build(slot,"pe_teacher"),"Insufficient KP still prevents building")
+  main.game.gold=budget
   var original=slot.global_position
   slot.set_blocker("school_books");main.build(slot,"pe_teacher")
-  check(not slot.occupied,"Blocked roadside site still requires clearing")
+  check(not slot.occupied,"Blocked slot still requires clearing")
   slot.set_blocker("");main.build(slot,"pe_teacher")
   var tower=slot.tower
   check(is_instance_valid(tower) and tower.tower_type=="pe_teacher","Build PE Teacher on each map")

@@ -115,7 +115,7 @@ func build(slot, tower_type: String = "book") -> void:
 	if get_tree().paused or slot.occupied or slot.is_blocked():
 		return
 	if tower_type=="pe_teacher" and not preload("res://scripts/pe_road_access.gd").can_build(map,slot):
-		ui.show_message("Must be built next to a road",true)
+		ui.show_message("Velg en byggeplass på denne banen",true)
 		return
 	if not game.try_build(slot, tower_type):
 		if not game.finished:
