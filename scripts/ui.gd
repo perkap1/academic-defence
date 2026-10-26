@@ -457,8 +457,11 @@ func create_pause_overlay(root: Control) -> void:
 	Artwork.panel(pause_overlay,Vector2.ZERO,pause_overlay.size)
 	var title := Artwork.label(pause_overlay,"Undervisningen er pauset",Vector2(45,65),Vector2(400,44),27)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var resume := Artwork.action(pause_overlay,"Fortsett",Vector2(124,150))
+	var resume := Artwork.action(pause_overlay,"Fortsett",Vector2(124,120))
 	resume.pressed.connect(func(): pause_requested.emit())
+	var audio_button=Artwork.plain_button(pause_overlay,"LYD",Vector2(175,245),Vector2(140,48))
+	audio_button.name="AudioSettings"
+	audio_button.pressed.connect(func():Sound.open_settings(self))
 
 func create_result(root: Control) -> void:
 	result_overlay = Control.new()

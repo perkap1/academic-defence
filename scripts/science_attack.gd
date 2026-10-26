@@ -30,6 +30,7 @@ func configure_impact(level_map,knowledge:int,radius:float,slow_seconds:float,st
 	hit_duration=slow_seconds
 	hit_strength=strength
 func launch_from(point:Vector2)->void:
+	Sound.play_effect("science_throw")
 	launch_offset=point+Vector2(0,65)-global_position
 	flight_duration=FLIGHT_TIME
 	duration=0.45+flight_duration
@@ -54,6 +55,7 @@ func _ready()->void:
 func impact()->void:
 	if impacted:return
 	impacted=true
+	Sound.play_effect("science_hit")
 	if is_instance_valid(map):
 		for student in map.get_students():
 			if is_instance_valid(student) and student.can_receive_attack("blackboard") and student.global_position.distance_to(global_position)<=hit_radius:

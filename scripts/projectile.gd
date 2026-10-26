@@ -16,6 +16,7 @@ func _ready() -> void:
 	add_child(sprite)
 
 func configure(student, amount: int, is_golden: bool = false) -> void:
+	Sound.play_effect("book_throw")
 	golden = is_golden
 	sprite.modulate = Color(1.4,1.18,0.75) if golden else Color.WHITE
 	sprite.scale = Vector2.ONE * (0.0875 if golden else 0.07)
@@ -53,6 +54,7 @@ func _process(delta: float) -> void:
 	var distance := global_position.distance_to(destination)
 	if distance <= speed * delta + 8:
 		spent = true
+		Sound.play_effect("book_hit")
 		if source_stats:
 			if source_stats.teach(target,knowledge,"book"): source_stats.add("hits")
 		else: target.receive_attack(knowledge,"book")

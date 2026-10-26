@@ -29,6 +29,9 @@ func _ready() -> void:
 		refresh_test_mode())
 	Artwork.label(header,"Gjelder nye runder på alle baner",Vector2(997,124),Vector2(370,24),17,Color("c4debf"))
 	refresh_test_mode()
+	var audio_button=Artwork.plain_button(header,"LYD",Vector2(790,53),Vector2(150,62))
+	audio_button.name="AudioSettings"
+	audio_button.pressed.connect(func():Sound.open_settings(self))
 	var note := Artwork.panel(root,Vector2(24,202),Vector2(778,116),true)
 	Artwork.label(note,"Velg bane \u00b7 Bokruinene er tilgjengelig fra start",Vector2(46,34),Vector2(690,28),20)
 	Artwork.label(note,"Skogsstien: 7 · Elvesvingene: 12 · Bokruinene: 15 bølger",Vector2(46,62),Vector2(690,23),17,Color("bbd8bf"))

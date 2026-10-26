@@ -85,12 +85,14 @@ func _input(event: InputEvent) -> void:
 func upgrade(slot) -> bool:
 	if get_tree().paused or not is_instance_valid(slot) or slot != selected_tower_slot or slot.get_parent() != map.slots: return false
 	if not game.try_upgrade(slot): return false
+	Sound.play_effect("upgrade")
 	ui.show_message("%s · Level %d" % [slot.tower.get_display_name(),slot.tower.level],false)
 	return true
 
 func specialize(slot, branch: String) -> bool:
 	if get_tree().paused or not is_instance_valid(slot) or slot != selected_tower_slot or slot.get_parent() != map.slots: return false
 	if not game.try_specialize(slot,branch): return false
+	Sound.play_effect("upgrade")
 	slot.tower.set_range_visible(true)
 	ui.show_message("%s klar · %s" % [slot.tower.get_display_name(),"+5 KP per uteksaminert elev i radius, maks 40/bølge." if branch=="scholarship" else "+30 KP etter hver bølge."],false)
 	return true
@@ -123,6 +125,7 @@ func build(slot, tower_type: String = "book") -> void:
 		return
 	var scene = EconomyScene if tower_type=="economy" else (AssistantScene if tower_type=="assistant" else (BlackboardScene if tower_type=="blackboard" else TowerScene))
 	if tower_type=="pe_teacher":scene=PETeacherScene
+	Sound.play_effect("build")
 	var tower = scene.instantiate()
 	map.towers.add_child(tower)
 	tower.position = slot.position
@@ -134,7 +137,9 @@ func build(slot, tower_type: String = "book") -> void:
 	ui.show_message("Study Hall bygget · +15 KP etter hver bølge." if tower_type=="economy" else "%s bygget. Klar for undervisning!" % ("Teaching Assistant Post" if tower_type=="assistant" else tower.get_display_name()), false)
 
 func student_resolved(student, graduated: bool) -> void:
-	if graduated: economy.student_graduated(student)
+	if graduated:
+		Sound.play_effect("graduate")
+		economy.student_graduated(student)
 	var base_reward: int = 5 if student.student_type in ["normal","pe","bookworm"] and waves.wave >= 4 else student.base_reward
 	var paid: int = game.resolve_student(graduated,base_reward,waves.wave)
 	map.show_completion(student, graduated,paid)

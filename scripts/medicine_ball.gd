@@ -41,6 +41,7 @@ func _ready()->void:
  dust.texture=dust_frames[0];dust.centered=false;dust.offset=Vector2(-200,-260);dust.scale=Vector2.ONE*0.13*size_factor
  add_child(dust);add_child(trail);add_child(ball);dust.hide()
 func launch_from(point:Vector2,ground_origin:Vector2=Vector2.INF)->void:
+ Sound.play_effect("pe_throw")
  origin=point;global_position=point
  # Choose the road direction most aligned with the throw across the ground.
  # The raised hand/visual flight arc must not reverse a vertical-road throw.
@@ -70,6 +71,7 @@ func advance(delta:float)->void:
   global_position=path.to_global(path.curve.sample_baked(progress))
   if distance_travelled>=roll_limit-0.001 or available-travel<=0.001:
    state="burst";elapsed=0
+   Sound.play_effect("pe_burst")
  elif state=="burst":
   elapsed+=remaining
   if elapsed>=BURST_TIME:set_process(false);queue_free();return
