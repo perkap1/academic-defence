@@ -38,10 +38,10 @@ func run()->void:
   tower.animation_time=0
   for time in [0.0,0.4,1.2,5.0]:
    tower.visual_time=time
-   check(tower.get_visual_frame()==int(floor(time*3.0+0.00001))%5,"Science calm idle")
-  for i in range(4):
-   tower.animation_time=0.4-i*0.1
-   check(tower.get_visual_frame()==i+5,"Ordered4 science attack frames")
+   check(tower.get_visual_frame()==int(floor(time*1.5+0.00001))%6,"Science calm idle matches Book Tower speed")
+  for i in range(5):
+   tower.animation_time=0.4-i*0.08
+   check(tower.get_visual_frame()==i+6,"Ordered5 science attack frames")
   var effect=tower.create_attack_effect()
   main.map.effects.add_child(effect)
   check(effect.frames.size()==5 and effect.frames[0] is AtlasTexture,"Five science cloud frames")

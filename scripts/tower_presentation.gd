@@ -42,16 +42,18 @@ static func thrown_book()->AtlasTexture:
  var sheet:Texture2D=load("res://assets/presentation/thrown_book.png")
  return atlas(sheet,Rect2(355,280,525,710),Vector2(617.5,635),Vector2(600,760),Vector2(300,380))
 static func science_teacher_frames()->Array:
- var sheet:Texture2D=load("res://assets/presentation/science_teacher_sheet.png")
+ var sheet:Texture2D=load("res://assets/presentation/science_teacher_v036.png")
  var result=[]
- var cells=[0,320,622,926,1230,1536]
- var centers=[171,475,779,1084,1386]
+ var lefts=[15,259,498,740,978,1217]
+ var rights=[255,497,737,977,1216,1448]
+ var centers=[146.5,390.5,631.5,870.5,1106,1337.5]
+ for i in range(6):
+  result.append(atlas(sheet,Rect2(lefts[i],120,rights[i]-lefts[i],385),Vector2(centers[i],502 if i==0 else 501),Vector2(600,600),Vector2(300,565)))
+ var attack_lefts=[10,245,586,890,1158]
+ var attack_rights=[248,586,878,1155,1448]
+ var attack_centers=[155.5,442,724.5,1027.5,1310]
  for i in range(5):
-  result.append(atlas(sheet,Rect2(cells[i],60,cells[i+1]-cells[i],438),Vector2(centers[i],490),Vector2(500,500),Vector2(250,470)))
- var attack_cells=[0,365,687,1090,1536]
- var attack_centers=[175,528,877,1282]
- for i in range(4):
-  result.append(atlas(sheet,Rect2(attack_cells[i],498,attack_cells[i+1]-attack_cells[i],475),Vector2(attack_centers[i],954),Vector2(500,500),Vector2(250,470)))
+  result.append(atlas(sheet,Rect2(attack_lefts[i],510,attack_rights[i]-attack_lefts[i],510),Vector2(attack_centers[i],1012),Vector2(600,600),Vector2(300,565)))
  return result
 static func science_orb_frames()->Array:
  var sheet:Texture2D=load("res://assets/presentation/science_attack_sheet.png")
@@ -73,7 +75,7 @@ static func apply(tower)->void:
  tower.frames=tower_frames(tower.tower_type,tower.level)
  var factor:float=0.247 if tower.tower_type=="book" else 0.2275
  tower.sprite.position=Vector2(0,-1.95)
- tower.sprite.offset=Vector2(-300,-465) if tower.tower_type=="book" else Vector2(-250,-470)
+ tower.sprite.offset=Vector2(-300,-465) if tower.tower_type=="book" else Vector2(-300,-565)
  tower.sprite.centered=false
  tower.sprite.scale=Vector2.ONE*factor
  tower.sprite.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
@@ -87,8 +89,11 @@ static func apply(tower)->void:
  base.centered=false
  base.scale=tower.sprite.scale
  base.texture=tower.frames[0]
+ if tower.tower_type=="blackboard":
+  # Keep the full desk width; actor crops exclude adjacent teachers above it.
+  base.texture=atlas(tower.frames[0].atlas,Rect2(0,120,270,385),Vector2(146.5,502),Vector2(600,600),Vector2(300,565))
  base.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
- var cut:float=-180.0 if tower.tower_type=="book" else -190.0
+ var cut:float=-180.0 if tower.tower_type=="book" else -130.0
  for pair in [[base,false],[tower.sprite,true]]:
   var material=ShaderMaterial.new()
   material.shader=BASE_SHADER

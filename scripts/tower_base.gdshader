@@ -2,10 +2,19 @@ shader_type canvas_item;
 uniform float cut_y = -150.0;
 uniform bool upper = true;
 uniform bool gold_banner = false;
+uniform int science_frame = -1;
+uniform vec2 source_pivot = vec2(0.0);
+uniform bool source_flipped = false;
+varying float local_x;
 varying float local_y;
-void vertex() { local_y = VERTEX.y; }
+void vertex() { local_x = VERTEX.x; local_y = VERTEX.y; }
 void fragment() {
  vec4 tex = texture(TEXTURE, UV);
+ // The supplied experiment effects overlap neighboring cells. Mask only those
+ // neighboring fragments at import/display time; the original PNG stays intact.
+ vec2 source = vec2(source_flipped ? -local_x : local_x, local_y) + source_pivot;
+ if (science_frame == 7 && source.y > 815.0 && source.x < 310.0) { discard; }
+ if (science_frame == 9 && source.y < 670.0 && source.x < 945.0) { discard; }
  // Only the central blue cloth; preserve the original gold emblem and trim.
  if (gold_banner && UV.x > 0.39 && UV.x < 0.61 && UV.y > 0.68 && UV.y < 0.92 && tex.b > tex.r * 1.4 && tex.b > tex.g * 1.15) {
   float light = max(tex.r, max(tex.g,tex.b));

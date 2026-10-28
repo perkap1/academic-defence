@@ -1,5 +1,6 @@
 extends "res://scripts/book_tower.gd"
 const ScienceAttack = preload("res://scripts/science_attack.gd")
+const SOURCE_PIVOTS=[Vector2(146.5,502),Vector2(390.5,501),Vector2(631.5,501),Vector2(870.5,501),Vector2(1106,501),Vector2(1337.5,501),Vector2(155.5,1012),Vector2(442,1012),Vector2(724.5,1012),Vector2(1027.5,1012),Vector2(1310,1012)]
 
 var area_radius := 105.0
 var slow_duration := 2.0
@@ -27,8 +28,15 @@ func upgrade_level() -> bool:
 	return true
 
 func get_visual_frame() -> int:
-	if animation_time<=0:return int(floor(visual_time*3.0+0.00001))%5
-	return 5+clampi(int(floor((0.4-animation_time)*10.0+0.00001)),0,3)
+	if animation_time<=0:return int(floor(visual_time*1.5+0.00001))%6
+	return 6+clampi(int(floor((0.4-animation_time)*12.5+0.00001)),0,4)
+
+func update_sprite(delta:float)->void:
+	super.update_sprite(delta)
+	var frame:=get_visual_frame()
+	sprite.material.set_shader_parameter("science_frame",frame)
+	sprite.material.set_shader_parameter("source_pivot",SOURCE_PIVOTS[frame])
+	sprite.material.set_shader_parameter("source_flipped",sprite.flip_h)
 
 func create_attack_effect():
 	var effect=ScienceAttack.new()
