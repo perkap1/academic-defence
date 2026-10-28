@@ -3,7 +3,7 @@ var slider:HSlider
 var mute_button:CheckButton
 var level_label:Label
 func _ready()->void:
- title="8-bit-lydeffekter";ok_button_text="Lukk"
+ title="Lydeffekter";ok_button_text="Lukk"
  process_mode=Node.PROCESS_MODE_ALWAYS
  var layout=VBoxContainer.new();layout.add_theme_constant_override("separation",18);add_child(layout)
  level_label=Label.new();level_label.add_theme_font_size_override("font_size",22);layout.add_child(level_label)

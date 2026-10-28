@@ -6,7 +6,7 @@ func run() -> void:
 	layout.initialized=true # Lane placement uses its own RNG.
 	var main = load("res://scenes/main_map4.tscn").instantiate()
 	root.add_child(main)
-	main.process_mode = Node.PROCESS_MODE_DISABLED
+	main.process_mode = Node.PROCESS_MODE_DISABLED;main.waves.variant_rng.seed=3404
 	var order := [7,8,5,9,1,10,6,2,11,3,12,0,4,13]
 	for wave in range(17):
 		for index in order:

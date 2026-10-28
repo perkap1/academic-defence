@@ -127,8 +127,8 @@ func run() -> void:
 				if student.student_type=="bookworm":
 					for hit in range(3): student.teach(100)
 				if student.student_type=="snack":
-					student.teach(200);student._process(2);student.teach(300)
-				else:student.teach(100)
+					student.teach(int(student.get_heal_capacity()/2));student._process(2);student.teach(int(student.get_heal_capacity()))
+				else:student.teach(int(student.get_heal_capacity()))
 		check(main.game.won and main.waves.wave == 12,"Map2 victory waits for wave12")
 		check(main.game.graduated == main.waves.counts.reduce(func(a,b):return a+b,0),"All Map2 students resolve once")
 		check(main.ui.wave_label.text == "12 / 12","Map2 HUD uses twelve waves")

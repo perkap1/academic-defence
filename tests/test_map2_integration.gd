@@ -4,7 +4,7 @@ func run() -> void:
 	var packed = load("res://scenes/main_map2.tscn")
 	var main = packed.instantiate()
 	root.add_child(main)
-	main.process_mode = Node.PROCESS_MODE_DISABLED
+	main.process_mode = Node.PROCESS_MODE_DISABLED;main.waves.variant_rng.seed=3402
 	var order := [2,4,3,5,1,0,6,7]
 	for wave in range(12):
 		for index in order:
@@ -25,7 +25,7 @@ func run() -> void:
 	main.free()
 	main = packed.instantiate()
 	root.add_child(main)
-	main.process_mode = Node.PROCESS_MODE_DISABLED
+	main.process_mode = Node.PROCESS_MODE_DISABLED;main.waves.variant_rng.seed=3402
 	main.waves.start_wave()
 	simulate(main,100)
 	check(main.game.lives == 4 and not main.game.finished,"Map2 wave1 without towers loses6 reputation")

@@ -19,6 +19,10 @@ var drop_frames := []
 var drop_time := 0.0
 var teacher
 var assistant_hold := false
+var enemy_rank:=""
+var health_multiplier:=1.0
+var rank_material:ShaderMaterial
+var rank_label:Label
 var knowledge:float = 0.0
 var done := false
 var animation_time := 0.0
@@ -113,10 +117,19 @@ func face_teacher(point:Vector2) -> void:
 	direction="side" if absf(vector.x)>absf(vector.y)*0.8 else ("front" if vector.y>0 else "back")
 	sprite.flip_h=side_flipped(vector.x)
 	sprite.texture=frames[direction][animation_frame()]
+	update_rank_pose()
+
+func update_rank_pose()->void:
+	if rank_material==null:return
+	rank_material.set_shader_parameter("actor_origin",global_position)
+	rank_material.set_shader_parameter("actor_scale",global_transform.x.length())
+	rank_material.set_shader_parameter("facing",["front","side","back"].find(direction))
+	rank_material.set_shader_parameter("flipped",sprite.flip_h)
 
 func update_lane_position()->void:
 	if get_parent() is Path2D:
 		position=UnitLayout.lane_position(get_parent().curve,progress,lane_offset)
+		update_rank_pose()
 		if not done:
 			var level=get_parent().get_parent()
 			if level.has_method("update_bridge_visual"):level.update_bridge_visual(self)
@@ -212,7 +225,13 @@ func _process(delta: float) -> void:
 		complete(false)
 
 func get_max_knowledge()->float:
-	return 90.0 if student_type in ["pe","bookworm"] else float(MAX_KNOWLEDGE)
+	return (90.0 if student_type in ["pe","bookworm"] else float(MAX_KNOWLEDGE))*health_multiplier
+
+func set_enemy_rank(value:String,multiplier:float)->void:
+	enemy_rank=value if value in ["elite","boss"] else ""
+	health_multiplier=maxf(1.0,multiplier) if enemy_rank!="" else 1.0
+	bar.max_value=get_max_knowledge()
+	preload("res://scripts/enemy_rank_presentation.gd").apply(self)
 
 func get_heal_capacity()->float:return get_max_knowledge()
 

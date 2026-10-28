@@ -15,18 +15,19 @@ func _ready()->void:
  sprite.offset=Vector2(-120,-245)
  sprite.position=Vector2(0,-40)
  sprite.texture=frames[direction][0]
- bar.max_value=150
+ bar.max_value=get_max_knowledge()
  bar.position.y=-165
  z_index=3
-func get_heal_capacity()->float:return 150.0
+func get_max_knowledge()->float:return 150.0*health_multiplier
+func get_heal_capacity()->float:return get_max_knowledge()
 func can_receive_attack(kind:String)->bool:
  return not done and kind=="book"
 func receive_attack(amount:int,kind:String)->void:
  if not can_receive_attack(kind) or amount<=0:return
- knowledge=minf(150,knowledge+amount)
+ knowledge=minf(get_max_knowledge(),knowledge+amount)
  bar.value=knowledge
  hit_time=0.24
- if knowledge==150:complete(true)
+ if knowledge>=get_max_knowledge():complete(true)
 func teach(_amount:int)->void:pass # Unsourced / ground Knowledge cannot affect flight.
 func apply_slow(_duration:float=2.0,_strength:float=0.30,_source:String="other")->void:pass
 func reserve_teacher(_candidate)->bool:return false

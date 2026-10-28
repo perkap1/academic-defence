@@ -19,11 +19,12 @@ func configure(_kind:String="clown",_sex:String="boy")->void:
 func _ready()->void:
  configure();super._ready()
  frames=ClownFrames.create();sprite.scale=Vector2.ONE*0.36;sprite.offset=Vector2(-140,-285)
- sprite.texture=frames[direction][animation_frame()];bar.max_value=120
+ sprite.texture=frames[direction][animation_frame()];bar.max_value=get_max_knowledge()
  sync_art()
  bar.position=Vector2(-40,-106);bar.size.x=56
  update_lane_position()
-func get_heal_capacity()->float:return 120.0
+func get_max_knowledge()->float:return 120.0*health_multiplier
+func get_heal_capacity()->float:return get_max_knowledge()
 func animation_frame()->int:
  if defeated:return 13+mini(4,int(defeat_time/0.85*5))
  if casting:return 6+mini(4,int(cast_elapsed/CAST_DURATION*5))
@@ -32,8 +33,8 @@ func animation_frame()->int:
  return 2+int(animation_time*8)%4
 func teach(amount:int)->void:
  if not is_targetable() or amount<=0:return
- knowledge=minf(120,knowledge+amount);bar.value=knowledge;hit_time=0.20
- if knowledge>=120:complete(true)
+ knowledge=minf(get_max_knowledge(),knowledge+amount);bar.value=knowledge;hit_time=0.20
+ if knowledge>=get_max_knowledge():complete(true)
 func sync_art()->void:
  var frame:=animation_frame()
  sprite.texture=frames[direction][frame]

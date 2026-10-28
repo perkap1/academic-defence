@@ -1,6 +1,6 @@
 extends "res://tests/test_integration.gd"
 func run():
- check(FileAccess.file_exists("res://scripts/sound.gd"),"8-bit sound manager exists")
+ check(FileAccess.file_exists("res://scripts/sound.gd"),"Sound manager exists")
  if failures:print("AUDIO: %d checks, %d failures"%[checks,failures]);quit(1);return
  var sound=root.get_node("Sound")
  sound.persist_enabled=false

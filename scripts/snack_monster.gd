@@ -21,7 +21,7 @@ func _ready()->void:
 func is_eating()->bool: return eating_remaining>0
 func can_receive_ground_attack(ignore_tunnel:bool=false)->bool:
  return super.can_receive_ground_attack(ignore_tunnel) and not is_eating()
-func get_heal_capacity()->float:return 400.0
+func get_heal_capacity()->float:return 400.0*health_multiplier
 func receive_confetti_heal(percent:float)->bool:
  if done or teaching_points<=0 or percent<=0:return false
  var restored:=minf(teaching_points,get_heal_capacity()*percent)
@@ -31,10 +31,10 @@ func receive_confetti_heal(percent:float)->bool:
  return true
 func teach(amount:int)->void:
  if not is_targetable() or amount<=0:return
- teaching_points=mini(400,teaching_points+amount)
+ teaching_points=mini(int(get_heal_capacity()),teaching_points+amount)
  knowledge=int(teaching_points/4.0)
  bar.value=teaching_points/4.0
- if not snack_break_used and teaching_points>=200:
+ if not snack_break_used and teaching_points>=get_heal_capacity()*0.5:
   snack_break_used=true
   eating_remaining=EATING_DURATION
   animation_time=0
@@ -51,7 +51,7 @@ func teach(amount:int)->void:
   sprite.texture=frames[direction][6]
   queue_redraw()
   return
- if teaching_points>=400:complete(true)
+ if teaching_points>=get_heal_capacity():complete(true)
 func apply_slow(duration:float=2.0,strength:float=0.30,source:String="other")->void:
  if is_targetable():super.apply_slow(duration,strength,source)
 func show_wet_hit()->void:
@@ -74,7 +74,7 @@ func _process(delta:float)->void:
   sprite.texture=frames[direction][6+int(animation_time*4)%4]
   if eating_remaining>0.000001:return
   eating_remaining=0
-  teaching_points=maxi(0,100-int(confetti_during_break))
+  teaching_points=maxi(0,int(get_heal_capacity()*0.25)-int(confetti_during_break))
   confetti_during_break=0
   knowledge=teaching_points/4.0
   bar.value=knowledge

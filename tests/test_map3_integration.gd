@@ -4,7 +4,7 @@ func run() -> void:
 	var layout=load("res://scripts/unit_layout.gd");layout.initialized=true;layout.lane_rng.seed=2903
 	var main = load("res://scenes/main_map3.tscn").instantiate()
 	root.add_child(main)
-	main.process_mode = Node.PROCESS_MODE_DISABLED
+	main.process_mode = Node.PROCESS_MODE_DISABLED;main.waves.variant_rng.seed=3403
 	var order := [2,10,11,1,15,12,4,3,9,7,8,6,0,5,14,13]
 	for wave in range(15):
 		for index in order:

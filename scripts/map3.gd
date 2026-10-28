@@ -49,7 +49,12 @@ func update_bridge_visual(unit)->void:
  if unit.student_type=="pilot" or unit.get_parent()!=lower_route:return
  get_bridge_clip_material()
  unit.material=bridge_material
- unit.sprite.material=bridge_material
+ if unit.rank_material!=null:
+  unit.rank_material.set_shader_parameter("clip_bridge",true)
+  unit.rank_material.set_shader_parameter("cover_min",to_global(BRIDGE_COVER.position))
+  unit.rank_material.set_shader_parameter("cover_max",to_global(BRIDGE_COVER.end))
+  unit.sprite.material=unit.rank_material
+ else:unit.sprite.material=bridge_material
  unit.bar.material=bridge_material
  unit.slow_indicator.material=bridge_material
  unit.visible=bridge_visibility(unit)>0.0

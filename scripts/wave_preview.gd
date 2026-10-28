@@ -3,6 +3,7 @@ const Artwork=preload("res://scripts/ui_skin.gd")
 const KINDS=["normal","pe_boy","pe_girl","bookworm","snack","pilot","clown"]
 const NAMES={"normal":"Normal Student","pe_boy":"PE Student Boy","pe_girl":"PE Student Girl","bookworm":"Bookworm","snack":"Snack Monster","pilot":"Paper Plane Pilot","clown":"Class Clown"}
 class EntranceIcon extends TextureButton:
+ var dangerous:=false
  var elapsed:=0.0
  var hover_preview:=false
  var frames:Array=[]
@@ -18,6 +19,8 @@ class EntranceIcon extends TextureButton:
 var icons:Dictionary={}
 var composition:Dictionary={}
 var panel:Control
+var rank_label:Label
+var ranks:Dictionary={}
 var total_label:Label
 var row_labels:Dictionary={}
 var level_map
@@ -36,7 +39,7 @@ func _ready()->void:
 func clear_icons()->void:
  hide_panel()
  for icon in icons.values():icon.free()
- icons.clear();composition.clear();cached_wave=-1
+ icons.clear();composition.clear();ranks.clear();cached_wave=-1
 func refresh(level,waves)->void:
  level_map=level;wave_manager=waves
  if waves.active or waves.game.finished or waves.wave>=waves.counts.size():
@@ -46,8 +49,12 @@ func refresh(level,waves)->void:
  if cached_wave==next_wave:return
  clear_icons();cached_wave=next_wave
  composition=waves.get_next_wave_preview()
+ ranks=waves.get_next_wave_ranks()
  for entry in composition:
   var icon=EntranceIcon.new();icon.name="Entrance%d"%entry;icon.size=Vector2(64,64)
+  icon.dangerous=ranks.has(entry)
+  if icon.dangerous:
+   var warning_material=ShaderMaterial.new();warning_material.shader=preload("res://scripts/ranked_warning.gdshader");icon.material=warning_material
   icon.focus_mode=Control.FOCUS_NONE
   for state in ["normal","hover","pressed","focus"]:icon.add_theme_stylebox_override(state,StyleBoxEmpty.new())
   icon.position=entrance_position(level.get_routes()[entry])-icon.size/2
@@ -86,7 +93,9 @@ func show_entry(entry:int,keep_open:bool=false)->void:
  for child in panel.get_children():child.free()
  row_labels.clear()
  var mix:Dictionary=composition[entry]
- var dimensions=Vector2(480,190+mix.size()*36)
+ var entry_ranks:Array=ranks.get(entry,[])
+ var rank_height:int=entry_ranks.size()*60
+ var dimensions=Vector2(480,190+mix.size()*36+rank_height)
  panel.size=dimensions
  Artwork.panel(panel,Vector2.ZERO,dimensions,true)
  Artwork.label(panel,"NEXT WAVE %d - %s"%[cached_wave,entry_name(entry)],Vector2(65,40),Vector2(350,26),18,Color("ffe47b"))
@@ -97,7 +106,15 @@ func show_entry(entry:int,keep_open:bool=false)->void:
   image.position=Vector2(67,76+row*36);image.size=image.texture.get_size()*2;image.mouse_filter=Control.MOUSE_FILTER_IGNORE;panel.add_child(image)
   row_labels[kind]=Artwork.label(panel,"%s x %d"%[NAMES[kind],mix[kind]],Vector2(110,78+row*36),Vector2(305,28),20)
   total+=int(mix[kind]);row+=1
- total_label=Artwork.label(panel,"TOTAL: %d STUDENTS"%total,Vector2(65,90+row*36),Vector2(350,28),20,Color("ffe47b"))
+ rank_label=Artwork.label(panel,"",Vector2(65,82+row*36),Vector2(350,maxi(52,rank_height)),18,Color("ffb4a5"))
+ rank_label.visible=ranks.has(entry)
+ if ranks.has(entry):
+  var descriptions:PackedStringArray=[]
+  for record in entry_ranks:
+   var key:String="pe_"+record.variant if record.kind=="pe" else record.kind
+   descriptions.append("%s: %s\n%sx helse · inkludert i antallet"%["BOSS" if record.rank=="boss" else "ELITE",NAMES[key],str(record.health_multiplier).replace(".",",")])
+  rank_label.text="\n".join(descriptions)
+ total_label=Artwork.label(panel,"TOTAL: %d STUDENTS"%total,Vector2(65,90+row*36+rank_height),Vector2(350,28),20,Color("ffe47b"))
  var origin:Vector2=icons[entry].position
  var position_hint=origin+Vector2(76,0)
  if position_hint.x+dimensions.x>1664:position_hint.x=origin.x-dimensions.x-12

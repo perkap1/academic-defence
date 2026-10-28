@@ -37,7 +37,7 @@ func run() -> void:
 	var packed = load("res://scenes/main.tscn")
 	var main = packed.instantiate()
 	root.add_child(main)
-	main.process_mode = Node.PROCESS_MODE_DISABLED
+	main.process_mode = Node.PROCESS_MODE_DISABLED;main.waves.variant_rng.seed=3401
 	check(main.waves.counts == [4, 6, 8, 11, 14, 17, 20], "Seven mixed wave counts")
 	check(main.waves.start_wave(), "Wave one starts")
 	check(not main.waves.start_wave(), "Overlapping wave rejected")
@@ -53,7 +53,7 @@ func run() -> void:
 	main.free()
 	main = packed.instantiate()
 	root.add_child(main)
-	main.process_mode = Node.PROCESS_MODE_DISABLED
+	main.process_mode = Node.PROCESS_MODE_DISABLED;main.waves.variant_rng.seed=3401
 	check(main.game.gold == 300 and main.game.lives == 10 and main.waves.wave == 0, "Fresh round resets state")
 	check(main.map.towers.get_child_count() == 0, "Fresh round has no towers")
 	# A normal-budget strategy: two towers first, reinvest between waves.
@@ -76,7 +76,7 @@ func run() -> void:
 	main.free()
 	main = packed.instantiate()
 	root.add_child(main)
-	main.process_mode = Node.PROCESS_MODE_DISABLED
+	main.process_mode = Node.PROCESS_MODE_DISABLED;main.waves.variant_rng.seed=3401
 	main.game.lives = 1
 	main.waves.start_wave()
 	main.waves._process(0.1)

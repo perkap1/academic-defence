@@ -109,6 +109,7 @@ func _process(delta: float) -> void:
 		spawn_index += 1
 		student.resolved.connect(on_student_resolved)
 		path.add_child(student)
+		if record.has("rank"):student.set_enemy_rank(record.rank,record.health_multiplier)
 		if kind == "bookworm" and not bookworm_announced:
 			bookworm_announced = true
 			bookworm_introduced.emit()
@@ -238,6 +239,7 @@ func _plan_for_wave(wave_id:int)->Array:
 			var variant:="girl" if kind=="pilot" else "boy"
 			if kind=="pe":variant="boy" if variant_rng.randi_range(0,1)==0 else "girl"
 			plan.append({"kind":kind,"variant":variant,"route":get_spawn_route(index,wave_id)})
+		preload("res://scripts/enemy_ranks.gd").decorate(plan,wave_id,counts.size(),map.level_id,variant_rng)
 		planned_waves[wave_id]=plan
 	return planned_waves[wave_id]
 func get_spawn_plan(wave_id:int)->Array:
@@ -254,3 +256,13 @@ func get_next_wave_preview() -> Dictionary:
 		if not preview.has(entry):preview[entry]={}
 		preview[entry][kind]=int(preview[entry].get(kind,0))+1
 	return preview
+
+func get_next_wave_ranks()->Dictionary:
+	var next_wave:=wave+1
+	if active or game==null or game.finished or next_wave>counts.size():return {}
+	var result:Dictionary={}
+	for record in _plan_for_wave(next_wave):
+		if record.has("rank"):
+			if not result.has(record.route):result[record.route]=[]
+			result[record.route].append(record.duplicate(true))
+	return result

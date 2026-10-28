@@ -82,7 +82,7 @@ func run() -> void:
 		for student in main.waves.students.duplicate():
 			if student.student_type=="bookworm":
 				for hit in range(3): student.teach(100)
-			student.teach(100)
+			student.teach(int(student.get_heal_capacity()))
 	check(main.game.won, "Mixed-wave full completion reaches victory")
 	print("V0.002: %d checks, %d failures" % [checks, failures])
 	quit(1 if failures else 0)

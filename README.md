@@ -4,7 +4,7 @@
 
 # Academic Defence
 
-Latest version: **0.030.2** — Centered Clown Knowledge bar and self-healing confetti pulses.
+Latest version: **0.034.1** — Cartoon sound effects, temporary final-wave bosses and elites every third wave, with two elites at wave 9. Enemy types and entrances are drawn from the actual cached spawn plan; affected entrance warnings turn dark red.
 
 A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: ground students graduate at 100 Knowledge (Paper Plane Pilots require 150). This repository contains the existing project developed in this chat.
 
@@ -43,7 +43,7 @@ Open http://127.0.0.1:8765/ . Keep all exported files together; do not open inde
 
 **v0.025 — playable prototype.** Five maps (7, 12, 15, 17 and 22 waves), normal and PE students and The Bookworm on all four maps, Book, Science and Teaching Assistant towers, economy buildings, tower upgrades/selling, pause, restart, radial building menu and shared graduation animation. Book Tower throws spinning books from a comic brick tower; levels share the same character art with gold 1/2/3 banner digits. Tower artwork is displayed at 65% of its original size (30% larger than v0.014.1); Book and Science teachers face the map entrance while level digits remain readable. Normal Student, PE boy/girl and all four Bookworm shield states now use the new comic enemy sheets with two idle and four movement frames per direction. Held students animate without moving; PE runs animate faster while retaining existing route speed. Science Tower uses the new comic science teacher, animated green/purple orbs and color clouds. All three levels share stable tower art with gold digits; its existing AoE Knowledge and non-stacking slow remain unchanged. Map 3 is available from the start; Autumn Campus unlocks after Map 3; The Final Exam unlocks after Map 4. Level progress is saved locally in Godot and in the browser's storage for the Web version.
 
-See `VERIFISERING-v0.026.md` for the latest checks and `VERIFISERING.md` for earlier verification.
+See `VERIFISERING-v0.034.1.md` for the latest checks and the earlier `VERIFISERING` documents for prior versions. The old fixed 300-KP strategy no longer wins map 5 under the stronger elite rules; the full map-5 victory/progression test uses the existing 2000-KP test-mode budget. This does not change the normal starting budget.
 
 ## Automatic publishing
 

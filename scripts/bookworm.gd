@@ -24,7 +24,7 @@ func teach(amount: int) -> void:
 		var effect := HitReaction.new()
 		var level = get_parent().get_parent()
 		level.effects.add_child(effect)
-		effect.sprite.material=sprite.material
+		effect.sprite.material=bar.material
 		effect.global_position = global_position
 		update_shield_art()
 		return
