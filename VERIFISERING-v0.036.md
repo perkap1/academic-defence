@@ -5,3 +5,5 @@ Uses the supplied Science Tower PNG unchanged (SHA256 F961ABF140DCBDFFA6F596D0FD
 The desk uses a fixed full-width base; the actor's narrower atlas regions exclude adjacent teachers in the tightly packed sheet. Two small display masks remove neighboring fragments where experiment effects overlap cells, respecting left/right mirroring. The source image is not edited. Gold level numerals are retained on the new red banner. Radial-menu art uses the new source automatically. Stats, upgrades, prices, spinning/directional projectiles and damage/slow behavior remain unchanged.
 
 Verification: Science Tower 99 checks, presentation 88, tower size 16, Book Tower 49, upgrades 107, projectile direction 30, audio 31 and unit layout 1690; all zero failures. All eleven frames were visually inspected in native Godot, including the mirrored view. Web export completed without script errors.
+
+The first CI run stopped on an old v0.002 fixture asserting a 500x500 science canvas. Its expected size was updated to the new common 600x600 canvas, retaining the assertion for every frame. Both left- and right-facing native boards were inspected.
