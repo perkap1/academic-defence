@@ -27,16 +27,16 @@ static func tower_frames(kind:String,level:int)->Array:
   frames.append(atlas(sheet,rect,Vector2(pivots[i][0],pivots[i][1])))
  return frames
 static func comic_book_frames()->Array:
- var sheet:Texture2D=load("res://assets/presentation/comic_book_sheet.png")
+ var sheet:Texture2D=load("res://assets/presentation/book_teacher_sheet.png")
  var result=[]
- var cells=[60,400,735,1065,1424]
- var rows=[Vector2(0,383),Vector2(383,765),Vector2(765,1086)]
- var centers=[[235,568,902,1237],[233,568,903,1237],[236,565,909,1236]]
- var feet=[380,761,1080]
- for row in range(3):
-  for i in range(4):
-   var right:float=796 if row==2 and i==1 else cells[i+1]
-   result.append(atlas(sheet,Rect2(cells[i],rows[row].x,right-cells[i],rows[row].y-rows[row].x),Vector2(centers[row][i],feet[row]),Vector2(440,420),Vector2(220,385)))
+ var idle_cells=[20,337,633,927,1223,1525]
+ var idle_centers=[177,484.5,780,1073,1379]
+ for i in range(5):
+  result.append(atlas(sheet,Rect2(idle_cells[i],90,idle_cells[i+1]-idle_cells[i],415),Vector2(idle_centers[i],494),Vector2(600,500),Vector2(300,465)))
+ var attack_cells=[20,390,735,1218,1525]
+ var attack_centers=[185,557.5,895.5,1345.5]
+ for i in range(4):
+  result.append(atlas(sheet,Rect2(attack_cells[i],520,attack_cells[i+1]-attack_cells[i],431),Vector2(attack_centers[i],939),Vector2(600,500),Vector2(300,465)))
  return result
 static func thrown_book()->AtlasTexture:
  var sheet:Texture2D=load("res://assets/presentation/thrown_book.png")
@@ -73,7 +73,7 @@ static func apply(tower)->void:
  tower.frames=tower_frames(tower.tower_type,tower.level)
  var factor:float=0.247 if tower.tower_type=="book" else 0.2275
  tower.sprite.position=Vector2(0,-1.95)
- tower.sprite.offset=Vector2(-220,-385) if tower.tower_type=="book" else Vector2(-250,-470)
+ tower.sprite.offset=Vector2(-300,-465) if tower.tower_type=="book" else Vector2(-250,-470)
  tower.sprite.centered=false
  tower.sprite.scale=Vector2.ONE*factor
  tower.sprite.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST

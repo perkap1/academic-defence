@@ -60,8 +60,8 @@ func upgrade_level() -> bool:
 	return true
 
 func get_visual_frame() -> int:
-	if animation_time > 0: return 8+clampi(int(floor((0.4-animation_time)*10.0+0.00001)),0,3)
-	return int(floor(visual_time*3.0))%8
+	if animation_time > 0: return 5+clampi(int(floor((0.4-animation_time)*10.0+0.00001)),0,3)
+	return int(floor(visual_time*1.5))%5
 
 func update_sprite(delta: float) -> void:
 	visual_time += delta

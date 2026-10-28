@@ -4,7 +4,7 @@
 
 # Academic Defence
 
-Latest version: **0.034.1** — Cartoon sound effects, temporary final-wave bosses and elites every third wave, with two elites at wave 9. Enemy types and entrances are drawn from the actual cached spawn plan; affected entrance warnings turn dark red.
+Latest version: **0.035.1** — New Book Tower teacher sprite sheet with five idle frames at half speed and four throw frames; existing attack timing, stats and upgrades retained. Includes cartoon sound effects, final-wave bosses and elites every third wave, with two elites at wave 9.
 
 A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: ground students graduate at 100 Knowledge (Paper Plane Pilots require 150). This repository contains the existing project developed in this chat.
 

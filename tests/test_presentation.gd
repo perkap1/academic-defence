@@ -22,14 +22,14 @@ func run()->void:
   main.free();print("PRESENTATION: %d checks, %d failures"%[checks,failures]);quit(1);return
  for level in range(1,4):
   if level>1: main.game.try_upgrade(slot)
-  var expected=[0,0,1,2,3,3,4,5,6,6]
+  var expected=[0,0,0,1,1,1,2,2,3,3]
   tower.animation_time=0
   for i in range(expected.size()):
    tower.visual_time=i*0.25
    check(tower.get_visual_frame()==expected[i],"Comic reading and coffee idle level%d"%level)
   tower.animation_time=0.2
-  check(tower.get_visual_frame()==10,"Comic throw sequence all Book levels")
-  check(tower.frames.size()==12 and tower.frames[0] is AtlasTexture,"User sheet used directly")
+  check(tower.get_visual_frame()==7,"Comic throw sequence all Book levels")
+  check(tower.frames.size()==9 and tower.frames[0] is AtlasTexture,"User sheet used directly")
  main.game.try_sell(slot)
  main.build(slot,"blackboard")
  tower=slot.tower

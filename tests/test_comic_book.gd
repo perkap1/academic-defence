@@ -9,21 +9,25 @@ func run() -> void:
 	var slot=main.map.slots.get_child(0)
 	main.build(slot,"book")
 	var tower=slot.tower
-	check(tower.frames.size()==12,"Twelve comic idle/coffee/throw frames")
+	check(tower.frames.size()==9,"Five new idle and four new throw frames")
 	check(tower.has_node("LevelBadge") and tower.get_node("LevelBadge").z_index>tower.sprite.z_index,"Gold level glyph renders above opaque banner")
-	if tower.frames.size()!=12:
+	if tower.frames.size()!=9:
 		main.free()
 		quit(1)
 		return
 	var point:Vector2=tower.global_position
+	check(tower.sprite.offset==Vector2(-300,-465),"New frames share a stable bottom-center origin")
+	check(is_equal_approx(tower.get_node("LevelBadge").position.y,6.3),"Level numeral sits on the new banner")
+	for image in tower.frames:check(image.get_size()==Vector2(600,500),"Common canvas across all idle and throw frames")
 	for level in range(1,4):
 		if level>1: main.game.try_upgrade(slot)
 		check(tower.global_position==point,"Upgrade keeps position")
 		check(tower.level==level,"Level remains correct")
-		check(tower.frames[0].atlas.resource_path.ends_with("comic_book_sheet.png"),"Same comic source at all levels")
+		check(tower.frames[0].atlas.resource_path.ends_with("book_teacher_sheet.png"),"New supplied source at all levels")
 		for frame in range(4):
 			tower.animation_time=0.4-frame*0.1
-			check(tower.get_visual_frame()==8+frame,"Throw frames ordered")
+			check(tower.get_visual_frame()==5+frame,"Throw frames ordered")
+			check(tower.base_sprite.texture==tower.frames[0],"Desk base remains fixed throughout throw and upgrades")
 	var student=load("res://scenes/student.tscn").instantiate()
 	main.map.route.add_child(student)
 	var projectile=load("res://scenes/projectile.tscn").instantiate()
