@@ -51,7 +51,7 @@ func upgrade_level()->bool:
  get_node("LevelBadge").queue_redraw();queue_redraw();return true
 func get_visual_frame()->int:
  if animation_time>0:return 4+clampi(int((ATTACK_DURATION-animation_time)/0.16),0,4)
- return int(visual_time*2.0)%4
+ return int(visual_time*1.5)%4
 func update_sprite(delta:float)->void:
  visual_time+=delta
  var index:=get_visual_frame()

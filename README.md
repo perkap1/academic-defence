@@ -4,7 +4,7 @@
 
 # Academic Defence
 
-Latest version: **0.036** — New Science Tower sprite sheet with six slow idle frames and five experiment frames. Both Book and Science Tower idle animations run at 1.5 frames per second. Existing attack timing, stats, upgrades, projectiles and gameplay remain unchanged.
+Latest version: **0.036.2** — All towers and economy buildings idle at 1.5 frames per second. Enabled green upgrade arrows purchase immediately, including PE Teacher, Library and Scholarship Office, without a confirmation dialog. Upgrade prices and gameplay timing remain unchanged.
 
 A pixel-art tower defence game made in **Godot 4.4.1**. Teach students before they reach the bridge: ground students graduate at 100 Knowledge (Paper Plane Pilots require 150). This repository contains the existing project developed in this chat.
 

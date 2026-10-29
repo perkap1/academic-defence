@@ -49,10 +49,7 @@ func run():
   for expected in [2,3]:
    var price=tower.get_upgrade_cost();var before=main.game.gold
    main.ui.request_upgrade()
-   check(main.ui.upgrade_confirmation.visible and main.ui.upgrade_confirmation.dialog_text.contains("%d KP"%price),"Upgrade confirmation shows current price")
-   check(main.game.gold==before and tower.level==expected-1,"Opening confirmation never spends KP")
-   main.ui.upgrade_confirmation.confirmed.emit();main.ui.upgrade_confirmation.hide()
-   check(tower.level==expected,"Confirmation upgrades through existing controller")
+   check(tower.level==expected and main.game.gold==before-price,"Green arrow upgrades immediately without confirmation")
    check(main.game.gold==before-price and tower.level==expected,"Upgrade price charged exactly once")
    check(tower.global_position==original,"Upgrade preserves tower position")
    check(tower.knowledge_per_hit==[50,65,80][expected-1],"Knowledge follows current balance")

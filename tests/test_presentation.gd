@@ -57,6 +57,24 @@ func run()->void:
  check(student.scale==Vector2(0.7,0.7),"Student70percent scale")
  check(student.get("lane_offset")!=null,"Student has lateral lane")
  student.free()
+ var pe=load("res://scenes/pe_teacher.tscn").instantiate();root.add_child(pe)
+ var post=load("res://scenes/assistant_post.tscn").instantiate();root.add_child(post)
+ for time in [0.0,0.5,0.7,1.4,2.1,3.0]:
+  var expected_idle:=int(time*1.5)%4
+  pe.visual_time=time;pe.animation_time=0;pe.update_sprite(0)
+  check(pe.sprite.texture==pe.frames[expected_idle],"PE idle matches Book and Science cadence")
+  post.animation_time=time;post.point_remaining=0;post._process(0)
+  check(post.sprite.texture==post.idle_frames[expected_idle],"Assistant Post idle matches shared cadence")
+ post.point_at(post.global_position+Vector2.RIGHT*100);post._process(0.18)
+ check(post.sprite.texture==post.point_frames[1],"Pointing retains six frames per second")
+ for branch in ["study","library","scholarship"]:
+  var economy=load("res://scenes/economy_building.tscn").instantiate();root.add_child(economy)
+  if branch!="study":economy.specialize(branch)
+  for time in [0.0,0.5,0.7,1.4,2.1,3.0,5.0]:
+   economy.visual_time=time;economy.active_time=0;economy._process(0)
+   check(economy.sprite.texture==economy.frames[int(time*1.5)%8],"Economy idle matches shared cadence: "+branch)
+  economy.free()
+ pe.free();post.free()
  main.free()
  print("PRESENTATION: %d checks, %d failures"%[checks,failures])
  quit(1 if failures else 0)

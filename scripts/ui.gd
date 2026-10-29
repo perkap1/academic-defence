@@ -38,8 +38,6 @@ var tower_title: Label
 var tower_description: Label
 var sell_button: Button
 var upgrade_button: Button
-var upgrade_confirmation: ConfirmationDialog
-var upgrade_confirmation_slot
 var upgrade_caption: Label
 var tower_banner: Control
 var banner_title: Label
@@ -158,27 +156,6 @@ func create_tower_panel(root: Control) -> void:
 	tower_banner.add_child(upgrade_button)
 	upgrade_button.pressed.connect(func():
 		request_upgrade())
-	upgrade_confirmation = ConfirmationDialog.new()
-	upgrade_confirmation.title = "Oppgrader bygning"
-	upgrade_confirmation.ok_button_text = "Oppgrader"
-	upgrade_confirmation.cancel_button_text = "Avbryt"
-	var confirm_style := StyleBoxFlat.new()
-	confirm_style.bg_color = Color("102b2b")
-	confirm_style.border_color = Color("d9ad48")
-	confirm_style.set_border_width_all(3)
-	confirm_style.set_content_margin_all(18)
-	upgrade_confirmation.add_theme_stylebox_override("panel",confirm_style)
-	upgrade_confirmation.add_theme_color_override("font_color",Color("fff1c4"))
-	upgrade_confirmation.get_label().add_theme_font_size_override("font_size",20)
-	for button in [upgrade_confirmation.get_ok_button(),upgrade_confirmation.get_cancel_button()]:
-		button.add_theme_font_size_override("font_size",20)
-		button.add_theme_stylebox_override("normal",confirm_style)
-		button.add_theme_color_override("font_color",Color("fff1c4"))
-	add_child(upgrade_confirmation)
-	upgrade_confirmation.confirmed.connect(func():
-		if is_instance_valid(upgrade_confirmation_slot) and upgrade_confirmation_slot == tower_slot:
-			upgrade_requested.emit(upgrade_confirmation_slot)
-		upgrade_confirmation_slot = null)
 	upgrade_caption = Artwork.label(tower_banner,"",Vector2(1345,104),Vector2(235,26),20)
 	upgrade_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	specialization_panel = Control.new()
@@ -641,17 +618,5 @@ func show_route_notice(text:String)->void:
 
 func request_upgrade() -> void:
 	if not is_instance_valid(tower_slot) or not is_instance_valid(tower_slot.tower): return
-	var tower = tower_slot.tower
-	if tower.tower_type=="pe_teacher":
-		if tower.get_upgrade_cost()<=0:return
-		upgrade_confirmation_slot=tower_slot
-		var next:int=tower.level
-		upgrade_confirmation.dialog_text="PE Teacher · Level %d\n%d KP\nKnowledge: %d · Roll: %d · Ball: %d%%"%[next+1,tower.get_upgrade_cost(),tower.KNOWLEDGE[next],tower.ROLL_DISTANCES[next],roundi(tower.BALL_SIZES[next]*100)]
-		upgrade_confirmation.popup_centered(Vector2i(500,190));return
-	if tower.tower_type != "economy":
-		upgrade_requested.emit(tower_slot)
-		return
-	if tower.get_upgrade_cost() <= 0: return
-	upgrade_confirmation_slot = tower_slot
-	upgrade_confirmation.dialog_text = "%s\n%d KP\n%s" % [tower.get_display_name(),tower.get_upgrade_cost(),"Inntekt: 30 → 35 KP / wave" if tower.branch == "library" else "Max KP / wave: 40 → 50"]
-	upgrade_confirmation.popup_centered(Vector2i(440,180))
+	if upgrade_button.disabled or not upgrade_button.visible:return
+	upgrade_requested.emit(tower_slot)

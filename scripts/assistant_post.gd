@@ -1,6 +1,6 @@
 extends Node2D
 var stats = preload("res://scripts/building_stats.gd").new()
-const IDLE_FPS := 3.0
+const IDLE_FPS := 1.5
 const POINT_FPS := 6.0
 const Assistant = preload("res://scripts/teaching_assistant.gd")
 var tower_type := "assistant"

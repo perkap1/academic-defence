@@ -10,8 +10,7 @@ func run():
  main.game.gold=10000
  var slot=main.map.slots.get_child(6);main.build(slot,"economy");main.select_slot(slot);main.specialize(slot,"library")
  await capture("library-before")
- main.ui.upgrade_button.pressed.emit();await capture("confirm")
- main.ui.upgrade_confirmation.confirmed.emit();main.ui.upgrade_confirmation.hide()
+ main.ui.upgrade_button.pressed.emit()
  await capture("library-gold")
  for i in range(9):
   slot.tower.sprite.texture=slot.tower.frames[i];await capture("library-frame%d"%i)
